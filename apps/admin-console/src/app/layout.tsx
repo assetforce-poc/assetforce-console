@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { ThemeProvider, CssBaseline } from "@mui/material";
-import { theme } from "@assetforce/ui/theme";
+import { theme } from "@assetforce/material/theme";
 
 export const metadata: Metadata = {
   title: "AssetForce Admin Console",

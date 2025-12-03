@@ -2,9 +2,19 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
   schema: 'http://localhost:8081/graphql', // AAC GraphQL endpoint
-  documents: ['src/**/*.gql', 'src/**/*.graphql'],
+  documents: [
+    'login/**/*.gql',
+    'login/**/*.graphql',
+    'session/**/*.gql',
+    'session/**/*.graphql',
+    'mfa/**/*.gql',
+    'mfa/**/*.graphql',
+    'fragments/**/*.gql',
+  ],
   generates: {
-    './src/graphql/generated/': {
+    // login 子功能
+    './login/graphql/generated/': {
+      documents: ['login/graphql/*.gql'],
       preset: 'client',
       presetConfig: {
         fragmentMasking: false,
@@ -14,16 +24,39 @@ const config: CodegenConfig = {
         useTypeImports: true,
         skipTypename: false,
         enumsAsTypes: true,
-        // 生成 typed document nodes，可以直接 import
         documentMode: 'documentNode',
-
-        // 🔲 不生成 hooks/components/HOC - 手动在 src/hooks/ 编写
-        // 注：client preset 默认不生成这些，以下配置为明确说明
-        withHooks: false,
-        withComponent: false,
-        withHOC: false,
       },
     },
+    // session 子功能
+    './session/graphql/generated/': {
+      documents: ['session/graphql/*.gql'],
+      preset: 'client',
+      presetConfig: {
+        fragmentMasking: false,
+        gqlTagName: 'gql',
+      },
+      config: {
+        useTypeImports: true,
+        skipTypename: false,
+        enumsAsTypes: true,
+        documentMode: 'documentNode',
+      },
+    },
+    // mfa 子功能 (待实施)
+    // './mfa/graphql/generated/': {
+    //   documents: ['mfa/graphql/*.gql'],
+    //   preset: 'client',
+    //   presetConfig: {
+    //     fragmentMasking: false,
+    //     gqlTagName: 'gql',
+    //   },
+    //   config: {
+    //     useTypeImports: true,
+    //     skipTypename: false,
+    //     enumsAsTypes: true,
+    //     documentMode: 'documentNode',
+    //   },
+    // },
   },
   ignoreNoDocuments: true,
 };
