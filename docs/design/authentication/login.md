@@ -1,22 +1,31 @@
 # login - 登录子功能详细设计
 
-- **Status**: ✅ 完成
+- **Status**: ✅ 规整完成
 - **Parent**: [authentication/README.md](./README.md)
 
 ---
 
 ## 1. 功能清单
 
-| 功能 | 组件 | GraphQL | 优先级 |
-|------|------|---------|--------|
-| Email + Password 登录 | LoginForm | `login` mutation | P0 |
-| Username + Password 登录 | LoginForm | `login` mutation | P1 |
-| GitHub OAuth | OAuthButtons | Keycloak redirect | P1 |
-| Google OAuth (扩展) | OAuthButtons | Keycloak redirect | P2 |
-| Azure AD OAuth (扩展) | OAuthButtons | Keycloak redirect | P2 |
-| Keycloak SSO (扩展) | OAuthButtons | Keycloak redirect | P2 |
-| Remember Me | LoginForm | Token TTL 延长 | P1 |
-| 忘记密码入口 | LoginForm | 跳转链接 | P0 |
+| 功能 | 组件 | GraphQL | 优先级 | AAC 状态 |
+|------|------|---------|--------|----------|
+| Email + Password 登录 | LoginForm | `login` mutation | P0 | ✅ 已实现 |
+| Username + Password 登录 | LoginForm | `login` mutation | P1 | ✅ 已实现 |
+| GitHub OAuth | OAuthButtons | Keycloak redirect | P1 | 🔲 需实施 OAuth |
+| Google OAuth (扩展) | OAuthButtons | Keycloak redirect | P2 | 🔲 需实施 OAuth |
+| Azure AD OAuth (扩展) | OAuthButtons | Keycloak redirect | P2 | 🔲 需实施 OAuth |
+| Keycloak SSO (扩展) | OAuthButtons | Keycloak redirect | P2 | 🔲 需实施 OAuth |
+| Remember Me | LoginForm | Token TTL 延长 | P1 | 🔲 需扩展 |
+| 忘记密码入口 | LoginForm | 跳转链接 | P0 | N/A |
+
+**实施说明**：
+- **Phase 1 (立即开始)**: Email/Username + Password 登录
+  - AAC `login` mutation 已支持 (Task 027)
+  - Keycloak 支持 email 作为 username，前端可直接使用
+- **Phase 7 (待 AAC 实施)**: GitHub OAuth 登录
+  - AAC 需添加 OAuth Authorization Code 交换 API
+  - 前端可先直接构造 Keycloak OAuth URL，回调后暂用 Keycloak token
+  - 待 AAC OAuth API 完成后切换
 
 ---
 

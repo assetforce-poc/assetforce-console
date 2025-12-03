@@ -84,18 +84,23 @@
 
 ## 4. 实施优先级
 
-| Phase | 子功能 | 目标 | 优先级 | 工作模式 |
-|-------|--------|------|--------|----------|
-| 1 | login | Email + Password 登录可用 | P0 | 规整→实施→✅ |
-| 2 | register | 用户自助注册可用 | P0 | 规整→实施→✅ |
-| 3 | password-reset | 忘记密码流程可用 | P0 | 规整→实施→✅ |
-| 4 | password | 用户可修改密码 | P0 | 规整→实施→✅ |
-| 5 | activation | Admin 邀请激活可用 | P0 | 规整→实施→✅ |
-| 6 | login (GitHub OAuth) | GitHub OAuth 登录可用 | P1 | 规整→实施→✅ |
-| 7 | session | 查看和管理活动会话 | P1 | 规整→实施→✅ |
-| 8 | mfa (验证) | TOTP 验证可用 | P1 | 规整→实施→✅ |
-| 9 | mfa (设置) | 用户可启用/禁用 MFA | P1 | 规整→实施→✅ |
-| 10 | auth-provider | 绑定/解绑 OAuth 认证方式 | P1 | 规整→实施→✅ |
+| Phase | 子功能 | 目标 | 优先级 | 依赖 | 工作模式 |
+|-------|--------|------|--------|------|----------|
+| 1 | login | Email + Password 登录可用 | P0 | AAC ✅ | 规整→实施→✅ |
+| 2 | register | 用户自助注册可用 | P0 | AAC 🔲 | 规整→实施→✅ |
+| 3 | password-reset | 忘记密码流程可用 | P0 | AAC 🔲 | 规整→实施→✅ |
+| 4 | password | 用户可修改密码 | P0 | AAC 🔲 | 规整→实施→✅ |
+| 5 | activation | Admin 邀请激活可用 | P0 | AAC 🔲 | 规整→实施→✅ |
+| 6 | session | 查看和管理活动会话 | P1 | AAC 🔲 | 规整→实施→✅ |
+| 7 | login (GitHub OAuth) | GitHub OAuth 登录可用 | P1 | AAC OAuth 🔲 | 🔲 待 AAC 实施 |
+| 8 | mfa (验证) | TOTP 验证可用 | P1 | AAC 🔲 | 规整→实施→✅ |
+| 9 | mfa (设置) | 用户可启用/禁用 MFA | P1 | AAC 🔲 | 规整→实施→✅ |
+| 10 | auth-provider | 绑定/解绑 OAuth 认证方式 | P1 | AAC 🔲 | 规整→实施→✅ |
+
+**依赖说明**：
+- **AAC ✅**: AAC 已实现（Task 027，`login` mutation 支持 username + password）
+- **AAC 🔲**: AAC 需要实施对应的 GraphQL API
+- **AAC OAuth 🔲**: AAC 需要实施 OAuth Authorization Code 交换 API
 
 **工作模式说明**：
 - **增量交付**：每个子功能独立完成（文档规整 → 实施 → 测试 → checkpoint）
