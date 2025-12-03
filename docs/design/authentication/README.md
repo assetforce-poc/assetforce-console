@@ -20,7 +20,7 @@
 | 密码管理 | 修改密码、密码强度检测 |
 | 认证方式管理 | OAuth Provider 绑定/解绑 |
 | 账户激活 | Admin 邀请用户后的首次激活 |
-| 注册 | 用户自助注册（待实现） |
+| 用户注册 | 用户自助注册（创建 Account） |
 
 **不包含**：
 - 授权（PME，由 `@assetforce/authorization` 负责）
@@ -38,8 +38,8 @@
 | password-reset | `password-reset/` | 忘记密码流程 | [password-reset.md](./password-reset.md) |
 | password | `password/` | 修改密码 | [password.md](./password.md) |
 | auth-provider | `auth-provider/` | OAuth 绑定/解绑 | [auth-provider.md](./auth-provider.md) |
-| activation | `activation/` | 账户激活 | [activation.md](./activation.md) |
-| register | `register/` | 用户注册 (Phase 2) | 待写 |
+| activation | `activation/` | Admin 邀请激活 | [activation.md](./activation.md) |
+| register | `register/` | 用户自助注册 | 待写 |
 
 ---
 
@@ -64,6 +64,8 @@
 | `linkAuthProvider` | auth-provider | 绑定认证方式 |
 | `unlinkAuthProvider` | auth-provider | 解绑认证方式 |
 | `activateAccount` | activation | 激活账户 |
+| `register` | register | 用户注册 |
+| `verifyEmailForRegistration` | register | 验证注册邮箱 |
 
 ### 3.2 Queries
 
@@ -72,6 +74,7 @@
 | `myActiveSessions` | session | 活动会话列表 |
 | `myAuthProviders` | auth-provider | 已绑定认证方式 |
 | `validateActivationToken` | activation | 验证激活 Token |
+| `checkEmailAvailability` | register | 检查邮箱是否可用 |
 
 ### 3.3 Fragments
 
@@ -81,17 +84,22 @@
 
 ## 4. 实施优先级
 
-| Phase | 子功能 | 目标 | 优先级 |
-|-------|--------|------|--------|
-| 1 | login | Email + Password 登录可用 | P0 |
-| 2 | password-reset | 忘记密码流程可用 | P0 |
-| 3 | mfa (验证) | TOTP 验证可用 | P0 |
-| 4 | password | 用户可修改密码 | P0 |
-| 5 | activation | 用户可激活账户 | P0 |
-| 6 | login (OAuth) | OAuth 登录可用 | P1 |
-| 7 | session | 查看和管理活动会话 | P1 |
-| 8 | mfa (设置) | 用户可启用/禁用 MFA | P1 |
-| 9 | auth-provider | 绑定/解绑 OAuth 认证方式 | P1 |
+| Phase | 子功能 | 目标 | 优先级 | 工作模式 |
+|-------|--------|------|--------|----------|
+| 1 | login | Email + Password 登录可用 | P0 | 规整→实施→✅ |
+| 2 | register | 用户自助注册可用 | P0 | 规整→实施→✅ |
+| 3 | password-reset | 忘记密码流程可用 | P0 | 规整→实施→✅ |
+| 4 | password | 用户可修改密码 | P0 | 规整→实施→✅ |
+| 5 | activation | Admin 邀请激活可用 | P0 | 规整→实施→✅ |
+| 6 | login (GitHub OAuth) | GitHub OAuth 登录可用 | P1 | 规整→实施→✅ |
+| 7 | session | 查看和管理活动会话 | P1 | 规整→实施→✅ |
+| 8 | mfa (验证) | TOTP 验证可用 | P1 | 规整→实施→✅ |
+| 9 | mfa (设置) | 用户可启用/禁用 MFA | P1 | 规整→实施→✅ |
+| 10 | auth-provider | 绑定/解绑 OAuth 认证方式 | P1 | 规整→实施→✅ |
+
+**工作模式说明**：
+- **增量交付**：每个子功能独立完成（文档规整 → 实施 → 测试 → checkpoint）
+- **可展示标准**：实施完成 + 功能可用 = 可展示
 
 ---
 
@@ -112,13 +120,14 @@
 | 文档 | 内容 | 状态 |
 |------|------|------|
 | README.md | 模块概览（本文档） | ✅ |
-| login.md | 登录子功能 | Draft |
+| login.md | 登录子功能 | ✅ |
 | mfa.md | MFA 子功能 | Draft |
 | session.md | 会话管理 | Draft |
 | password-reset.md | 密码重置 | Draft |
 | password.md | 密码管理 | Draft |
 | auth-provider.md | 认证方式管理 | Draft |
 | activation.md | 账户激活 | Draft |
+| register.md | 用户注册 | 待写 |
 | fragments.md | GraphQL Fragments | Draft |
 
 ---

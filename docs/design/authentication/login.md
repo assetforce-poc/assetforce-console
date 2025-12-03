@@ -1,6 +1,6 @@
 # login - 登录子功能详细设计
 
-- **Status**: Draft (暂存内容待规整)
+- **Status**: ✅ 完成
 - **Parent**: [authentication/README.md](./README.md)
 
 ---
@@ -11,15 +11,18 @@
 |------|------|---------|--------|
 | Email + Password 登录 | LoginForm | `login` mutation | P0 |
 | Username + Password 登录 | LoginForm | `login` mutation | P1 |
-| Google OAuth | OAuthButtons | Keycloak redirect | P1 |
-| Azure AD OAuth | OAuthButtons | Keycloak redirect | P2 |
-| Keycloak SSO | OAuthButtons | Keycloak redirect | P1 |
+| GitHub OAuth | OAuthButtons | Keycloak redirect | P1 |
+| Google OAuth (扩展) | OAuthButtons | Keycloak redirect | P2 |
+| Azure AD OAuth (扩展) | OAuthButtons | Keycloak redirect | P2 |
+| Keycloak SSO (扩展) | OAuthButtons | Keycloak redirect | P2 |
 | Remember Me | LoginForm | Token TTL 延长 | P1 |
 | 忘记密码入口 | LoginForm | 跳转链接 | P0 |
 
 ---
 
 ## 2. 数据流
+
+### 2.1 Email/Username + Password 登录
 
 ```
 User Input → LoginForm → useLogin → login mutation → AAC
@@ -33,6 +36,41 @@ User Input → LoginForm → useLogin → login mutation → AAC
                         Navigate to app
 ```
 
+### 2.2 OAuth 登录流程
+
+```
+用户点击 OAuth 按钮 (GitHub/其他扩展 Provider)
+        ↓
+OAuthButtons → 生成 state (CSRF 防护)
+        ↓
+重定向到 Keycloak OAuth 授权页面
+    (URL: {keycloak}/realms/{realm}/protocol/openid-connect/auth)
+        ↓
+用户在 Keycloak 登录并选择 GitHub 授权
+        ↓
+Keycloak 重定向回应用
+    (callback URL: /auth/callback?code=xxx&state=xxx)
+        ↓
+useOAuthLogin → 验证 state
+        ↓
+┌───────┴───────┐
+│               │
+有效          无效 (CSRF 攻击)
+│               │
+↓               ↓
+交换 code      显示错误
+    ↓
+login mutation (provider + code) → AAC
+        ↓
+┌───────┴───────┐
+│               │
+Success       MFA Required
+│               │
+↓               ↓
+Store tokens  Navigate to MFA
+Navigate to app
+```
+
 ---
 
 ## 3. 组件设计
@@ -44,9 +82,10 @@ interface LoginFormProps {
   config: {
     enableEmailPassword: boolean;
     enableUsernamePassword: boolean;
-    enableGoogle: boolean;
-    enableAzureAd: boolean;
-    enableKeycloakSSO: boolean;
+    enableGitHub: boolean;           // GitHub OAuth (P1)
+    enableGoogle: boolean;            // 扩展 (P2)
+    enableAzureAd: boolean;           // 扩展 (P2)
+    enableKeycloakSSO: boolean;       // 扩展 (P2)
     enableRememberMe: boolean;
   };
   onSuccess: (tokens: AuthTokens) => void;
@@ -61,11 +100,15 @@ interface LoginFormProps {
 
 ```typescript
 interface OAuthButtonsProps {
-  providers: Array<'google' | 'azure-ad' | 'keycloak'>;
-  onSuccess: (tokens: AuthTokens) => void;
-  onError?: (error: AuthError) => void;
+  providers: Array<'github' | 'google' | 'azure-ad' | 'keycloak'>;  // github 优先，其他为扩展
+  onInitiate?: (provider: OAuthProviderId) => void;  // OAuth 流程启动时调用
 }
 ```
+
+**说明**：
+- OAuth 成功在回调页面 `/auth/callback` 处理，不需要 `onSuccess` 回调
+- `onInitiate` 可选，用于通知父组件 OAuth 流程开始（如显示 loading）
+- **GitHub 为主要 OAuth 方式 (P1)**，Google/Azure AD/Keycloak 为可扩展选项 (P2)
 
 ### 3.3 CredentialInput
 
@@ -80,9 +123,114 @@ interface CredentialInputProps {
 
 ---
 
-## 4. GraphQL
+## 4. Hooks
 
-### 4.1 login.gql
+### 4.1 useLogin
+
+密码登录的核心 Hook。
+
+```typescript
+function useLogin(): {
+  login: (input: {
+    credential: string;        // email 或 username
+    password: string;
+    rememberMe?: boolean;
+  }) => Promise<LoginResult>;
+  loading: boolean;
+  error: AuthError | null;
+}
+
+type LoginResult =
+  | { type: 'success'; tokens: AuthTokens }
+  | { type: 'mfa_required'; challenge: MFAChallenge };
+```
+
+**使用场景**：
+- LoginForm 提交时调用
+- 处理 MFA Required 响应
+- 错误处理（密码错误、账户锁定等）
+
+---
+
+### 4.2 useOAuthLogin
+
+OAuth 登录的核心 Hook。
+
+```typescript
+function useOAuthLogin(): {
+  // 启动 OAuth 流程（同步，会立即重定向）
+  initiateOAuth: (provider: OAuthProviderId) => void;
+
+  // 处理 OAuth 回调
+  handleOAuthCallback: (params: {
+    code: string;
+    state: string;
+  }) => Promise<LoginResult>;
+
+  loading: boolean;
+  error: AuthError | null;
+}
+
+type OAuthProviderId = 'github' | 'google' | 'azure-ad' | 'keycloak';
+```
+
+**内部实现说明**：
+
+1. **initiateOAuth** (同步):
+   ```typescript
+   // 生成随机 state (CSRF token)
+   const state = generateRandomString(32);
+
+   // 保存到 sessionStorage
+   sessionStorage.setItem('oauth_provider', provider);
+   sessionStorage.setItem('oauth_state', state);
+
+   // 构造 Keycloak 授权 URL
+   const authUrl = `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/auth?` +
+     `client_id=${CLIENT_ID}&` +
+     `redirect_uri=${REDIRECT_URI}&` +
+     `response_type=code&` +
+     `scope=openid profile email&` +
+     `state=${state}`;
+
+   // 重定向
+   window.location.href = authUrl;
+   ```
+
+2. **handleOAuthCallback** (异步):
+   ```typescript
+   // 从 sessionStorage 读取保存的数据
+   const savedProvider = sessionStorage.getItem('oauth_provider');
+   const savedState = sessionStorage.getItem('oauth_state');
+
+   // 验证 state (防 CSRF)
+   if (params.state !== savedState) {
+     throw new Error('CSRF attack detected');
+   }
+
+   // 构造 OAuthLoginInput
+   const input: OAuthLoginInput = {
+     provider: savedProvider,
+     code: params.code,
+     state: params.state,
+     method: 'oauth'
+   };
+
+   // 调用 login mutation
+   const result = await loginMutation(input);
+
+   // 清理 sessionStorage
+   sessionStorage.removeItem('oauth_provider');
+   sessionStorage.removeItem('oauth_state');
+
+   return result;
+   ```
+
+---
+
+## 5. GraphQL
+
+### 5.1 login.gql
 
 ```graphql
 mutation login($input: LoginInput!) {
@@ -101,10 +249,100 @@ mutation login($input: LoginInput!) {
 }
 ```
 
+### 5.2 Input 类型
+
+#### LoginInput
+
+密码登录的输入类型：
+
+```typescript
+interface LoginInput {
+  // 凭证（email 或 username）
+  credential: string;
+
+  // 密码
+  password: string;
+
+  // 记住我（延长 token 有效期）
+  rememberMe?: boolean;
+
+  // 登录方式
+  method: 'password';
+}
+```
+
+#### OAuthLoginInput
+
+OAuth 登录的输入类型：
+
+```typescript
+interface OAuthLoginInput {
+  // OAuth Provider (github 优先，其他为扩展)
+  provider: 'github' | 'google' | 'azure-ad' | 'keycloak';
+
+  // 授权码
+  code: string;
+
+  // CSRF 防护 token
+  state: string;
+
+  // 登录方式
+  method: 'oauth';
+}
+```
+
+**注意**：
+- AAC 需要根据 `method` 字段区分密码登录和 OAuth 登录
+- `rememberMe` 会影响返回的 token TTL（具体值待确认）
+- OAuth 的 `state` 必须与前端生成的一致
+
 ---
 
-## 5. 待确认事项
+## 6. 配置说明
 
-- [ ] OAuth 回调 URL 配置
-- [ ] Remember Me 的 Token TTL 具体值
-- [ ] 登录失败次数限制和锁定策略
+### 6.1 OAuth 配置
+
+| 配置项 | 开发环境 | 生产环境 | 状态 |
+|--------|---------|----------|------|
+| **Keycloak URL** | `http://localhost:8080` | `https://keycloak.assetforce.com` | ✅ 确定 |
+| **Realm** | `assetforce-test` | `assetforce-prod` | ✅ 确定 (来自 Task 027) |
+| **Client ID** | `assetforce-console` | `assetforce-console` | 🔲 待创建 |
+| **回调 URL** | `/auth/callback` | `/auth/callback` | ✅ 确定 |
+| **Redirect URI** | `http://localhost:3000/auth/callback` | `https://console.assetforce.com/auth/callback` | ✅ 确定 |
+| **Scope** | `openid profile email` | `openid profile email` | ✅ 确定 |
+
+**待办**：
+- [ ] 在 Keycloak `assetforce-test` realm 创建 Client `assetforce-console`
+- [ ] 配置 Redirect URI 白名单
+- [ ] 配置 Client 为 public（前端应用）
+
+---
+
+### 6.2 Token 配置
+
+| 配置项 | 推荐值 | 可调整 | 说明 |
+|--------|--------|--------|------|
+| **默认 accessToken TTL** | 2 小时 | ✅ | 行业标准 |
+| **Remember Me accessToken TTL** | 7 天 | ✅ | 平衡安全和体验 |
+| **refreshToken TTL** | 30 天 | ✅ | 标准做法 |
+| **refreshToken 启用** | 是 | ❌ | 必需 |
+
+**实现**：
+- AAC 根据 `rememberMe` 字段返回不同 TTL 的 token
+- Frontend 使用 `useRefreshToken` 自动刷新过期 token
+
+---
+
+### 6.3 安全策略
+
+| 策略 | 推荐值 | 参考标准 | 可调整 |
+|------|--------|---------|--------|
+| **登录失败次数限制** | 5 次 | OWASP | ✅ |
+| **账户锁定时间** | 15 分钟 | OWASP | ✅ |
+| **验证码触发** | 3 次失败后 | 行业标准 | ✅ |
+| **IP 限制** | Phase 2 | - | - |
+
+**实现**：
+- AAC 负责失败次数统计和账户锁定
+- Frontend 在 3 次失败后显示 reCAPTCHA
+- 锁定后返回 `ACCOUNT_LOCKED` 错误码
