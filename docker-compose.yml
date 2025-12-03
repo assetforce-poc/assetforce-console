@@ -1,0 +1,114 @@
+# Docker Compose for assetforce-console development
+# Usage:
+#   Development: docker-compose up dev
+#   Production:  docker-compose --profile prod up customer-portal admin-console
+
+services:
+  # ==========================================================================
+  # Development Mode - Hot reload with volume mounts
+  # ==========================================================================
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+      args:
+        GITHUB_PACKAGES_TOKEN: ${GITHUB_PACKAGES_TOKEN}
+    container_name: assetforce-console-dev
+    ports:
+      - "3000:3000"  # customer-portal
+      - "3001:3001"  # admin-console
+    volumes:
+      # Mount source code for hot-reload
+      - .:/app
+      # Preserve node_modules from container (not from host)
+      - /app/node_modules
+      - /app/apps/customer-portal/node_modules
+      - /app/apps/admin-console/node_modules
+      - /app/apps/customer-portal/.next
+      - /app/apps/admin-console/.next
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_AAC_URL=http://localhost:8081
+      - NEXT_PUBLIC_IMC_URL=http://localhost:8082
+      - NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080
+    networks:
+      - assetforce-network
+
+  # ==========================================================================
+  # Production Mode - Customer Portal
+  # ==========================================================================
+  customer-portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: customer-portal
+      args:
+        GITHUB_PACKAGES_TOKEN: ${GITHUB_PACKAGES_TOKEN}
+    container_name: assetforce-customer-portal
+    profiles:
+      - prod
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_AAC_URL=http://aac:8081
+      - NEXT_PUBLIC_IMC_URL=http://imc:8082
+      - NEXT_PUBLIC_KEYCLOAK_URL=http://keycloak:8080
+    networks:
+      - assetforce-network
+    depends_on:
+      - aac
+      - imc
+
+  # ==========================================================================
+  # Production Mode - Admin Console
+  # ==========================================================================
+  admin-console:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: admin-console
+      args:
+        GITHUB_PACKAGES_TOKEN: ${GITHUB_PACKAGES_TOKEN}
+    container_name: assetforce-admin-console
+    profiles:
+      - prod
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_AAC_URL=http://aac:8081
+      - NEXT_PUBLIC_IMC_URL=http://imc:8082
+      - NEXT_PUBLIC_KEYCLOAK_URL=http://keycloak:8080
+    networks:
+      - assetforce-network
+    depends_on:
+      - aac
+      - imc
+
+  # ==========================================================================
+  # Backend Services (for standalone testing)
+  # Note: For full stack, use assetforce-infra/docker/docker-compose.yml
+  # ==========================================================================
+  aac:
+    image: assetforce/aac:latest
+    profiles:
+      - prod
+    ports:
+      - "8081:8081"
+    networks:
+      - assetforce-network
+
+  imc:
+    image: assetforce/imc:latest
+    profiles:
+      - prod
+    ports:
+      - "8082:8082"
+    networks:
+      - assetforce-network
+
+networks:
+  assetforce-network:
+    driver: bridge

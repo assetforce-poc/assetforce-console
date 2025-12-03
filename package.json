@@ -7,11 +7,12 @@
   ],
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev",
+    "dev": "dotenvx run -- turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^1.51.1",
     "prettier": "^3.3.3",
     "turbo": "^2.6.1",
     "typescript": "^5.7.2"
