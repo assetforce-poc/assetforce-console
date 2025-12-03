@@ -1,0 +1,34 @@
+{
+  "name": "@assetforce/authentication",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./components": "./src/components/index.ts",
+    "./hooks": "./src/hooks/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "type-check": "tsc --noEmit",
+    "codegen": "graphql-codegen --config codegen.ts"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.12.3",
+    "@assetforce/graphql": "*",
+    "@assetforce/ui": "*",
+    "@mui/material": "^7.2.0",
+    "graphql": "^16.9.0",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@assetforce/typescript-config": "*",
+    "@graphql-codegen/cli": "^5.0.3",
+    "@graphql-codegen/client-preset": "^4.5.1",
+    "@graphql-codegen/typescript": "^4.1.2",
+    "@graphql-codegen/typescript-operations": "^4.4.2",
+    "@types/react": "^19.0.1",
+    "typescript": "^5.7.2"
+  }
+}
