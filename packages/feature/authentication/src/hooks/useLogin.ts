@@ -1,34 +1,8 @@
 "use client";
 
 import { useMutation } from '@apollo/client';
-import { gql } from '@apollo/client';
-import type { LoginMutation, LoginMutationVariables} from '../graphql/generated/types';
-
-// Import GraphQL operation
-const LOGIN_MUTATION = gql`
-  mutation Login($input: LoginInput!) {
-    login(input: $input) {
-      success
-      accessToken
-      refreshToken
-      expiresIn
-      tokenType
-      error
-      identityContext {
-        zone
-        realm
-        subject {
-          accountId
-          userId
-          username
-          email
-          displayName
-        }
-        groups
-      }
-    }
-  }
-`;
+import { LoginDocument } from '../graphql/generated/graphql';
+import type { LoginMutation, LoginMutationVariables } from '../graphql/generated/graphql';
 
 // Types
 export interface UseLoginInput {
@@ -93,7 +67,7 @@ export interface AuthError {
  * ```
  */
 export function useLogin() {
-  const [loginMutation, { loading }] = useMutation<LoginMutation, LoginMutationVariables>(LOGIN_MUTATION);
+  const [loginMutation, { loading }] = useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
 
   const login = async (input: UseLoginInput): Promise<LoginResult> => {
     try {
