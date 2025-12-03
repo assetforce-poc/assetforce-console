@@ -1,0 +1,28 @@
+{
+  "name": "@assetforce/graphql",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./hooks": "./src/hooks/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.12.3",
+    "graphql": "^16.9.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@assetforce/typescript-config": "*",
+    "@types/react": "^19.0.1",
+    "typescript": "^5.7.2"
+  }
+}
