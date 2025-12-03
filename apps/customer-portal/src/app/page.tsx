@@ -1,6 +1,7 @@
 'use client';
 
-import { Container, Typography, Button, Box, Paper } from '@mui/material';
+import Link from 'next/link';
+import { Container, Typography, Button, Box, Paper } from '@assetforce/material';
 
 export default function Home() {
   return (
@@ -19,9 +20,15 @@ export default function Home() {
             AssetForce Customer Portal
           </Typography>
           <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 3 }}>
-            Sign in to access your account
+            Welcome to the AssetForce Customer Portal
           </Typography>
-          <Button variant="contained" fullWidth size="large">
+          <Button
+            component={Link}
+            href="/auth/login"
+            variant="contained"
+            fullWidth
+            size="large"
+          >
             Sign In
           </Button>
         </Paper>
