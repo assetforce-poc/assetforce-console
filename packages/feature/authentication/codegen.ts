@@ -2,15 +2,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
   schema: 'http://localhost:8081/graphql', // AAC GraphQL endpoint
-  documents: [
-    'login/**/*.gql',
-    'login/**/*.graphql',
-    'session/**/*.gql',
-    'session/**/*.graphql',
-    'mfa/**/*.gql',
-    'mfa/**/*.graphql',
-    'fragments/**/*.gql',
-  ],
+  documents: ['**/*.gql', '**/*.graphql'],
   generates: {
     // login 子功能
     './login/graphql/generated/': {
