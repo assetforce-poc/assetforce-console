@@ -1,55 +1,42 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
+// 共享的 preset 配置
+const SHARED_PRESET_CONFIG = {
+  fragmentMasking: false,
+  gqlTagName: 'gql',
+} as const;
+
+// 共享的 codegen 配置
+const SHARED_CONFIG = {
+  useTypeImports: true,
+  skipTypename: false,
+  enumsAsTypes: true,
+  documentMode: 'documentNode',
+} as const;
+
+// 创建子功能配置
+const createSubfunctionConfig = (subfunctionPath: string) => ({
+  documents: [`${subfunctionPath}/graphql/*.gql`],
+  preset: 'client' as const,
+  presetConfig: SHARED_PRESET_CONFIG,
+  config: SHARED_CONFIG,
+});
+
+// 子功能列表（根据实际目录结构自动生成配置）
+const SUBFUNCTIONS = ['login', 'session'];
+
+// 自动生成 generates 配置
+const generates = Object.fromEntries(
+  SUBFUNCTIONS.map((name) => [
+    `./${name}/graphql/generated/`,
+    createSubfunctionConfig(name),
+  ])
+);
+
 const config: CodegenConfig = {
-  schema: 'http://localhost:8081/graphql', // AAC GraphQL endpoint
+  schema: 'http://localhost:8081/graphql',
   documents: ['**/*.gql', '**/*.graphql'],
-  generates: {
-    // login 子功能
-    './login/graphql/generated/': {
-      documents: ['login/graphql/*.gql'],
-      preset: 'client',
-      presetConfig: {
-        fragmentMasking: false,
-        gqlTagName: 'gql',
-      },
-      config: {
-        useTypeImports: true,
-        skipTypename: false,
-        enumsAsTypes: true,
-        documentMode: 'documentNode',
-      },
-    },
-    // session 子功能
-    './session/graphql/generated/': {
-      documents: ['session/graphql/*.gql'],
-      preset: 'client',
-      presetConfig: {
-        fragmentMasking: false,
-        gqlTagName: 'gql',
-      },
-      config: {
-        useTypeImports: true,
-        skipTypename: false,
-        enumsAsTypes: true,
-        documentMode: 'documentNode',
-      },
-    },
-    // mfa 子功能 (待实施)
-    // './mfa/graphql/generated/': {
-    //   documents: ['mfa/graphql/*.gql'],
-    //   preset: 'client',
-    //   presetConfig: {
-    //     fragmentMasking: false,
-    //     gqlTagName: 'gql',
-    //   },
-    //   config: {
-    //     useTypeImports: true,
-    //     skipTypename: false,
-    //     enumsAsTypes: true,
-    //     documentMode: 'documentNode',
-    //   },
-    // },
-  },
+  generates,
   ignoreNoDocuments: true,
 };
 
