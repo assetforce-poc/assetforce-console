@@ -49,6 +49,11 @@
     eslint-plugin-only-warn "1.1.0"
     typescript-eslint "8.35.1"
 
+"@assetforce/types@^0.2.0":
+  version "0.2.0"
+  resolved "https://npm.pkg.github.com/download/@assetforce/types/0.2.0/e983db8ec339af1f3dc5d71f7058c9bca2925e6d#e983db8ec339af1f3dc5d71f7058c9bca2925e6d"
+  integrity sha512-wjspTRmJkwUh9ia9ma4QsYAOXwUzMNb65bS5o+cWtXKIfMzN3PR6WcwlASmnkAFvInA2h9TeXs6KX5BFts8w7A==
+
 "@assetforce/typescript-config@*":
   version "0.1.1"
   resolved "https://npm.pkg.github.com/download/@assetforce/typescript-config/0.1.1/6c6bf6dddf5b7dfbb14369d20522441ccfae8f9e#6c6bf6dddf5b7dfbb14369d20522441ccfae8f9e"

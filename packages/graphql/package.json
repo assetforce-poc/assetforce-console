@@ -14,15 +14,15 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@apollo/client": "^3.12.3",
-    "graphql": "^16.9.0"
+    "@apollo/client": "~3.12.3",
+    "graphql": "~16.9.0"
   },
   "peerDependencies": {
-    "react": "^19.0.0"
+    "react": "19.0.0"
   },
   "devDependencies": {
     "@assetforce/typescript-config": "*",
-    "@types/react": "^19.0.1",
-    "typescript": "^5.7.2"
+    "@types/react": "~19.0.1",
+    "typescript": "~5.7.2"
   }
 }

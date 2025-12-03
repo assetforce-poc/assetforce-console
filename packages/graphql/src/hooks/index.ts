@@ -1,2 +1,2 @@
 // Authentication hooks (AAC)
-export * from "./useAuth";
+export * from './useAuth';

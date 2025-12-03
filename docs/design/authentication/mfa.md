@@ -7,15 +7,15 @@
 
 ## 1. 功能清单
 
-| 功能 | 组件 | GraphQL | 优先级 |
-|------|------|---------|--------|
-| TOTP 验证 | MFAVerification | `completeMFA` mutation | P0 |
-| SMS 验证 | MFAVerification | `completeMFA` mutation | P1 |
-| Email 验证 | MFAVerification | `completeMFA` mutation | P2 |
-| 启用 TOTP | TOTPSetup | `enableMFA` mutation | P0 |
-| 验证 MFA 设置 | TOTPSetup | `verifyMFASetup` mutation | P0 |
-| 禁用 MFA | - | `disableMFA` mutation | P1 |
-| 显示备份码 | BackupCodes | `enableMFA` response | P0 |
+| 功能          | 组件            | GraphQL                   | 优先级 |
+| ------------- | --------------- | ------------------------- | ------ |
+| TOTP 验证     | MFAVerification | `completeMFA` mutation    | P0     |
+| SMS 验证      | MFAVerification | `completeMFA` mutation    | P1     |
+| Email 验证    | MFAVerification | `completeMFA` mutation    | P2     |
+| 启用 TOTP     | TOTPSetup       | `enableMFA` mutation      | P0     |
+| 验证 MFA 设置 | TOTPSetup       | `verifyMFASetup` mutation | P0     |
+| 禁用 MFA      | -               | `disableMFA` mutation     | P1     |
+| 显示备份码    | BackupCodes     | `enableMFA` response      | P0     |
 
 ---
 
@@ -82,7 +82,7 @@ interface TOTPSetupProps {
 ```typescript
 interface BackupCodesProps {
   codes: string[];
-  onConfirm: () => void;  // 用户确认已保存
+  onConfirm: () => void; // 用户确认已保存
   onDownload?: () => void;
   onPrint?: () => void;
 }
@@ -140,7 +140,7 @@ mutation disableMFA($input: DisableMFAInput!) {
 ```graphql
 fragment MFAChallenge on MFAChallengeResponse {
   challengeId
-  method         # TOTP | SMS | EMAIL
+  method # TOTP | SMS | EMAIL
   expiresAt
 }
 

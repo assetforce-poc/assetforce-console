@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
-import { ThemeProvider, CssBaseline } from "@mui/material";
-import { theme } from "@assetforce/material/theme";
+import type { Metadata } from 'next';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { theme } from '@assetforce/material/theme';
 
 export const metadata: Metadata = {
-  title: "AssetForce Customer Portal",
-  description: "Customer Portal for AssetForce Platform",
+  title: 'AssetForce Customer Portal',
+  description: 'Customer Portal for AssetForce Platform',
 };
 
 export default function RootLayout({

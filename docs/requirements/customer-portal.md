@@ -23,13 +23,13 @@ Customer Portal 是面向终端用户的前端应用，提供用户认证、个�
 
 基于 AAC 的 **Firebase-style Multi-Provider** 架构，支持以下登录方式：
 
-| 登录方式 | Provider ID | 优先级 | 说明 |
-|---------|-------------|--------|------|
-| Email + Password | `email-password` | P0 | 主要登录方式，B2B 必需 |
-| Username + Password | `username-password` | P1 | 可选的用户名登录 |
-| Google OAuth | `google` | P1 | Google Workspace 企业账号 |
-| Azure AD | `azure-ad` | P2 | Microsoft 企业账号 (SAML/OIDC) |
-| Keycloak SSO | `keycloak` | P2 | 内部 SSO 系统 |
+| 登录方式            | Provider ID         | 优先级 | 说明                           |
+| ------------------- | ------------------- | ------ | ------------------------------ |
+| Email + Password    | `email-password`    | P0     | 主要登录方式，B2B 必需         |
+| Username + Password | `username-password` | P1     | 可选的用户名登录               |
+| Google OAuth        | `google`            | P1     | Google Workspace 企业账号      |
+| Azure AD            | `azure-ad`          | P2     | Microsoft 企业账号 (SAML/OIDC) |
+| Keycloak SSO        | `keycloak`          | P2     | 内部 SSO 系统                  |
 
 #### 1.2 登录页面功能
 
@@ -56,6 +56,7 @@ Customer Portal 是面向终端用户的前端应用，提供用户认证、个�
 ```
 
 **功能点**:
+
 - [ ] Email/Username 输入框（自动检测是 email 还是 username）
 - [ ] Password 输入框（支持显示/隐藏密码）
 - [ ] Remember me 选项（延长 session 有效期）
@@ -67,14 +68,15 @@ Customer Portal 是面向终端用户的前端应用，提供用户认证、个�
 
 基于 AAC 的 MFA 设计，支持以下验证方式：
 
-| MFA 类型 | 优先级 | 说明 |
-|---------|--------|------|
-| TOTP | P0 | Google Authenticator, Authy |
-| SMS | P1 | 短信验证码 |
-| Email | P1 | 邮箱验证码 |
-| Hardware | P2 | YubiKey 等硬件密钥 |
+| MFA 类型 | 优先级 | 说明                        |
+| -------- | ------ | --------------------------- |
+| TOTP     | P0     | Google Authenticator, Authy |
+| SMS      | P1     | 短信验证码                  |
+| Email    | P1     | 邮箱验证码                  |
+| Hardware | P2     | YubiKey 等硬件密钥          |
 
 **MFA 验证流程**:
+
 ```
 登录成功 → 检查 mfaEnabled → 显示 MFA 验证页面 → 验证通过 → 进入应用
 ```
@@ -93,13 +95,13 @@ Customer Portal 是面向终端用户的前端应用，提供用户认证、个�
 
 显示当前用户的 Account 信息：
 
-| 字段 | 来源 | 可编辑 |
-|------|------|--------|
-| Email | Account.email | ❌ (需验证流程) |
-| Username | Account.username | ✅ |
-| Avatar | IMC User.profile.avatar | ✅ |
-| Display Name | IMC User.profile.displayName | ✅ |
-| Locale | IMC User.profile.locale | ✅ |
+| 字段         | 来源                         | 可编辑          |
+| ------------ | ---------------------------- | --------------- |
+| Email        | Account.email                | ❌ (需验证流程) |
+| Username     | Account.username             | ✅              |
+| Avatar       | IMC User.profile.avatar      | ✅              |
+| Display Name | IMC User.profile.displayName | ✅              |
+| Locale       | IMC User.profile.locale      | ✅              |
 
 #### 2.2 认证方式管理
 
@@ -122,6 +124,7 @@ Customer Portal 是面向终端用户的前端应用，提供用户认证、个�
 ```
 
 **功能点**:
+
 - [ ] 查看已绑定的认证方式列表
 - [ ] 显示每个 provider 的状态（verified, lastUsedAt）
 - [ ] 绑定新的 OAuth provider
@@ -146,6 +149,7 @@ Customer Portal 是面向终端用户的前端应用，提供用户认证、个�
 ```
 
 **功能点**:
+
 - [ ] 启用/禁用 MFA
 - [ ] 添加 TOTP（显示 QR Code）
 - [ ] 添加 SMS（验证手机号）
@@ -240,27 +244,49 @@ Step 4: 密码重置成功，跳转登录
 mutation Login($input: LoginInput!) {
   login(input: $input) {
     success
-    tokens { accessToken, refreshToken, expiresIn }
+    tokens {
+      accessToken
+      refreshToken
+      expiresIn
+    }
     mfaRequired
-    mfaChallenge { challengeId, method }
-    error { code, message }
+    mfaChallenge {
+      challengeId
+      method
+    }
+    error {
+      code
+      message
+    }
   }
 }
 
 mutation CompleteMFA($input: MFAInput!) {
   completeMFA(input: $input) {
     success
-    tokens { accessToken, refreshToken, expiresIn }
-    error { code, message }
+    tokens {
+      accessToken
+      refreshToken
+      expiresIn
+    }
+    error {
+      code
+      message
+    }
   }
 }
 
 mutation Logout {
-  logout { success }
+  logout {
+    success
+  }
 }
 
 mutation LogoutAllSessions {
-  logoutAllSessions { success, revokedCount }
+  logoutAllSessions {
+    success
+    revokedCount
+  }
 }
 
 mutation RefreshToken($refreshToken: String!) {
@@ -273,19 +299,27 @@ mutation RefreshToken($refreshToken: String!) {
 
 # 账户管理
 mutation UpdateProfile($input: UpdateProfileInput!) {
-  updateProfile(input: $input) { success }
+  updateProfile(input: $input) {
+    success
+  }
 }
 
 mutation ChangePassword($input: ChangePasswordInput!) {
-  changePassword(input: $input) { success }
+  changePassword(input: $input) {
+    success
+  }
 }
 
 mutation LinkAuthProvider($input: LinkProviderInput!) {
-  linkAuthProvider(input: $input) { success }
+  linkAuthProvider(input: $input) {
+    success
+  }
 }
 
 mutation UnlinkAuthProvider($providerId: String!) {
-  unlinkAuthProvider(providerId: $providerId) { success }
+  unlinkAuthProvider(providerId: $providerId) {
+    success
+  }
 }
 
 # MFA
@@ -298,11 +332,15 @@ mutation EnableMFA($method: MFAMethod!) {
 }
 
 mutation VerifyMFASetup($input: VerifyMFAInput!) {
-  verifyMFASetup(input: $input) { success }
+  verifyMFASetup(input: $input) {
+    success
+  }
 }
 
 mutation DisableMFA {
-  disableMFA { success }
+  disableMFA {
+    success
+  }
 }
 ```
 
@@ -323,7 +361,10 @@ query Me {
       lastUsedAt
     }
     mfaEnabled
-    mfaSecrets { type, isActive }
+    mfaSecrets {
+      type
+      isActive
+    }
     tenantRoles {
       tenantId
       role
@@ -346,7 +387,13 @@ query MyIdentityContext {
 query MyActiveSessions {
   myActiveSessions {
     sessionId
-    deviceInfo { deviceType, browser, os, ip, location }
+    deviceInfo {
+      deviceType
+      browser
+      os
+      ip
+      location
+    }
     createdAt
     lastActivityAt
     isCurrent
@@ -369,38 +416,39 @@ query AvailableTenants {
 
 ### 共享组件 (packages/ui)
 
-| 组件 | 优先级 | 说明 |
-|------|--------|------|
-| LoginForm | P0 | 登录表单（email/password + OAuth buttons） |
-| MFAVerification | P0 | MFA 验证界面 |
-| UserAvatar | P0 | 用户头像组件 |
-| UserMenu | P0 | 用户下拉菜单（profile, settings, logout） |
-| AuthProviderList | P1 | 认证方式列表 |
-| SessionList | P1 | 活动会话列表 |
-| TenantSwitcher | P1 | 租户切换器 |
-| PasswordStrength | P1 | 密码强度指示器 |
-| QRCodeDisplay | P1 | TOTP QR Code 显示 |
+| 组件             | 优先级 | 说明                                       |
+| ---------------- | ------ | ------------------------------------------ |
+| LoginForm        | P0     | 登录表单（email/password + OAuth buttons） |
+| MFAVerification  | P0     | MFA 验证界面                               |
+| UserAvatar       | P0     | 用户头像组件                               |
+| UserMenu         | P0     | 用户下拉菜单（profile, settings, logout）  |
+| AuthProviderList | P1     | 认证方式列表                               |
+| SessionList      | P1     | 活动会话列表                               |
+| TenantSwitcher   | P1     | 租户切换器                                 |
+| PasswordStrength | P1     | 密码强度指示器                             |
+| QRCodeDisplay    | P1     | TOTP QR Code 显示                          |
 
 ---
 
 ## 页面路由
 
-| 路由 | 页面 | 权限 |
-|------|------|------|
-| `/login` | 登录页面 | Public |
-| `/login/mfa` | MFA 验证页面 | Requires auth session |
-| `/forgot-password` | 忘记密码 | Public |
-| `/reset-password` | 重置密码 | Public (with token) |
-| `/` | Dashboard | Authenticated |
-| `/profile` | 个人信息 | Authenticated |
-| `/profile/security` | 安全设置 | Authenticated |
-| `/profile/sessions` | 活动会话 | Authenticated |
+| 路由                | 页面         | 权限                  |
+| ------------------- | ------------ | --------------------- |
+| `/login`            | 登录页面     | Public                |
+| `/login/mfa`        | MFA 验证页面 | Requires auth session |
+| `/forgot-password`  | 忘记密码     | Public                |
+| `/reset-password`   | 重置密码     | Public (with token)   |
+| `/`                 | Dashboard    | Authenticated         |
+| `/profile`          | 个人信息     | Authenticated         |
+| `/profile/security` | 安全设置     | Authenticated         |
+| `/profile/sessions` | 活动会话     | Authenticated         |
 
 ---
 
 ## 非功能需求
 
 ### 安全
+
 - HTTPS only
 - CSRF protection
 - XSS prevention (sanitize all inputs)
@@ -408,15 +456,18 @@ query AvailableTenants {
 - Rate limiting on login attempts
 
 ### 性能
+
 - Login latency < 2s (including OAuth redirect)
 - Token refresh should be transparent to user
 - Lazy load non-critical components
 
 ### 可访问性
+
 - WCAG 2.1 AA compliance
 - Keyboard navigation support
 - Screen reader compatible
 
 ### 国际化
+
 - 支持中文、英文、日文
 - 基于 User.profile.locale 自动切换

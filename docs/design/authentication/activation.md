@@ -7,10 +7,10 @@
 
 ## 1. 功能清单
 
-| 功能 | 组件 | GraphQL | 优先级 |
-|------|------|---------|--------|
-| 账户激活（设置密码） | ActivationForm | `activateAccount` mutation | P0 |
-| 验证激活 Token | - | `validateActivationToken` query | P0 |
+| 功能                 | 组件           | GraphQL                         | 优先级 |
+| -------------------- | -------------- | ------------------------------- | ------ |
+| 账户激活（设置密码） | ActivationForm | `activateAccount` mutation      | P0     |
+| 验证激活 Token       | -              | `validateActivationToken` query | P0     |
 
 ---
 
@@ -96,8 +96,8 @@ activateAccount mutation → AAC
 
 ```typescript
 interface ActivationFormProps {
-  token: string;                    // URL 中的激活 token
-  userEmail: string;                // 从 validateActivationToken 返回
+  token: string; // URL 中的激活 token
+  userEmail: string; // 从 validateActivationToken 返回
   onSuccess: (tokens: AuthTokens) => void;
   onError?: (error: AuthError) => void;
 }
@@ -133,7 +133,7 @@ function useValidateActivationToken(token: string): {
   email: string | null;
   error: { code: string; message: string } | null;
   loading: boolean;
-}
+};
 ```
 
 ### 5.2 useActivateAccount
@@ -143,7 +143,7 @@ function useActivateAccount(): {
   activate: (input: { token: string; password: string }) => Promise<AuthTokens>;
   loading: boolean;
   error: AuthError | null;
-}
+};
 ```
 
 ---
@@ -159,7 +159,7 @@ query validateActivationToken($token: String!) {
     email
     expiresAt
     error {
-      code      # EXPIRED | INVALID | ALREADY_ACTIVATED
+      code # EXPIRED | INVALID | ALREADY_ACTIVATED
       message
     }
   }
@@ -183,13 +183,13 @@ mutation activateAccount($input: ActivateAccountInput!) {
 
 ## 7. 与 password-reset 的区别
 
-| 方面 | password-reset | activation |
-|------|----------------|------------|
-| 触发者 | 用户自己（忘记密码） | Admin（创建用户） |
-| 目的 | 重置已有密码 | 首次设置密码 |
-| Token 来源 | 用户请求发送 | Admin 创建用户时自动发送 |
-| 激活后 | 跳转登录页，需手动登录 | 自动登录，直接进入应用 |
-| UI | 简单的重置表单 | 可包含欢迎信息、引导设置 MFA 等 |
+| 方面       | password-reset         | activation                      |
+| ---------- | ---------------------- | ------------------------------- |
+| 触发者     | 用户自己（忘记密码）   | Admin（创建用户）               |
+| 目的       | 重置已有密码           | 首次设置密码                    |
+| Token 来源 | 用户请求发送           | Admin 创建用户时自动发送        |
+| 激活后     | 跳转登录页，需手动登录 | 自动登录，直接进入应用          |
+| UI         | 简单的重置表单         | 可包含欢迎信息、引导设置 MFA 等 |
 
 ---
 

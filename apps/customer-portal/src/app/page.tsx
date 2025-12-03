@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { Container, Typography, Button, Box, Paper } from "@mui/material";
+import { Container, Typography, Button, Box, Paper } from '@mui/material';
 
 export default function Home() {
   return (
     <Container maxWidth="sm">
       <Box
         sx={{
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <Paper elevation={3} sx={{ p: 4, width: "100%" }}>
+        <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
           <Typography variant="h4" component="h1" gutterBottom align="center">
             AssetForce Customer Portal
           </Typography>

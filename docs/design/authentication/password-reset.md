@@ -7,10 +7,10 @@
 
 ## 1. 功能清单
 
-| 功能 | 组件 | GraphQL | 优先级 |
-|------|------|---------|--------|
-| 请求重置密码 | ForgotPasswordForm | `requestPasswordReset` mutation | P0 |
-| 重置密码 | ResetPasswordForm | `resetPassword` mutation | P0 |
+| 功能         | 组件               | GraphQL                         | 优先级 |
+| ------------ | ------------------ | ------------------------------- | ------ |
+| 请求重置密码 | ForgotPasswordForm | `requestPasswordReset` mutation | P0     |
+| 重置密码     | ResetPasswordForm  | `resetPassword` mutation        | P0     |
 
 ---
 
@@ -49,7 +49,7 @@ interface ForgotPasswordFormProps {
 
 ```typescript
 interface ResetPasswordFormProps {
-  token: string;                    // URL 中的重置 token
+  token: string; // URL 中的重置 token
   onSuccess: () => void;
   onError?: (error: AuthError) => void;
   onTokenExpired?: () => void;
@@ -66,7 +66,7 @@ interface ResetPasswordFormProps {
 mutation requestPasswordReset($input: RequestPasswordResetInput!) {
   requestPasswordReset(input: $input) {
     success
-    message  # "如果该邮箱存在，我们已发送重置链接"
+    message # "如果该邮箱存在，我们已发送重置链接"
   }
 }
 ```

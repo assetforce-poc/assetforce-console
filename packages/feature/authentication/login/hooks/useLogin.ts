@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useMutation } from '@apollo/client';
 import { LoginDocument } from '../graphql/generated';
@@ -6,9 +6,9 @@ import type { LoginMutation, LoginMutationVariables } from '../graphql/generated
 
 // Types
 export interface UseLoginInput {
-  credential: string;        // email 或 username
+  credential: string; // email 或 username
   password: string;
-  rememberMe?: boolean;      // 暂不支持，待 AAC 扩展
+  rememberMe?: boolean; // 暂不支持，待 AAC 扩展
 }
 
 export interface AuthTokens {
@@ -67,16 +67,18 @@ export interface AuthError {
  * ```
  */
 export function useLogin() {
-  const [loginMutation, { loading }] = useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+  const [loginMutation, { loading }] = useMutation<LoginMutation, LoginMutationVariables>(
+    LoginDocument
+  );
 
   const login = async (input: UseLoginInput): Promise<LoginResult> => {
     try {
       const { data } = await loginMutation({
         variables: {
           input: {
-            username: input.credential,  // Keycloak 支持 email 作为 username
+            username: input.credential, // Keycloak 支持 email 作为 username
             password: input.password,
-            realm: 'assetforce-test',    // 默认 realm
+            realm: 'assetforce-test', // 默认 realm
           },
         },
       });
@@ -88,7 +90,8 @@ export function useLogin() {
         };
       }
 
-      const { success, accessToken, refreshToken, expiresIn, tokenType, error, identityContext } = data.login;
+      const { success, accessToken, refreshToken, expiresIn, tokenType, error, identityContext } =
+        data.login;
 
       // 错误处理
       if (!success || error) {
@@ -97,7 +100,7 @@ export function useLogin() {
           return {
             type: 'mfa_required',
             challenge: {
-              type: 'totp',  // TODO: 从 AAC 返回
+              type: 'totp', // TODO: 从 AAC 返回
               message: error,
             },
           };
@@ -118,18 +121,20 @@ export function useLogin() {
             refreshToken,
             expiresIn,
             tokenType,
-            identityContext: identityContext ? {
-              zone: identityContext.zone ?? undefined,
-              realm: identityContext.realm,
-              subject: {
-                accountId: identityContext.subject.accountId,
-                userId: identityContext.subject.userId ?? undefined,
-                username: identityContext.subject.username,
-                email: identityContext.subject.email ?? undefined,
-                displayName: identityContext.subject.displayName ?? undefined,
-              },
-              groups: identityContext.groups,
-            } : undefined,
+            identityContext: identityContext
+              ? {
+                  zone: identityContext.zone ?? undefined,
+                  realm: identityContext.realm,
+                  subject: {
+                    accountId: identityContext.subject.accountId,
+                    userId: identityContext.subject.userId ?? undefined,
+                    username: identityContext.subject.username,
+                    email: identityContext.subject.email ?? undefined,
+                    displayName: identityContext.subject.displayName ?? undefined,
+                  },
+                  groups: identityContext.groups,
+                }
+              : undefined,
           },
         };
       }
@@ -150,6 +155,6 @@ export function useLogin() {
   return {
     login,
     loading,
-    error: null as AuthError | null,  // TODO: 从 mutation error 提取
+    error: null as AuthError | null, // TODO: 从 mutation error 提取
   };
 }

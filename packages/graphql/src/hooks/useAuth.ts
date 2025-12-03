@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { gql, useMutation, useLazyQuery } from "@apollo/client";
+import { gql, useMutation, useLazyQuery } from '@apollo/client';
 
 // GraphQL Operations for AAC
 const LOGIN_MUTATION = gql`

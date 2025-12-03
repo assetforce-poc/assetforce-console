@@ -7,10 +7,10 @@ export {
   useQuery,
   useMutation,
   useLazyQuery,
-} from "@apollo/client";
+} from '@apollo/client';
 
 // Export custom client factory
-export { createApolloClient } from "./client";
+export { createApolloClient } from './client';
 
 // Export hooks
-export * from "./hooks";
+export * from './hooks';

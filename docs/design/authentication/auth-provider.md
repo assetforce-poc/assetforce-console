@@ -7,11 +7,11 @@
 
 ## 1. 功能清单
 
-| 功能 | 组件 | GraphQL | 优先级 |
-|------|------|---------|--------|
-| 查看已绑定认证方式 | AuthProviderList | `myAuthProviders` query | P1 |
-| 绑定新认证方式 | LinkProviderButton | `linkAuthProvider` mutation | P1 |
-| 解绑认证方式 | AuthProviderList | `unlinkAuthProvider` mutation | P1 |
+| 功能               | 组件               | GraphQL                       | 优先级 |
+| ------------------ | ------------------ | ----------------------------- | ------ |
+| 查看已绑定认证方式 | AuthProviderList   | `myAuthProviders` query       | P1     |
+| 绑定新认证方式     | LinkProviderButton | `linkAuthProvider` mutation   | P1     |
+| 解绑认证方式       | AuthProviderList   | `unlinkAuthProvider` mutation | P1     |
 
 ---
 
@@ -105,7 +105,7 @@ mutation unlinkAuthProvider($providerId: ID!) {
 
 ```graphql
 fragment AuthProviderInfo on AuthProvider {
-  providerId     # google | azure-ad | keycloak
+  providerId # google | azure-ad | keycloak
   providerName
   email
   linkedAt

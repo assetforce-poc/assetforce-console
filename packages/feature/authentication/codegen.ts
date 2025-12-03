@@ -27,10 +27,7 @@ const SUBFUNCTIONS = ['login', 'session'];
 
 // 自动生成 generates 配置
 const generates = Object.fromEntries(
-  SUBFUNCTIONS.map((name) => [
-    `./${name}/graphql/generated/`,
-    createSubfunctionConfig(name),
-  ])
+  SUBFUNCTIONS.map((name) => [`./${name}/graphql/generated/`, createSubfunctionConfig(name)])
 );
 
 const config: CodegenConfig = {

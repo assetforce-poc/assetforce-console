@@ -13,20 +13,20 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/material": "^7.3.5",
-    "@mui/icons-material": "^7.3.5"
+    "@emotion/react": "~11.14.0",
+    "@emotion/styled": "~11.14.0",
+    "@mui/material": "~7.3.5",
+    "@mui/icons-material": "~7.3.5"
   },
   "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
     "@assetforce/eslint-config": "*",
     "@assetforce/typescript-config": "*",
-    "@types/react": "^19.0.1",
-    "@types/react-dom": "^19.0.1",
-    "typescript": "^5.7.2"
+    "@types/react": "~19.0.1",
+    "@types/react-dom": "~19.0.1",
+    "typescript": "~5.7.2"
   }
 }

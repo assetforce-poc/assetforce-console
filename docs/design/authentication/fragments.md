@@ -26,6 +26,7 @@ fragment AuthTokens on TokenPair {
 ```
 
 **使用场景**：
+
 - login mutation
 - completeMFA mutation
 - refreshToken mutation
@@ -38,12 +39,13 @@ fragment AuthTokens on TokenPair {
 ```graphql
 fragment MFAChallenge on MFAChallengeResponse {
   challengeId
-  method         # TOTP | SMS | EMAIL
+  method # TOTP | SMS | EMAIL
   expiresAt
 }
 ```
 
 **使用场景**：
+
 - login mutation (当返回 MFA Required 时)
 
 ---
@@ -59,6 +61,7 @@ fragment MFASetup on MFASetupResponse {
 ```
 
 **使用场景**：
+
 - enableMFA mutation
 
 ---
@@ -82,6 +85,7 @@ fragment SessionInfo on Session {
 ```
 
 **使用场景**：
+
 - myActiveSessions query
 
 ---
@@ -90,7 +94,7 @@ fragment SessionInfo on Session {
 
 ```graphql
 fragment AuthProviderInfo on AuthProvider {
-  providerId     # google | azure-ad | keycloak
+  providerId # google | azure-ad | keycloak
   providerName
   email
   linkedAt
@@ -98,6 +102,7 @@ fragment AuthProviderInfo on AuthProvider {
 ```
 
 **使用场景**：
+
 - myAuthProviders query
 - linkAuthProvider mutation
 

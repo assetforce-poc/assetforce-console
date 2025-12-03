@@ -7,13 +7,13 @@
 
 ## 1. 功能清单
 
-| 功能 | 组件 | GraphQL | 优先级 |
-|------|------|---------|--------|
-| Token 刷新 | (自动) | `refreshToken` mutation | P0 |
-| 单设备登出 | LogoutConfirmDialog | `logout` mutation | P0 |
-| 全设备登出 | SessionList | `logoutAllSessions` mutation | P1 |
-| 查看活动会话 | SessionList | `myActiveSessions` query | P1 |
-| 撤销指定会话 | SessionList | `revokeSession` mutation | P1 |
+| 功能         | 组件                | GraphQL                      | 优先级 |
+| ------------ | ------------------- | ---------------------------- | ------ |
+| Token 刷新   | (自动)              | `refreshToken` mutation      | P0     |
+| 单设备登出   | LogoutConfirmDialog | `logout` mutation            | P0     |
+| 全设备登出   | SessionList         | `logoutAllSessions` mutation | P1     |
+| 查看活动会话 | SessionList         | `myActiveSessions` query     | P1     |
+| 撤销指定会话 | SessionList         | `revokeSession` mutation     | P1     |
 
 ---
 

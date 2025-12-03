@@ -54,6 +54,7 @@ Admin Console 是面向管理员的后台管理界面，提供用户管理、角
 | Created | AAC Account.createdAt | 创建时间 |
 
 **功能点**:
+
 - [ ] 分页、排序、筛选
 - [ ] 批量操作（激活、停用、删除）
 - [ ] 导出用户列表 (CSV)
@@ -93,6 +94,7 @@ Admin Console 是面向管理员的后台管理界面，提供用户管理、角
 ```
 
 **创建流程**:
+
 1. 管理员输入基本信息（email 必填）
 2. 选择认证方式：
    - **邀请邮件**: AAC 发送邀请链接，用户自行设置密码
@@ -132,6 +134,7 @@ Admin Console 是面向管理员的后台管理界面，提供用户管理、角
 ```
 
 **管理操作**:
+
 - [ ] 编辑用户资料（displayName, avatar 等）
 - [ ] 重置密码（发送重置邮件）
 - [ ] 强制禁用 MFA
@@ -145,13 +148,13 @@ Admin Console 是面向管理员的后台管理界面，提供用户管理、角
 
 基于 AAC AccountStatus：
 
-| 状态 | 说明 | 管理员操作 |
-|------|------|-----------|
-| `PENDING` | 待激活 | 重发邀请邮件、直接激活 |
-| `ACTIVE` | 正常 | 暂停、锁定、删除 |
-| `SUSPENDED` | 已暂停 | 恢复、删除 |
-| `LOCKED` | 已锁定 | 解锁、删除 |
-| `INACTIVE` | 已停用 | 重新激活、删除 |
+| 状态        | 说明   | 管理员操作             |
+| ----------- | ------ | ---------------------- |
+| `PENDING`   | 待激活 | 重发邀请邮件、直接激活 |
+| `ACTIVE`    | 正常   | 暂停、锁定、删除       |
+| `SUSPENDED` | 已暂停 | 恢复、删除             |
+| `LOCKED`    | 已锁定 | 解锁、删除             |
+| `INACTIVE`  | 已停用 | 重新激活、删除         |
 
 ---
 
@@ -298,6 +301,7 @@ Admin Console 是面向管理员的后台管理界面，提供用户管理、角
 ```
 
 **事件类型**:
+
 - LOGIN_SUCCESS / LOGIN_FAILED
 - MFA_CHALLENGE / MFA_SUCCESS / MFA_FAILED
 - LOGOUT
@@ -344,6 +348,7 @@ Admin Console 是面向管理员的后台管理界面，提供用户管理、角
 ```
 
 **功能点**:
+
 - [ ] 创建/编辑/删除组
 - [ ] 组层级结构（树形）
 - [ ] 添加/移除组成员
@@ -366,90 +371,134 @@ mutation CreateUser($input: CreateUserInput!) {
 }
 
 mutation UpdateUser($accountId: ID!, $input: UpdateUserInput!) {
-  updateUser(accountId: $accountId, input: $input) { success }
+  updateUser(accountId: $accountId, input: $input) {
+    success
+  }
 }
 
 mutation DeleteUser($accountId: ID!) {
-  deleteUser(accountId: $accountId) { success }
+  deleteUser(accountId: $accountId) {
+    success
+  }
 }
 
 mutation ResetUserPassword($accountId: ID!) {
-  resetUserPassword(accountId: $accountId) { success }
+  resetUserPassword(accountId: $accountId) {
+    success
+  }
 }
 
 mutation UnlockAccount($accountId: ID!) {
-  unlockAccount(accountId: $accountId) { success }
+  unlockAccount(accountId: $accountId) {
+    success
+  }
 }
 
 mutation SuspendAccount($accountId: ID!) {
-  suspendAccount(accountId: $accountId) { success }
+  suspendAccount(accountId: $accountId) {
+    success
+  }
 }
 
 mutation ReactivateAccount($accountId: ID!) {
-  reactivateAccount(accountId: $accountId) { success }
+  reactivateAccount(accountId: $accountId) {
+    success
+  }
 }
 
 mutation ForceDisableMFA($accountId: ID!) {
-  forceDisableMFA(accountId: $accountId) { success }
+  forceDisableMFA(accountId: $accountId) {
+    success
+  }
 }
 
 mutation RevokeAllUserSessions($accountId: ID!) {
-  revokeAllUserSessions(accountId: $accountId) { revokedCount }
+  revokeAllUserSessions(accountId: $accountId) {
+    revokedCount
+  }
 }
 
 # 角色管理
 mutation CreateRole($input: CreateRoleInput!) {
-  createRole(input: $input) { roleId, name }
+  createRole(input: $input) {
+    roleId
+    name
+  }
 }
 
 mutation UpdateRole($roleId: ID!, $input: UpdateRoleInput!) {
-  updateRole(roleId: $roleId, input: $input) { success }
+  updateRole(roleId: $roleId, input: $input) {
+    success
+  }
 }
 
 mutation DeleteRole($roleId: ID!) {
-  deleteRole(roleId: $roleId) { success }
+  deleteRole(roleId: $roleId) {
+    success
+  }
 }
 
 mutation AssignUserRole($accountId: ID!, $tenantId: ID!, $role: String!) {
-  assignUserRole(accountId: $accountId, tenantId: $tenantId, role: $role) { success }
+  assignUserRole(accountId: $accountId, tenantId: $tenantId, role: $role) {
+    success
+  }
 }
 
 mutation RemoveUserRole($accountId: ID!, $tenantId: ID!) {
-  removeUserRole(accountId: $accountId, tenantId: $tenantId) { success }
+  removeUserRole(accountId: $accountId, tenantId: $tenantId) {
+    success
+  }
 }
 
 # 租户策略
 mutation UpdatePasswordPolicy($tenantId: ID!, $input: PasswordPolicyInput!) {
-  updatePasswordPolicy(tenantId: $tenantId, input: $input) { success }
+  updatePasswordPolicy(tenantId: $tenantId, input: $input) {
+    success
+  }
 }
 
 mutation UpdateAuthPolicy($tenantId: ID!, $input: AuthPolicyInput!) {
-  updateAuthPolicy(tenantId: $tenantId, input: $input) { success }
+  updateAuthPolicy(tenantId: $tenantId, input: $input) {
+    success
+  }
 }
 
 mutation UpdateMFAPolicy($tenantId: ID!, $input: MFAPolicyInput!) {
-  updateMFAPolicy(tenantId: $tenantId, input: $input) { success }
+  updateMFAPolicy(tenantId: $tenantId, input: $input) {
+    success
+  }
 }
 
 # 组管理
 mutation CreateGroup($input: CreateGroupInput!) {
-  createGroup(input: $input) { groupId, name }
+  createGroup(input: $input) {
+    groupId
+    name
+  }
 }
 
 mutation UpdateGroup($groupId: ID!, $input: UpdateGroupInput!) {
-  updateGroup(groupId: $groupId, input: $input) { success }
+  updateGroup(groupId: $groupId, input: $input) {
+    success
+  }
 }
 
 mutation DeleteGroup($groupId: ID!) {
-  deleteGroup(groupId: $groupId) { success }
+  deleteGroup(groupId: $groupId) {
+    success
+  }
 }
 
 mutation AddUserToGroup($groupId: ID!, $userId: ID!) {
-  addUserToGroup(groupId: $groupId, userId: $userId) { success }
+  addUserToGroup(groupId: $groupId, userId: $userId) {
+    success
+  }
 }
 
 mutation RemoveUserFromGroup($groupId: ID!, $userId: ID!) {
-  removeUserFromGroup(groupId: $groupId, userId: $userId) { success }
+  removeUserFromGroup(groupId: $groupId, userId: $userId) {
+    success
+  }
 }
 ```
 
@@ -467,11 +516,21 @@ query Users($filter: UserFilter, $pagination: Pagination) {
       mfaEnabled
       lastLoginAt
       createdAt
-      profile { displayName, avatar }
-      tenantRoles { tenantId, role, isPrimary }
+      profile {
+        displayName
+        avatar
+      }
+      tenantRoles {
+        tenantId
+        role
+        isPrimary
+      }
     }
     totalCount
-    pageInfo { hasNextPage, hasPreviousPage }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
   }
 }
 
@@ -482,7 +541,10 @@ query User($accountId: ID!) {
     username
     status
     mfaEnabled
-    mfaSecrets { type, isActive }
+    mfaSecrets {
+      type
+      isActive
+    }
     authProviders {
       providerId
       providerType
@@ -491,20 +553,35 @@ query User($accountId: ID!) {
       isVerified
       lastUsedAt
     }
-    tenantRoles { tenantId, role, isPrimary, grantedAt }
+    tenantRoles {
+      tenantId
+      role
+      isPrimary
+      grantedAt
+    }
     lastLoginAt
     failedLoginAttempts
     lockedUntil
     createdAt
     updatedAt
-    profile { displayName, avatar, locale }
+    profile {
+      displayName
+      avatar
+      locale
+    }
   }
 }
 
 query UserSessions($accountId: ID!) {
   userSessions(accountId: $accountId) {
     sessionId
-    deviceInfo { deviceType, browser, os, ip, location }
+    deviceInfo {
+      deviceType
+      browser
+      os
+      ip
+      location
+    }
     createdAt
     lastActivityAt
   }
@@ -527,7 +604,13 @@ query Role($roleId: ID!) {
     name
     description
     permissions
-    users { accountId, email, profile { displayName } }
+    users {
+      accountId
+      email
+      profile {
+        displayName
+      }
+    }
   }
 }
 
@@ -579,7 +662,12 @@ query AuthenticationLogs($filter: AuthLogFilter, $pagination: Pagination) {
       eventType
       success
       errorCode
-      deviceInfo { deviceType, browser, ip, location }
+      deviceInfo {
+        deviceType
+        browser
+        ip
+        location
+      }
       timestamp
     }
     totalCount
@@ -609,7 +697,10 @@ query Groups($tenantId: ID!) {
     name
     parentGroupId
     memberCount
-    children { groupId, name }
+    children {
+      groupId
+      name
+    }
   }
 }
 
@@ -619,7 +710,13 @@ query Group($groupId: ID!) {
     name
     description
     parentGroupId
-    members { userId, profile { displayName, email } }
+    members {
+      userId
+      profile {
+        displayName
+        email
+      }
+    }
   }
 }
 ```
@@ -630,77 +727,80 @@ query Group($groupId: ID!) {
 
 ### 专用组件 (apps/admin-console)
 
-| 组件 | 优先级 | 说明 |
-|------|--------|------|
-| UserTable | P0 | 用户列表表格（支持排序、筛选、分页） |
-| UserCreateDialog | P0 | 创建用户对话框 |
-| UserDetailDrawer | P0 | 用户详情侧边栏 |
-| RoleTable | P1 | 角色列表表格 |
-| RolePermissionEditor | P1 | 角色权限编辑器 |
-| PolicyEditor | P1 | 安全策略编辑器 |
-| AuditLogTable | P1 | 审计日志表格 |
-| GroupTree | P2 | 组织树形结构 |
+| 组件                 | 优先级 | 说明                                 |
+| -------------------- | ------ | ------------------------------------ |
+| UserTable            | P0     | 用户列表表格（支持排序、筛选、分页） |
+| UserCreateDialog     | P0     | 创建用户对话框                       |
+| UserDetailDrawer     | P0     | 用户详情侧边栏                       |
+| RoleTable            | P1     | 角色列表表格                         |
+| RolePermissionEditor | P1     | 角色权限编辑器                       |
+| PolicyEditor         | P1     | 安全策略编辑器                       |
+| AuditLogTable        | P1     | 审计日志表格                         |
+| GroupTree            | P2     | 组织树形结构                         |
 
 ### 依赖 MUI X 组件
 
-| MUI 组件 | 用途 |
-|----------|------|
-| DataGrid Pro | 用户列表、日志列表 |
-| DateRangePicker | 日志筛选日期范围 |
-| TreeView | 组织结构 |
+| MUI 组件        | 用途               |
+| --------------- | ------------------ |
+| DataGrid Pro    | 用户列表、日志列表 |
+| DateRangePicker | 日志筛选日期范围   |
+| TreeView        | 组织结构           |
 
 ---
 
 ## 页面路由
 
-| 路由 | 页面 | 权限 |
-|------|------|------|
-| `/admin` | Dashboard | admin:read |
-| `/admin/users` | 用户列表 | user:read |
-| `/admin/users/:id` | 用户详情 | user:read |
-| `/admin/users/create` | 创建用户 | user:create |
-| `/admin/roles` | 角色列表 | role:read |
-| `/admin/roles/:id` | 角色详情 | role:read |
-| `/admin/groups` | 组织管理 | group:read |
-| `/admin/tenant` | 租户设置 | tenant:read |
-| `/admin/tenant/policies` | 安全策略 | tenant:update |
-| `/admin/logs/auth` | 认证日志 | audit:read |
-| `/admin/logs/admin` | 管理日志 | audit:read |
+| 路由                     | 页面      | 权限          |
+| ------------------------ | --------- | ------------- |
+| `/admin`                 | Dashboard | admin:read    |
+| `/admin/users`           | 用户列表  | user:read     |
+| `/admin/users/:id`       | 用户详情  | user:read     |
+| `/admin/users/create`    | 创建用户  | user:create   |
+| `/admin/roles`           | 角色列表  | role:read     |
+| `/admin/roles/:id`       | 角色详情  | role:read     |
+| `/admin/groups`          | 组织管理  | group:read    |
+| `/admin/tenant`          | 租户设置  | tenant:read   |
+| `/admin/tenant/policies` | 安全策略  | tenant:update |
+| `/admin/logs/auth`       | 认证日志  | audit:read    |
+| `/admin/logs/admin`      | 管理日志  | audit:read    |
 
 ---
 
 ## 权限矩阵
 
-| 操作 | Admin | Manager | Member | Viewer |
-|------|-------|---------|--------|--------|
-| 查看用户列表 | ✅ | ✅ | ❌ | ❌ |
-| 创建用户 | ✅ | ✅ | ❌ | ❌ |
-| 编辑用户 | ✅ | ✅ | ❌ | ❌ |
-| 删除用户 | ✅ | ❌ | ❌ | ❌ |
-| 重置密码 | ✅ | ✅ | ❌ | ❌ |
-| 查看角色 | ✅ | ✅ | ❌ | ❌ |
-| 管理角色 | ✅ | ❌ | ❌ | ❌ |
-| 查看租户设置 | ✅ | ✅ | ❌ | ❌ |
-| 编辑安全策略 | ✅ | ❌ | ❌ | ❌ |
-| 查看审计日志 | ✅ | ✅ | ❌ | ❌ |
-| 管理组织 | ✅ | ✅ | ❌ | ❌ |
+| 操作         | Admin | Manager | Member | Viewer |
+| ------------ | ----- | ------- | ------ | ------ |
+| 查看用户列表 | ✅    | ✅      | ❌     | ❌     |
+| 创建用户     | ✅    | ✅      | ❌     | ❌     |
+| 编辑用户     | ✅    | ✅      | ❌     | ❌     |
+| 删除用户     | ✅    | ❌      | ❌     | ❌     |
+| 重置密码     | ✅    | ✅      | ❌     | ❌     |
+| 查看角色     | ✅    | ✅      | ❌     | ❌     |
+| 管理角色     | ✅    | ❌      | ❌     | ❌     |
+| 查看租户设置 | ✅    | ✅      | ❌     | ❌     |
+| 编辑安全策略 | ✅    | ❌      | ❌     | ❌     |
+| 查看审计日志 | ✅    | ✅      | ❌     | ❌     |
+| 管理组织     | ✅    | ✅      | ❌     | ❌     |
 
 ---
 
 ## 非功能需求
 
 ### 安全
+
 - 所有管理操作需要权限验证
 - 敏感操作需要二次确认
 - 管理员操作全部记录审计日志
 - 防止越权操作（不能管理更高级别角色）
 
 ### 性能
+
 - 用户列表支持 10,000+ 用户
 - 日志查询支持百万级数据
 - 表格虚拟滚动
 
 ### 可用性
+
 - 批量操作支持进度显示
 - 操作失败时显示详细错误
 - 支持撤销最近操作（软删除场景）

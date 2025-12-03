@@ -37,6 +37,7 @@ packages/feature/
 ```
 
 **模块边界规则**：
+
 - 每个模块有清晰的 `index.ts` 导出
 - 模块间通过公开接口通信，禁止直接引用内部文件
 - 模块内部实现可自由重构，不影响外部使用
@@ -84,8 +85,8 @@ export interface AuthConfig {
     email: { enabled: boolean };
   };
   session: {
-    defaultTimeout: number;      // seconds
-    rememberMeTimeout: number;   // seconds
+    defaultTimeout: number; // seconds
+    rememberMeTimeout: number; // seconds
   };
   password: {
     minLength: number;
@@ -108,8 +109,8 @@ export const defaultAuthConfig: AuthConfig = {
     email: { enabled: true },
   },
   session: {
-    defaultTimeout: 3600,       // 1 hour
-    rememberMeTimeout: 604800,  // 7 days
+    defaultTimeout: 3600, // 1 hour
+    rememberMeTimeout: 604800, // 7 days
   },
   password: {
     minLength: 8,
@@ -147,14 +148,14 @@ NEXT_PUBLIC_ENABLE_MFA_SMS=false
 
 #### 3.1 禁止列表
 
-| 类型 | 禁止 | 应该 |
-|------|------|------|
-| URL | `fetch('http://localhost:8081')` | `fetch(config.aacUrl)` |
-| 文本 | `<Button>Login</Button>` | `<Button>{t('auth.login')}</Button>` |
-| 颜色 | `color: '#1976d2'` | `color: theme.palette.primary.main` |
-| 尺寸 | `width: 400` | `width: theme.spacing(50)` |
-| 时间 | `setTimeout(..., 3600000)` | `setTimeout(..., config.session.timeout * 1000)` |
-| 错误码 | `if (code === 'AUTH_001')` | `if (code === ErrorCodes.INVALID_CREDENTIALS)` |
+| 类型   | 禁止                             | 应该                                             |
+| ------ | -------------------------------- | ------------------------------------------------ |
+| URL    | `fetch('http://localhost:8081')` | `fetch(config.aacUrl)`                           |
+| 文本   | `<Button>Login</Button>`         | `<Button>{t('auth.login')}</Button>`             |
+| 颜色   | `color: '#1976d2'`               | `color: theme.palette.primary.main`              |
+| 尺寸   | `width: 400`                     | `width: theme.spacing(50)`                       |
+| 时间   | `setTimeout(..., 3600000)`       | `setTimeout(..., config.session.timeout * 1000)` |
+| 错误码 | `if (code === 'AUTH_001')`       | `if (code === ErrorCodes.INVALID_CREDENTIALS)`   |
 
 #### 3.2 常量定义位置
 
@@ -253,6 +254,7 @@ function LoginForm() {
 ```
 
 **翻译文件结构**：
+
 ```
 packages/config/src/i18n/
 ├── locales/
@@ -425,8 +427,8 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 const config: CodegenConfig = {
   schema: process.env.NEXT_PUBLIC_AAC_URL + '/graphql',
   documents: [
-    '**/graphql/*.gql',           // 所有子功能的 .gql 文件
-    'fragments/**/*.gql',         // 模块级共享 fragments
+    '**/graphql/*.gql', // 所有子功能的 .gql 文件
+    'fragments/**/*.gql', // 模块级共享 fragments
   ],
   generates: {
     // 为每个子功能生成到对应目录
@@ -450,6 +452,7 @@ export default config;
 ```
 
 **生成内容（仅类型，不含 Hook）**：
+
 - `LoginDocument` - GraphQL 文档常量
 - `LoginMutation` - 返回类型
 - `LoginMutationVariables` - 变量类型
@@ -503,6 +506,7 @@ function LoginPage() {
 ```
 
 **开发流程**：
+
 1. 在子功能目录下创建 `graphql/*.gql` 文件（如 `packages/feature/authentication/login/graphql/login.gql`）
 2. 运行 `yarn codegen:authentication` 生成该模块所有子功能的类型和 hooks
 3. 从模块导入使用：`import { LoginForm, useLoginMutation } from '@assetforce/authentication'`
