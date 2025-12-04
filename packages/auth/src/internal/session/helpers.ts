@@ -44,9 +44,17 @@ export function toClientSession(data: SessionData): Session | null {
 /**
  * Cookie store interface for reading cookies from headers
  */
-interface ReadonlyCookieStore {
+interface CookieStore {
   get: (name: string) => { name: string; value: string } | undefined;
-  set: () => void;
+  set: (name: string, value: string, options?: Record<string, unknown>) => void;
+}
+
+/**
+ * Mutable cookie store that captures set operations
+ */
+export interface MutableCookieStore extends CookieStore {
+  /** Get the cookie value to set in response (if any) */
+  getSetCookieValue: () => string | null;
 }
 
 /**
@@ -57,10 +65,12 @@ function escapeRegex(str: string): string {
 }
 
 /**
- * Create a read-only cookie store from request headers
+ * Create a mutable cookie store from request headers
+ * Captures set() calls for later use in Response headers
  */
-export function createCookieStoreFromHeaders(headers: Headers): ReadonlyCookieStore {
+export function createCookieStoreFromHeaders(headers: Headers): MutableCookieStore {
   const cookieHeader = headers.get('cookie') || '';
+  let setCookieValue: string | null = null;
 
   return {
     get: (name: string) => {
@@ -69,25 +79,36 @@ export function createCookieStoreFromHeaders(headers: Headers): ReadonlyCookieSt
       if (!match || match[1] === undefined) return undefined;
       return { name, value: match[1] };
     },
-    set: () => {
-      // Read-only in this context
+    set: (name: string, value: string, options?: Record<string, unknown>) => {
+      // Build cookie string
+      let cookie = `${name}=${value}`;
+      if (options) {
+        if (options.httpOnly) cookie += '; HttpOnly';
+        if (options.secure) cookie += '; Secure';
+        if (options.sameSite) cookie += `; SameSite=${options.sameSite}`;
+        if (options.path) cookie += `; Path=${options.path}`;
+        if (options.maxAge !== undefined) cookie += `; Max-Age=${options.maxAge}`;
+      }
+      setCookieValue = cookie;
     },
+    getSetCookieValue: () => setCookieValue,
   };
 }
 
 /**
  * Get session from headers (for Route Handlers)
+ * Returns cookie store to allow getting Set-Cookie value after session.save()
  */
 export async function getSessionFromHeaders(
   headers: Headers,
   sessionOptions: SessionOptions
-): Promise<{ session: Session | null; raw: IronSession<SessionData> }> {
+): Promise<{ session: Session | null; raw: IronSession<SessionData>; cookieStore: MutableCookieStore }> {
   const cookieStore = createCookieStoreFromHeaders(headers);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ironSession = await getIronSession<SessionData>(cookieStore as any, sessionOptions);
 
   const session = toClientSession(ironSession);
-  return { session, raw: ironSession };
+  return { session, raw: ironSession, cookieStore };
 }
 
 /**

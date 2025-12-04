@@ -98,15 +98,33 @@ export const createAuth = (config: AuthConfig): AuthInstance => {
     const segments = pathname.split('/').filter(Boolean);
     const route = segments.pop() as RouteKey | undefined;
 
-    // Get session
-    const { session: clientSession, raw: session } = await getSessionFromHeaders(request.headers, sessionOptions);
+    // Get session with mutable cookie store
+    const { session: clientSession, raw: session, cookieStore } = await getSessionFromHeaders(
+      request.headers,
+      sessionOptions
+    );
 
     // Find handler
     const routeHandler = route ? HANDLERS[route] : undefined;
 
     if (!routeHandler) return new Response('Not found', { status: 404 });
 
-    return routeHandler({ request, session, clientSession, api });
+    // Execute handler
+    const response = await routeHandler({ request, session, clientSession, api });
+
+    // Add Set-Cookie header if session was modified
+    const setCookieValue = cookieStore.getSetCookieValue();
+    if (setCookieValue) {
+      const newHeaders = new Headers(response.headers);
+      newHeaders.set('Set-Cookie', setCookieValue);
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: newHeaders,
+      });
+    }
+
+    return response;
   };
 
   return {
