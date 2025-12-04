@@ -2,15 +2,15 @@
  * AuthErrorCode - Authentication error codes
  */
 export type AuthErrorCode =
-  | 'INVALID_CREDENTIALS'      // Invalid username or password
-  | 'SESSION_EXPIRED'          // Session has expired
-  | 'SESSION_NOT_FOUND'        // Session not found
-  | 'TENANT_REQUIRED'          // Tenant selection required
-  | 'TENANT_ACCESS_DENIED'     // Access denied to tenant
-  | 'TOKEN_EXPIRED'            // Token has expired
-  | 'TOKEN_INVALID'            // Invalid token
-  | 'NETWORK_ERROR'            // Network error
-  | 'UNKNOWN_ERROR';           // Unknown error
+  | 'INVALID_CREDENTIALS' // Invalid username or password
+  | 'SESSION_EXPIRED' // Session has expired
+  | 'SESSION_NOT_FOUND' // Session not found
+  | 'TENANT_REQUIRED' // Tenant selection required
+  | 'TENANT_ACCESS_DENIED' // Access denied to tenant
+  | 'TOKEN_EXPIRED' // Token has expired
+  | 'TOKEN_INVALID' // Invalid token
+  | 'NETWORK_ERROR' // Network error
+  | 'UNKNOWN_ERROR'; // Unknown error
 
 /**
  * AuthError - Authentication error class

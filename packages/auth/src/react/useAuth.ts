@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuthContext, type AuthContextValue } from './AuthProvider';
+import { type AuthContextValue, useAuthContext } from './AuthProvider';
 
 /**
  * UseAuthReturn - useAuth return type

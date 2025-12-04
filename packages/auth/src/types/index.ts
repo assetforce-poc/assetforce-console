@@ -1,18 +1,18 @@
 // Session
-export type { Session } from './session';
+export type { Session, SessionData } from './session';
 
 // User
 export type { User } from './user';
 
-// Identity (AssetForce 扩展)
+// Identity (4D Identity Model)
 export type { IdentityContext } from './identity';
 
 // Tenant
-export type { Tenant, TenantSelection } from './tenant';
+export type { Tenant } from './tenant';
 
 // Config
-export type { AuthConfig } from './config';
+export type { AuthConfig, SessionConfig } from './config';
 
 // Errors
-export { AuthError } from './errors';
 export type { AuthErrorCode } from './errors';
+export { AuthError } from './errors';

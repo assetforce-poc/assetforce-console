@@ -1,19 +1,16 @@
 /**
  * User - Basic user information
+ *
+ * Minimal user info from AAC IdentityContext.
+ * Additional fields may be populated from other sources.
  */
 export interface User {
-  /** User ID */
+  /** User ID (accountId from AAC) */
   id: string;
+  /** Display name or username */
+  name?: string;
   /** Email address */
   email?: string;
-  /** Username */
-  name?: string;
   /** Avatar URL */
   image?: string;
-  /** Whether email is verified */
-  emailVerified: boolean;
-  /** Creation time */
-  createdAt: Date;
-  /** Last update time */
-  updatedAt: Date;
 }

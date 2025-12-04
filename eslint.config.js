@@ -8,6 +8,12 @@ const project = resolve(__dirname, 'tsconfig.json');
 export default [
   ...eslintConfigAssetforce,
   {
+    rules: {
+      // Single-line if statements when possible, braces when multi-line
+      curly: ['error', 'multi-line'],
+    },
+  },
+  {
     ignores: ['**/node_modules/', '**/dist/', '**/.turbo/', '**/generated/'],
   },
 ];

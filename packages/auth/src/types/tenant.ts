@@ -1,25 +1,18 @@
 /**
  * Tenant - Tenant information
+ *
+ * In AAC, Realm is the logical tenant managed by IMC.
+ * The realmId serves as the tenant identifier.
  */
 export interface Tenant {
-  /** Tenant ID */
+  /** Tenant ID (realmId from AAC) */
   id: string;
-  /** Tenant name */
+  /** Display name */
   name: string;
-  /** Realm identifier */
-  realm: string;
-}
-
-/**
- * TenantSelection - Tenant selection result
- */
-export interface TenantSelection {
-  /** Selected tenant */
-  tenant: Tenant;
-  /** Access token */
-  accessToken: string;
-  /** Refresh token */
-  refreshToken: string;
-  /** Expiration time in seconds */
-  expiresIn: number;
+  /** Zone ID */
+  zoneId?: string;
+  /** Realm type */
+  realmType?: string;
+  /** Description */
+  description?: string;
 }
