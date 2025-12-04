@@ -31,7 +31,7 @@ const generates = Object.fromEntries(
 );
 
 const config: CodegenConfig = {
-  schema: 'http://localhost:8081/graphql',
+  schema: process.env.AAC_GRAPHQL_URL || 'http://localhost:8081/graphql',
   documents: ['**/*.gql', '**/*.graphql'],
   generates,
   ignoreNoDocuments: true,

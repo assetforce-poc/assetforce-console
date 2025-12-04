@@ -18,7 +18,6 @@ COPY package.json yarn.lock .npmrc ./
 COPY apps/customer-portal/package.json ./apps/customer-portal/
 COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
-COPY packages/config/package.json ./packages/config/
 COPY packages/graphql/package.json ./packages/graphql/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 
@@ -100,7 +99,6 @@ COPY package.json yarn.lock .npmrc ./
 COPY apps/customer-portal/package.json ./apps/customer-portal/
 COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
-COPY packages/config/package.json ./packages/config/
 COPY packages/graphql/package.json ./packages/graphql/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 

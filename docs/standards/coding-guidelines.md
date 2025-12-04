@@ -59,9 +59,9 @@ import { LoginForm } from '@assetforce/authentication/login/components/LoginForm
 #### 2.1 配置层级
 
 ```
-环境变量 (.env)
+环境变量 (.env / docker-compose)
     ↓
-packages/config/
+packages/feature/common/env/
     ↓
 App-level config (apps/*/config/)
     ↓
@@ -71,7 +71,7 @@ Feature-level config (传入组件)
 #### 2.2 配置文件结构
 
 ```typescript
-// packages/config/src/auth.config.ts
+// packages/feature/common/config/auth.config.ts
 export interface AuthConfig {
   providers: {
     emailPassword: { enabled: boolean };
@@ -123,24 +123,25 @@ export const defaultAuthConfig: AuthConfig = {
 
 #### 2.3 环境变量命名规范
 
+**服务端变量**（API Route / Proxy 使用，不暴露到客户端）：
+
 ```bash
-# .env.example
-
-# === Backend URLs ===
-NEXT_PUBLIC_AAC_URL=http://localhost:8081
-NEXT_PUBLIC_IMC_URL=http://localhost:8082
-NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080
-
-# === OAuth Providers ===
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=
-NEXT_PUBLIC_AZURE_AD_TENANT_ID=
-NEXT_PUBLIC_AZURE_AD_CLIENT_ID=
-
-# === Feature Flags ===
-NEXT_PUBLIC_ENABLE_GOOGLE_LOGIN=false
-NEXT_PUBLIC_ENABLE_AZURE_AD_LOGIN=false
-NEXT_PUBLIC_ENABLE_MFA_SMS=false
+# === Backend GraphQL URLs (服务端 Proxy 使用) ===
+AAC_GRAPHQL_URL=http://localhost:8081/graphql  # 开发环境
+AAC_GRAPHQL_URL=http://aac:8081/graphql         # Docker 网络内
+IMC_GRAPHQL_URL=http://localhost:8082/graphql
 ```
+
+**客户端变量**（如需要，使用 `NEXT_PUBLIC_` 前缀）：
+
+```bash
+# === OAuth Providers (客户端 SDK 使用) ===
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=
+NEXT_PUBLIC_AZURE_AD_CLIENT_ID=
+```
+
+**重要**：由于我们使用 Proxy 模式 (客户端 → `/api/graphql` → 服务端 proxy → AAC/IMC)，
+后端 URL 只在服务端使用，**不需要** `NEXT_PUBLIC_` 前缀。
 
 ---
 
@@ -160,7 +161,7 @@ NEXT_PUBLIC_ENABLE_MFA_SMS=false
 #### 3.2 常量定义位置
 
 ```typescript
-// packages/config/src/constants/error-codes.ts
+// packages/feature/common/constants/error-codes.ts
 export const ErrorCodes = {
   // Authentication
   INVALID_CREDENTIALS: 'AUTH_001',
@@ -176,7 +177,7 @@ export const ErrorCodes = {
   PROVIDER_ALREADY_LINKED: 'ACC_003',
 } as const;
 
-// packages/config/src/constants/routes.ts
+// packages/feature/common/constants/routes.ts
 export const Routes = {
   LOGIN: '/login',
   LOGIN_MFA: '/login/mfa',
@@ -256,7 +257,7 @@ function LoginForm() {
 **翻译文件结构**：
 
 ```
-packages/config/src/i18n/
+packages/feature/common/i18n/
 ├── locales/
 │   ├── en/
 │   │   ├── auth.json
@@ -425,7 +426,7 @@ fragment MFAChallenge on MFAChallengeResponse {
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-  schema: process.env.NEXT_PUBLIC_AAC_URL + '/graphql',
+  schema: process.env.AAC_GRAPHQL_URL || 'http://localhost:8081/graphql',
   documents: [
     '**/graphql/*.gql', // 所有子功能的 .gql 文件
     'fragments/**/*.gql', // 模块级共享 fragments

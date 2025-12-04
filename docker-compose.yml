@@ -53,9 +53,8 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_AAC_URL=http://aac:8081
-      - NEXT_PUBLIC_IMC_URL=http://imc:8082
-      - NEXT_PUBLIC_KEYCLOAK_URL=http://keycloak:8080
+      - AAC_GRAPHQL_URL=http://aac:8081/graphql
+      - IMC_GRAPHQL_URL=http://imc:8082/graphql
     networks:
       - assetforce-network
     depends_on:
@@ -79,9 +78,8 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_AAC_URL=http://aac:8081
-      - NEXT_PUBLIC_IMC_URL=http://imc:8082
-      - NEXT_PUBLIC_KEYCLOAK_URL=http://keycloak:8080
+      - AAC_GRAPHQL_URL=http://aac:8081/graphql
+      - IMC_GRAPHQL_URL=http://imc:8082/graphql
     networks:
       - assetforce-network
     depends_on:
