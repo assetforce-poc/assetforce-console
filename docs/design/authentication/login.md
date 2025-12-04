@@ -1,7 +1,22 @@
 # login - 登录子功能详细设计
 
-- **Status**: ✅ 规整完成
+- **Status**: 🔄 部分实现
 - **Parent**: [authentication/README.md](./README.md)
+- **Last Updated**: 2025-12-04
+
+---
+
+## 实现状态
+
+| 项目 | 设计 | 实现 | 说明 |
+|------|------|------|------|
+| LoginForm | ✅ | ✅ | 基础版已实现 |
+| useLogin | ✅ | ✅ | 已实现 |
+| OAuthButtons | ✅ | 🔲 | 待实现 |
+| CredentialInput | ✅ | 🔲 | 内联在 LoginForm，未单独抽取 |
+| useOAuthLogin | ✅ | 🔲 | 待实现 |
+| rememberMe | ✅ | 🔲 | 代码预留，待 AAC 支持 |
+| GraphQL schema | ✅ | ⚠️ | 实现使用扁平结构，非 Union Type |
 
 ---
 
@@ -87,7 +102,10 @@ Navigate to app
 
 ### 3.1 LoginForm
 
+#### 设计接口 (完整版)
+
 ```typescript
+// 设计目标 - 完整功能
 interface LoginFormProps {
   config: {
     enableEmailPassword: boolean;
@@ -106,7 +124,23 @@ interface LoginFormProps {
 }
 ```
 
-### 3.2 OAuthButtons
+#### 当前实现 (简化版) ✅
+
+```typescript
+// 实际实现 - login/components/LoginForm.tsx
+interface LoginFormProps {
+  onSuccess?: (result: Extract<LoginResult, { type: 'success' }>) => void;
+  onMFARequired?: (result: Extract<LoginResult, { type: 'mfa_required' }>) => void;
+  onError?: (message: string) => void;
+}
+```
+
+**差异说明**：
+- `config` 未实现 - 当前只支持 username/password
+- `onForgotPassword` / `onCreateAccount` 未实现 - 待添加链接
+- 回调参数类型不同 - 使用 LoginResult 联合类型
+
+### 3.2 OAuthButtons 🔲 未实现
 
 ```typescript
 interface OAuthButtonsProps {
@@ -121,7 +155,9 @@ interface OAuthButtonsProps {
 - `onInitiate` 可选，用于通知父组件 OAuth 流程开始（如显示 loading）
 - **GitHub 为主要 OAuth 方式 (P1)**，Google/Azure AD/Keycloak 为可扩展选项 (P2)
 
-### 3.3 CredentialInput
+**实现状态**: 🔲 待实现 - 需要先完成 AAC OAuth Code Exchange API
+
+### 3.3 CredentialInput 🔲 未单独实现
 
 ```typescript
 interface CredentialInputProps {
@@ -131,6 +167,8 @@ interface CredentialInputProps {
   error?: string;
 }
 ```
+
+**实现状态**: 🔲 内联在 LoginForm 中，未单独抽取为组件
 
 ---
 
@@ -162,7 +200,7 @@ type LoginResult = { type: 'success'; tokens: AuthTokens } | { type: 'mfa_requir
 
 ---
 
-### 4.2 useOAuthLogin
+### 4.2 useOAuthLogin 🔲 未实现
 
 OAuth 登录的核心 Hook。
 
@@ -242,6 +280,8 @@ type OAuthProviderId = 'github' | 'google' | 'azure-ad' | 'keycloak';
 
 ### 5.1 login.gql
 
+#### 设计方案 (Union Type)
+
 ```graphql
 mutation login($input: LoginInput!) {
   login(input: $input) {
@@ -258,6 +298,39 @@ mutation login($input: LoginInput!) {
   }
 }
 ```
+
+#### 当前实现 (扁平结构) ✅
+
+```graphql
+# 实际实现 - login/graphql/login.gql
+mutation Login($input: LoginInput!) {
+  login(input: $input) {
+    success
+    accessToken
+    refreshToken
+    expiresIn
+    tokenType
+    error                    # 字符串，非结构化错误
+    identityContext {
+      zone
+      realm
+      subject {
+        accountId
+        userId
+        username
+        email
+        displayName
+      }
+      groups
+    }
+  }
+}
+```
+
+**差异说明**：
+- 设计使用 Union Type 区分成功/MFA/错误
+- 实现使用扁平结构，通过 `success` + `error` 字段判断
+- MFA 判断：代码中检查 `error?.includes('MFA')` (临时方案)
 
 ### 5.2 Input 类型
 
