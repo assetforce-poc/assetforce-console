@@ -10,9 +10,10 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@assetforce/auth": "*",
     "@assetforce/authentication": "*",
+    "@assetforce/graphql": "*",
     "@assetforce/material": "*",
-        "@assetforce/graphql": "*",
     "@emotion/cache": "~11.13.5",
     "next": "15.1.2",
     "react": "19.0.0",

@@ -1,5 +1,6 @@
+import { AuthProvider } from '@assetforce/auth/react';
 import { ApolloClientProvider } from '@assetforce/graphql/provider';
-import { CssBaseline,ThemeProvider } from '@assetforce/material';
+import { CssBaseline, ThemeProvider } from '@assetforce/material';
 import { AppRouterCacheProvider } from '@assetforce/material/nextjs';
 import { theme } from '@assetforce/material/theme';
 import type { Metadata } from 'next';
@@ -19,10 +20,12 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <ApolloClientProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              {children}
-            </ThemeProvider>
+            <AuthProvider>
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
+                {children}
+              </ThemeProvider>
+            </AuthProvider>
           </ApolloClientProvider>
         </AppRouterCacheProvider>
       </body>

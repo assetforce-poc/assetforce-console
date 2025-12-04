@@ -1,0 +1,4 @@
+{
+  "main": "../src/react/index.ts",
+  "types": "../src/react/index.ts"
+}
