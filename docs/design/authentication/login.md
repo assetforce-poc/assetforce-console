@@ -151,9 +151,7 @@ function useLogin(): {
   error: AuthError | null;
 };
 
-type LoginResult =
-  | { type: 'success'; tokens: AuthTokens }
-  | { type: 'mfa_required'; challenge: MFAChallenge };
+type LoginResult = { type: 'success'; tokens: AuthTokens } | { type: 'mfa_required'; challenge: MFAChallenge };
 ```
 
 **使用场景**：

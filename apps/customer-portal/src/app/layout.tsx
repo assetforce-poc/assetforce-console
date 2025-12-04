@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { AppRouterCacheProvider } from '@assetforce/material/nextjs';
 import { ThemeProvider, CssBaseline } from '@assetforce/material';
 import { theme } from '@assetforce/material/theme';
+import { ApolloClientProvider } from '@assetforce/graphql/provider';
 
 export const metadata: Metadata = {
   title: 'AssetForce Customer Portal',
@@ -17,10 +18,12 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            {children}
-          </ThemeProvider>
+          <ApolloClientProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              {children}
+            </ThemeProvider>
+          </ApolloClientProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

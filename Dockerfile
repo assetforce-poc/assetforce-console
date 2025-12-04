@@ -4,7 +4,7 @@
 # =============================================================================
 # Stage 1: Base - Install dependencies
 # =============================================================================
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
@@ -17,9 +17,10 @@ FROM base AS deps
 COPY package.json yarn.lock .npmrc ./
 COPY apps/customer-portal/package.json ./apps/customer-portal/
 COPY apps/admin-console/package.json ./apps/admin-console/
-COPY packages/ui/package.json ./packages/ui/
+COPY packages/material/package.json ./packages/material/
 COPY packages/config/package.json ./packages/config/
 COPY packages/graphql/package.json ./packages/graphql/
+COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 
 # Install dependencies
 # GITHUB_PACKAGES_TOKEN is required for @assetforce/* packages
@@ -98,9 +99,10 @@ WORKDIR /app
 COPY package.json yarn.lock .npmrc ./
 COPY apps/customer-portal/package.json ./apps/customer-portal/
 COPY apps/admin-console/package.json ./apps/admin-console/
-COPY packages/ui/package.json ./packages/ui/
+COPY packages/material/package.json ./packages/material/
 COPY packages/config/package.json ./packages/config/
 COPY packages/graphql/package.json ./packages/graphql/
+COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 
 ARG GITHUB_PACKAGES_TOKEN
 RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \

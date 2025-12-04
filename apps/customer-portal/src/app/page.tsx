@@ -22,13 +22,7 @@ export default function Home() {
           <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 3 }}>
             Welcome to the AssetForce Customer Portal
           </Typography>
-          <Button
-            component={Link}
-            href="/auth/login"
-            variant="contained"
-            fullWidth
-            size="large"
-          >
+          <Button component={Link} href="/auth/login" variant="contained" fullWidth size="large">
             Sign In
           </Button>
         </Paper>

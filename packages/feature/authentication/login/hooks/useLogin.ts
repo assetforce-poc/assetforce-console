@@ -67,9 +67,7 @@ export interface AuthError {
  * ```
  */
 export function useLogin() {
-  const [loginMutation, { loading }] = useMutation<LoginMutation, LoginMutationVariables>(
-    LoginDocument
-  );
+  const [loginMutation, { loading }] = useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
 
   const login = async (input: UseLoginInput): Promise<LoginResult> => {
     try {
@@ -90,8 +88,7 @@ export function useLogin() {
         };
       }
 
-      const { success, accessToken, refreshToken, expiresIn, tokenType, error, identityContext } =
-        data.login;
+      const { success, accessToken, refreshToken, expiresIn, tokenType, error, identityContext } = data.login;
 
       // 错误处理
       if (!success || error) {

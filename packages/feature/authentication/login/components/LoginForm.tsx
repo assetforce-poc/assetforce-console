@@ -76,13 +76,7 @@ export function LoginForm({ onSuccess, onMFARequired, onError }: LoginFormProps)
           disabled={loading}
         />
 
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          size="large"
-          disabled={loading || !credential || !password}
-        >
+        <Button type="submit" fullWidth variant="contained" size="large" disabled={loading || !credential || !password}>
           {loading ? 'Signing in...' : 'Sign In'}
         </Button>
       </Stack>

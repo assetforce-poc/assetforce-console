@@ -15,10 +15,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 export function createApolloClient(uri: string) {
-  const httpLink = new HttpLink({
-    uri,
-    credentials: 'include',
-  });
+  const httpLink = new HttpLink({ uri, credentials: 'include' });
 
   return new ApolloClient({
     link: from([errorLink, httpLink]),

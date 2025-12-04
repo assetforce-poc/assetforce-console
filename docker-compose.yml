@@ -29,9 +29,10 @@ services:
       - /app/apps/admin-console/.next
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_AAC_URL=http://localhost:8081
-      - NEXT_PUBLIC_IMC_URL=http://localhost:8082
-      - NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080
+      - GITHUB_PACKAGES_TOKEN=${GITHUB_PACKAGES_TOKEN}
+      # Override for Docker: use host.docker.internal to access host services
+      - AAC_GRAPHQL_URL=http://host.docker.internal:8081/graphql
+      - IMC_GRAPHQL_URL=http://host.docker.internal:8082/graphql
     networks:
       - assetforce-network
 

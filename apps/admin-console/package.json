@@ -2,11 +2,12 @@
   "name": "@assetforce/admin-console",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack --port 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@assetforce/material": "*",
@@ -22,7 +23,6 @@
     "@types/react": "~19.0.1",
     "@types/react-dom": "~19.0.1",
     "eslint": "~9.17.0",
-    "eslint-config-next": "15.1.2",
     "typescript": "~5.7.2"
   }
 }

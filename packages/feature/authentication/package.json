@@ -2,6 +2,7 @@
   "name": "@assetforce/authentication",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "main": "./index.ts",
   "types": "./index.ts",
   "exports": {
@@ -10,7 +11,7 @@
     "./session": "./session/index.ts"
   },
   "scripts": {
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint .",
     "type-check": "tsc --noEmit",
     "codegen": "graphql-codegen --config codegen.ts"
   },

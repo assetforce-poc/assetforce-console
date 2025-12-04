@@ -1,6 +1,11 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "GITHUB_PACKAGES_TOKEN",
+    "AAC_GRAPHQL_URL",
+    "IMC_GRAPHQL_URL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

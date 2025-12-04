@@ -1,6 +1,7 @@
 {
   "name": "assetforce-console",
   "private": true,
+  "type": "module",
   "workspaces": [
     "apps/*",
     "packages/*",
@@ -8,7 +9,7 @@
   ],
   "scripts": {
     "build": "turbo build",
-    "dev": "dotenvx run -- turbo dev",
+    "dev": "dotenvx run -f .env.local -f .env -- turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
@@ -21,5 +22,8 @@
   "packageManager": "yarn@1.22.22",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "@assetforce/eslint-config": "*"
   }
 }
