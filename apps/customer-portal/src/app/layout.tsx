@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
-import { AppRouterCacheProvider } from '@assetforce/material/nextjs';
-import { ThemeProvider, CssBaseline } from '@assetforce/material';
-import { theme } from '@assetforce/material/theme';
 import { ApolloClientProvider } from '@assetforce/graphql/provider';
+import { CssBaseline,ThemeProvider } from '@assetforce/material';
+import { AppRouterCacheProvider } from '@assetforce/material/nextjs';
+import { theme } from '@assetforce/material/theme';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'AssetForce Customer Portal',

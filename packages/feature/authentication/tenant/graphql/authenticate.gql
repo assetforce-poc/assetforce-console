@@ -1,0 +1,37 @@
+# Multi-tenant authentication
+# - Single realm: returns token directly (accessToken present, availableRealms null)
+# - Multiple realms: returns realm list (availableRealms present, accessToken null)
+mutation Authenticate($username: String!, $password: String!) {
+  authenticate(username: $username, password: $password) {
+    success
+    subject
+    # Multiple realms case
+    availableRealms {
+      realmId
+      realmName
+      displayName
+      zoneId
+      realmType
+      description
+      isActive
+    }
+    # Single realm case (auto-selected)
+    accessToken
+    refreshToken
+    expiresIn
+    tokenType
+    identityContext {
+      zone
+      realm
+      subject {
+        accountId
+        userId
+        username
+        email
+        displayName
+      }
+      groups
+    }
+    error
+  }
+}

@@ -8,7 +8,8 @@
   "exports": {
     ".": "./index.ts",
     "./login": "./login/index.ts",
-    "./session": "./session/index.ts"
+    "./session": "./session/index.ts",
+    "./tenant": "./tenant/index.ts"
   },
   "scripts": {
     "lint": "eslint .",

@@ -1,14 +1,11 @@
 'use client';
 
-import { Container, Typography, Box, Paper, Grid2 } from '@mui/material';
-import PeopleIcon from '@mui/icons-material/People';
-import SecurityIcon from '@mui/icons-material/Security';
-import BusinessIcon from '@mui/icons-material/Business';
+import { Box, Container, Grid2, Icons,Paper, Typography } from '@assetforce/material';
 
 const stats = [
-  { title: 'Users', value: '—', icon: PeopleIcon },
-  { title: 'Roles', value: '—', icon: SecurityIcon },
-  { title: 'Tenants', value: '—', icon: BusinessIcon },
+  { title: 'Users', value: '—', icon: Icons.People },
+  { title: 'Roles', value: '—', icon: Icons.Security },
+  { title: 'Tenants', value: '—', icon: Icons.Business },
 ];
 
 export default function Home() {

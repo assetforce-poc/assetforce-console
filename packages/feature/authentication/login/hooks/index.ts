@@ -1,2 +1,2 @@
+export type { AuthError,AuthTokens, LoginResult, MFAChallenge, UseLoginInput } from './useLogin';
 export { useLogin } from './useLogin';
-export type { UseLoginInput, AuthTokens, MFAChallenge, LoginResult, AuthError } from './useLogin';

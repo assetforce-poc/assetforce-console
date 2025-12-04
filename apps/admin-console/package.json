@@ -11,8 +11,7 @@
   },
   "dependencies": {
     "@assetforce/material": "*",
-    "@assetforce/config": "*",
-    "@assetforce/graphql": "*",
+        "@assetforce/graphql": "*",
     "@emotion/cache": "~11.13.5",
     "next": "15.1.2",
     "react": "19.0.0",

@@ -1,5 +1,5 @@
 // Re-export Apollo Client essentials
-export { ApolloClient, InMemoryCache, ApolloProvider, gql, useQuery, useMutation, useLazyQuery } from '@apollo/client';
+export { ApolloClient, ApolloProvider, gql, InMemoryCache, useLazyQuery,useMutation, useQuery } from '@apollo/client';
 
 // Export custom client factory
 export { createApolloClient } from './client';
@@ -8,5 +8,5 @@ export { createApolloClient } from './client';
 export { ApolloClientProvider } from './provider';
 
 // Export proxy utilities
-export { createGraphQLProxy } from './proxy';
 export type { GraphQLProxyOptions } from './proxy';
+export { createGraphQLProxy } from './proxy';

@@ -23,7 +23,7 @@ const createSubfunctionConfig = (subfunctionPath: string) => ({
 });
 
 // 子功能列表（根据实际目录结构自动生成配置）
-const SUBFUNCTIONS = ['login', 'session'];
+const SUBFUNCTIONS = ['login', 'session', 'tenant'];
 
 // 自动生成 generates 配置
 const generates = Object.fromEntries(

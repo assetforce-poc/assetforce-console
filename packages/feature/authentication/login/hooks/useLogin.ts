@@ -1,8 +1,9 @@
 'use client';
 
 import { useMutation } from '@apollo/client';
-import { LoginDocument } from '../graphql/generated';
+
 import type { LoginMutation, LoginMutationVariables } from '../graphql/generated';
+import { LoginDocument } from '../graphql/generated';
 
 // Types
 export interface UseLoginInput {
