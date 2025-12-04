@@ -19,6 +19,7 @@ COPY apps/customer-portal/package.json ./apps/customer-portal/
 COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
+COPY packages/auth/package.json ./packages/auth/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 
 # Install dependencies
@@ -100,6 +101,7 @@ COPY apps/customer-portal/package.json ./apps/customer-portal/
 COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
+COPY packages/auth/package.json ./packages/auth/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 
 ARG GITHUB_PACKAGES_TOKEN
