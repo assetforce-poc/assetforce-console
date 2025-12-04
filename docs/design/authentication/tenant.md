@@ -12,6 +12,7 @@
 多租户登录流程处理用户在多个租户（Realm）中的身份认证。
 
 **核心场景**：
+
 - **单租户用户**：直接返回 token，无需选择
 - **多租户用户**：显示租户选择器，用户选择后返回 token
 
@@ -58,13 +59,14 @@ interface MultiTenantLoginFormProps {
 
 **状态机**：
 
-| 步骤 | 状态 | 显示内容 |
-|------|------|----------|
-| 1 | `credentials` | 凭证输入表单 |
-| 2 | `tenant-selection` | 租户选择器（仅多租户） |
-| 3 | `complete` | 成功消息（等待重定向） |
+| 步骤 | 状态               | 显示内容               |
+| ---- | ------------------ | ---------------------- |
+| 1    | `credentials`      | 凭证输入表单           |
+| 2    | `tenant-selection` | 租户选择器（仅多租户） |
+| 3    | `complete`         | 成功消息（等待重定向） |
 
 **功能**：
+
 - [x] Email/Username + Password 输入
 - [x] 错误提示 (Alert)
 - [x] Loading 状态
@@ -90,6 +92,7 @@ interface TenantSelectorProps {
 ```
 
 **Realm 类型**：
+
 ```typescript
 interface Realm {
   realmId: string;
@@ -104,6 +107,7 @@ interface Realm {
 ```
 
 **功能**：
+
 - [x] 租户列表展示 (MUI List)
 - [x] 租户类型标签 (Production/Trial/Demo/Sandbox)
 - [x] 选中状态高亮
@@ -139,24 +143,27 @@ interface UseMultiTenantLoginReturn {
 ```
 
 **状态类型**：
+
 ```typescript
 interface MultiTenantLoginState {
   step: 'credentials' | 'tenant-selection' | 'complete';
-  subject?: string;           // 用户标识（多租户时用于 selectTenant）
-  availableRealms?: Realm[];  // 可选租户列表
-  selectedRealm?: Realm;      // 选中的租户
-  error?: string;             // 错误消息
+  subject?: string; // 用户标识（多租户时用于 selectTenant）
+  availableRealms?: Realm[]; // 可选租户列表
+  selectedRealm?: Realm; // 选中的租户
+  error?: string; // 错误消息
 }
 ```
 
 **流程逻辑**：
 
 1. **authenticate(username, password)**
+
    - 调用 `authenticate` mutation
    - 单租户：直接触发 onSuccess
    - 多租户：切换到 `tenant-selection` 步骤
 
 2. **selectTenant(realm)**
+
    - 调用 `selectTenant` mutation
    - 成功后触发 onSuccess
 
@@ -282,10 +289,7 @@ export default function LoginPage() {
     <Container maxWidth="sm">
       <Paper sx={{ p: 4 }}>
         <Typography variant="h4">Sign In</Typography>
-        <MultiTenantLoginForm
-          onSuccess={handleSuccess}
-          onError={console.error}
-        />
+        <MultiTenantLoginForm onSuccess={handleSuccess} onError={console.error} />
       </Paper>
     </Container>
   );
@@ -296,17 +300,17 @@ export default function LoginPage() {
 
 ## 8. AAC 依赖
 
-| API | AAC 状态 | 说明 |
-|-----|----------|------|
+| API                     | AAC 状态  | 说明                   |
+| ----------------------- | --------- | ---------------------- |
 | `authenticate` mutation | ✅ 已实现 | 预认证 + 单/多租户判断 |
-| `selectTenant` mutation | ✅ 已实现 | 租户选择后获取 token |
+| `selectTenant` mutation | ✅ 已实现 | 租户选择后获取 token   |
 
 ---
 
 ## 附录: 相关文档
 
-| 文档 | 路径 |
-|------|------|
-| login 子功能 | `authentication/login.md` |
+| 文档           | 路径                                    |
+| -------------- | --------------------------------------- |
+| login 子功能   | `authentication/login.md`               |
 | AAC 多租户设计 | `assetforce-docs/.../aac/capabilities/` |
-| Task 027 | Keycloak AAC IMC Prototype |
+| Task 027       | Keycloak AAC IMC Prototype              |

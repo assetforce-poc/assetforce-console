@@ -8,15 +8,15 @@
 
 ## 实现状态
 
-| 项目 | 设计 | 实现 | 说明 |
-|------|------|------|------|
-| LoginForm | ✅ | ✅ | 基础版已实现 |
-| useLogin | ✅ | ✅ | 已实现 |
-| OAuthButtons | ✅ | 🔲 | 待实现 |
-| CredentialInput | ✅ | 🔲 | 内联在 LoginForm，未单独抽取 |
-| useOAuthLogin | ✅ | 🔲 | 待实现 |
-| rememberMe | ✅ | 🔲 | 代码预留，待 AAC 支持 |
-| GraphQL schema | ✅ | ⚠️ | 实现使用扁平结构，非 Union Type |
+| 项目            | 设计 | 实现 | 说明                            |
+| --------------- | ---- | ---- | ------------------------------- |
+| LoginForm       | ✅   | ✅   | 基础版已实现                    |
+| useLogin        | ✅   | ✅   | 已实现                          |
+| OAuthButtons    | ✅   | 🔲   | 待实现                          |
+| CredentialInput | ✅   | 🔲   | 内联在 LoginForm，未单独抽取    |
+| useOAuthLogin   | ✅   | 🔲   | 待实现                          |
+| rememberMe      | ✅   | 🔲   | 代码预留，待 AAC 支持           |
+| GraphQL schema  | ✅   | ⚠️   | 实现使用扁平结构，非 Union Type |
 
 ---
 
@@ -136,6 +136,7 @@ interface LoginFormProps {
 ```
 
 **差异说明**：
+
 - `config` 未实现 - 当前只支持 username/password
 - `onForgotPassword` / `onCreateAccount` 未实现 - 待添加链接
 - 回调参数类型不同 - 使用 LoginResult 联合类型
@@ -310,7 +311,7 @@ mutation Login($input: LoginInput!) {
     refreshToken
     expiresIn
     tokenType
-    error                    # 字符串，非结构化错误
+    error # 字符串，非结构化错误
     identityContext {
       zone
       realm
@@ -328,6 +329,7 @@ mutation Login($input: LoginInput!) {
 ```
 
 **差异说明**：
+
 - 设计使用 Union Type 区分成功/MFA/错误
 - 实现使用扁平结构，通过 `success` + `error` 字段判断
 - MFA 判断：代码中检查 `error?.includes('MFA')` (临时方案)
