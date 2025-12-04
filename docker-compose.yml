@@ -33,6 +33,9 @@ services:
       # Override for Docker: use host.docker.internal to access host services
       - AAC_GRAPHQL_URL=http://host.docker.internal:8081/graphql
       - IMC_GRAPHQL_URL=http://host.docker.internal:8082/graphql
+      # Auth configuration
+      - AUTH_ENDPOINT=http://host.docker.internal:8081/graphql
+      - AUTH_SECRET=this-is-a-dev-secret-min-32-chars!
     networks:
       - assetforce-network
 
