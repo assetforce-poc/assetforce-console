@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Container, Paper,Typography } from '@assetforce/material';
+import { Box, Button, Container, Paper, Typography } from '@assetforce/material';
 import Link from 'next/link';
 
 export default function Home() {

@@ -1,4 +1,4 @@
-import { CssBaseline,ThemeProvider } from '@assetforce/material';
+import { CssBaseline, ThemeProvider } from '@assetforce/material';
 import { AppRouterCacheProvider } from '@assetforce/material/nextjs';
 import { theme } from '@assetforce/material/theme';
 import type { Metadata } from 'next';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Container, Grid2, Icons,Paper, Typography } from '@assetforce/material';
+import { Box, Container, Grid2, Icons, Paper, Typography } from '@assetforce/material';
 
 const stats = [
   { title: 'Users', value: '—', icon: Icons.People },

@@ -1,7 +1,7 @@
 'use client';
 
-import { type AuthResult,MultiTenantLoginForm } from '@assetforce/authentication/tenant';
-import { Box, Container, Paper,Typography } from '@assetforce/material';
+import { type AuthResult, MultiTenantLoginForm } from '@assetforce/authentication/tenant';
+import { Box, Container, Paper, Typography } from '@assetforce/material';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
