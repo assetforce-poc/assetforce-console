@@ -1,10 +1,9 @@
 'use client';
 
-import { Alert, Box, Button, Fade,Stack, TextField } from '@mui/material';
+import { Alert, Box, Button, Fade, Stack, TextField } from '@mui/material';
 import { useState } from 'react';
 
-import type { AuthResult } from '../../graphql/generated/graphql';
-import { useMultiTenantLogin } from '../../hooks';
+import { type AuthResult, useMultiTenantLogin } from '../../hooks';
 import { TenantSelector } from '../TenantSelector';
 
 export interface MultiTenantLoginFormProps {

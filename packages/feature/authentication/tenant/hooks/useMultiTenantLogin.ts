@@ -1,11 +1,47 @@
-import { useMutation } from '@apollo/client';
-import { useCallback,useState } from 'react';
+'use client';
 
-import type { AuthResult } from '../graphql/generated/graphql';
-import { AuthenticateDocument, SelectTenantDocument } from '../graphql/generated/graphql';
-import type { MultiTenantLoginState,Realm } from '../types';
+import { useCallback, useState } from 'react';
+
+import type { MultiTenantLoginState, Realm } from '../types';
+
+/**
+ * API Tenant type (from @assetforce/auth)
+ */
+interface ApiTenant {
+  id: string;
+  name: string;
+  zoneId?: string;
+  realmType?: string;
+  description?: string;
+}
+
+/**
+ * API Response types (matches @assetforce/auth server responses)
+ */
+interface SignInResponse {
+  success: boolean;
+  requiresTenantSelection?: boolean;
+  subject?: string;
+  availableTenants?: ApiTenant[];
+  error?: string;
+}
+
+interface SelectTenantResponse {
+  success: boolean;
+  error?: string;
+}
+
+/**
+ * Auth result returned on success
+ */
+export interface AuthResult {
+  success: boolean;
+  error?: string;
+}
 
 export interface UseMultiTenantLoginOptions {
+  /** Base path for auth API (default: /api/auth) */
+  basePath?: string;
   /** Callback when login completes successfully */
   onSuccess?: (result: AuthResult) => void;
   /** Callback when an error occurs */
@@ -29,12 +65,42 @@ const initialState: MultiTenantLoginState = {
   step: 'credentials',
 };
 
+/**
+ * Convert API Tenant to UI Realm type
+ */
+function toRealm(tenant: ApiTenant): Realm {
+  return {
+    realmId: tenant.id,
+    realmName: tenant.name,
+    displayName: tenant.name,
+    zoneId: tenant.zoneId ?? '',
+    realmType: (tenant.realmType as Realm['realmType']) ?? 'PRODUCTION',
+    description: tenant.description,
+    isActive: true,
+  };
+}
+
+/**
+ * useMultiTenantLogin - Multi-tenant authentication hook
+ *
+ * Uses @assetforce/auth API endpoints instead of direct GraphQL calls.
+ * The authentication flow:
+ * 1. Call /api/auth/signin with credentials
+ * 2. If multiple tenants, show selection UI
+ * 3. Call /api/auth/select-tenant with chosen tenant
+ *
+ * @example
+ * ```tsx
+ * const { state, loading, authenticate, selectTenant } = useMultiTenantLogin({
+ *   onSuccess: () => router.push('/dashboard'),
+ *   onError: (msg) => console.error(msg),
+ * });
+ * ```
+ */
 export const useMultiTenantLogin = (options?: UseMultiTenantLoginOptions): UseMultiTenantLoginReturn => {
+  const basePath = options?.basePath ?? '/api/auth';
   const [state, setState] = useState<MultiTenantLoginState>(initialState);
   const [loading, setLoading] = useState(false);
-
-  const [authenticateMutation] = useMutation(AuthenticateDocument);
-  const [selectTenantMutation] = useMutation(SelectTenantDocument);
 
   // Authenticate - handles both single and multiple realm cases
   const authenticate = useCallback(
@@ -43,56 +109,51 @@ export const useMultiTenantLogin = (options?: UseMultiTenantLoginOptions): UseMu
       setState((prev) => ({ ...prev, error: undefined }));
 
       try {
-        const { data } = await authenticateMutation({
-          variables: { username, password },
+        const response = await fetch(`${basePath}/signin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username, password }),
         });
 
-        if (!data?.authenticate.success) {
+        const data: SignInResponse = await response.json();
+
+        if (!data.success) {
           setState((prev) => ({
             ...prev,
-            error: data?.authenticate.error ?? 'Authentication failed',
+            error: data.error ?? 'Authentication failed',
           }));
+          options?.onError?.(data.error ?? 'Authentication failed');
           return;
         }
 
-        const subject = data.authenticate.subject;
+        // Check if tenant selection is required
+        if (data.requiresTenantSelection && data.availableTenants) {
+          const availableRealms = data.availableTenants.map(toRealm);
 
-        // Check if token is returned (single realm case)
-        if (data.authenticate.accessToken) {
-          // Single realm - authentication complete
+          if (availableRealms.length === 0) {
+            setState((prev) => ({
+              ...prev,
+              error: 'No tenants available for this user',
+            }));
+            options?.onError?.('No tenants available for this user');
+            return;
+          }
+
           setState({
-            step: 'complete',
-            subject: subject ?? undefined,
-          });
-
-          // Call success callback with the result
-          options?.onSuccess?.({
-            success: true,
-            accessToken: data.authenticate.accessToken,
-            refreshToken: data.authenticate.refreshToken,
-            expiresIn: data.authenticate.expiresIn,
-            tokenType: data.authenticate.tokenType,
-            identityContext: data.authenticate.identityContext,
+            step: 'tenant-selection',
+            subject: data.subject,
+            availableRealms,
           });
           return;
         }
 
-        // Multiple realms - show selection UI
-        const availableRealms = (data.authenticate.availableRealms ?? []) as Realm[];
-
-        if (availableRealms.length === 0) {
-          setState((prev) => ({
-            ...prev,
-            error: 'No tenants available for this user',
-          }));
-          return;
-        }
-
+        // Single tenant - authentication complete
         setState({
-          step: 'tenant-selection',
-          subject: subject ?? undefined,
-          availableRealms,
+          step: 'complete',
+          subject: data.subject,
         });
+        options?.onSuccess?.({ success: true });
       } catch (error) {
         const message = error instanceof Error ? error.message : 'An error occurred';
         setState((prev) => ({ ...prev, error: message }));
@@ -101,7 +162,7 @@ export const useMultiTenantLogin = (options?: UseMultiTenantLoginOptions): UseMu
         setLoading(false);
       }
     },
-    [authenticateMutation, options]
+    [basePath, options]
   );
 
   // Select tenant - only called for multiple realms case
@@ -113,18 +174,24 @@ export const useMultiTenantLogin = (options?: UseMultiTenantLoginOptions): UseMu
       }
 
       setLoading(true);
-      setState((prev) => ({ ...prev, selectedRealm: realm }));
+      setState((prev) => ({ ...prev, selectedRealm: realm, error: undefined }));
 
       try {
-        const { data } = await selectTenantMutation({
-          variables: { subject: state.subject, realmId: realm.realmId },
+        const response = await fetch(`${basePath}/select-tenant`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ tenantId: realm.realmId }),
         });
 
-        if (!data?.selectTenant.success) {
+        const data: SelectTenantResponse = await response.json();
+
+        if (!data.success) {
           setState((prev) => ({
             ...prev,
-            error: data?.selectTenant.error ?? 'Failed to select tenant',
+            error: data.error ?? 'Failed to select tenant',
           }));
+          options?.onError?.(data.error ?? 'Failed to select tenant');
           return;
         }
 
@@ -133,8 +200,7 @@ export const useMultiTenantLogin = (options?: UseMultiTenantLoginOptions): UseMu
           subject: state.subject,
           selectedRealm: realm,
         });
-
-        options?.onSuccess?.(data.selectTenant);
+        options?.onSuccess?.({ success: true });
       } catch (error) {
         const message = error instanceof Error ? error.message : 'An error occurred';
         setState((prev) => ({ ...prev, error: message }));
@@ -143,7 +209,7 @@ export const useMultiTenantLogin = (options?: UseMultiTenantLoginOptions): UseMu
         setLoading(false);
       }
     },
-    [state.subject, selectTenantMutation, options]
+    [basePath, state.subject, options]
   );
 
   // Reset the flow

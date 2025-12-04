@@ -1,34 +1,20 @@
 'use client';
 
-import { useMutation } from '@apollo/client';
+import { useCallback, useState } from 'react';
 
-import type { LoginMutation, LoginMutationVariables } from '../graphql/generated';
-import { LoginDocument } from '../graphql/generated';
+/**
+ * API Response types (matches @assetforce/auth server responses)
+ */
+interface SignInResponse {
+  success: boolean;
+  requiresTenantSelection?: boolean;
+  error?: string;
+}
 
 // Types
 export interface UseLoginInput {
-  credential: string; // email 或 username
+  credential: string; // email or username
   password: string;
-  rememberMe?: boolean; // 暂不支持，待 AAC 扩展
-}
-
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-  tokenType: string;
-  identityContext?: {
-    zone?: string;
-    realm: string;
-    subject: {
-      accountId: string;
-      userId?: string;
-      username: string;
-      email?: string;
-      displayName?: string;
-    };
-    groups: string[];
-  };
 }
 
 export interface MFAChallenge {
@@ -37,21 +23,32 @@ export interface MFAChallenge {
 }
 
 export type LoginResult =
-  | { type: 'success'; tokens: AuthTokens }
+  | { type: 'success' }
+  | { type: 'tenant_selection_required' }
   | { type: 'mfa_required'; challenge: MFAChallenge }
   | { type: 'error'; message: string };
 
-export interface AuthError {
-  code: string;
-  message: string;
+export interface UseLoginOptions {
+  /** Base path for auth API (default: /api/auth) */
+  basePath?: string;
+}
+
+export interface UseLoginReturn {
+  /** Perform login */
+  login: (input: UseLoginInput) => Promise<LoginResult>;
+  /** Loading state */
+  loading: boolean;
 }
 
 /**
- * useLogin Hook - Email/Username + Password 登录
+ * useLogin Hook - Simple email/username + password login
+ *
+ * Uses @assetforce/auth API endpoints instead of direct GraphQL calls.
+ * For multi-tenant scenarios with tenant selection UI, use useMultiTenantLogin instead.
  *
  * @example
  * ```tsx
- * const { login, loading, error } = useLogin();
+ * const { login, loading } = useLogin();
  *
  * const handleLogin = async () => {
  *   const result = await login({
@@ -60,99 +57,76 @@ export interface AuthError {
  *   });
  *
  *   if (result.type === 'success') {
- *     // Store tokens, navigate to app
- *   } else if (result.type === 'mfa_required') {
- *     // Navigate to MFA page
+ *     router.push('/dashboard');
+ *   } else if (result.type === 'tenant_selection_required') {
+ *     router.push('/auth/select-tenant');
+ *   } else if (result.type === 'error') {
+ *     setError(result.message);
  *   }
  * };
  * ```
  */
-export function useLogin() {
-  const [loginMutation, { loading }] = useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+export function useLogin(options?: UseLoginOptions): UseLoginReturn {
+  const basePath = options?.basePath ?? '/api/auth';
+  const [loading, setLoading] = useState(false);
 
-  const login = async (input: UseLoginInput): Promise<LoginResult> => {
-    try {
-      const { data } = await loginMutation({
-        variables: {
-          input: {
-            username: input.credential, // Keycloak 支持 email 作为 username
+  const login = useCallback(
+    async (input: UseLoginInput): Promise<LoginResult> => {
+      setLoading(true);
+
+      try {
+        const response = await fetch(`${basePath}/signin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            username: input.credential,
             password: input.password,
-            realm: 'assetforce-test', // 默认 realm
-          },
-        },
-      });
+          }),
+        });
 
-      if (!data?.login) {
-        return {
-          type: 'error',
-          message: 'No response from server',
-        };
-      }
+        const data: SignInResponse = await response.json();
 
-      const { success, accessToken, refreshToken, expiresIn, tokenType, error, identityContext } = data.login;
+        if (!data.success) {
+          // Check if MFA is required (by error message pattern)
+          if (data.error?.includes('MFA') || data.error?.includes('2FA')) {
+            return {
+              type: 'mfa_required',
+              challenge: {
+                type: 'totp',
+                message: data.error,
+              },
+            };
+          }
 
-      // 错误处理
-      if (!success || error) {
-        // 检查是否是 MFA required
-        if (error?.includes('MFA') || error?.includes('2FA')) {
           return {
-            type: 'mfa_required',
-            challenge: {
-              type: 'totp', // TODO: 从 AAC 返回
-              message: error,
-            },
+            type: 'error',
+            message: data.error || 'Login failed',
           };
         }
 
+        // Check if tenant selection is required
+        if (data.requiresTenantSelection) {
+          return { type: 'tenant_selection_required' };
+        }
+
+        // Success
+        return { type: 'success' };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Network error';
         return {
           type: 'error',
-          message: error || 'Login failed',
+          message,
         };
+      } finally {
+        setLoading(false);
       }
-
-      // 成功
-      if (accessToken && refreshToken && expiresIn && tokenType) {
-        return {
-          type: 'success',
-          tokens: {
-            accessToken,
-            refreshToken,
-            expiresIn,
-            tokenType,
-            identityContext: identityContext
-              ? {
-                  zone: identityContext.zone ?? undefined,
-                  realm: identityContext.realm,
-                  subject: {
-                    accountId: identityContext.subject.accountId,
-                    userId: identityContext.subject.userId ?? undefined,
-                    username: identityContext.subject.username,
-                    email: identityContext.subject.email ?? undefined,
-                    displayName: identityContext.subject.displayName ?? undefined,
-                  },
-                  groups: identityContext.groups,
-                }
-              : undefined,
-          },
-        };
-      }
-
-      return {
-        type: 'error',
-        message: 'Invalid response format',
-      };
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      return {
-        type: 'error',
-        message,
-      };
-    }
-  };
+    },
+    [basePath]
+  );
 
   return {
     login,
     loading,
-    error: null as AuthError | null, // TODO: 从 mutation error 提取
   };
 }

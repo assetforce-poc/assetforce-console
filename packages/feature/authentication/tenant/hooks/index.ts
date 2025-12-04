@@ -1,2 +1,2 @@
-export type { UseMultiTenantLoginOptions, UseMultiTenantLoginReturn } from './useMultiTenantLogin';
+export type { AuthResult, UseMultiTenantLoginOptions, UseMultiTenantLoginReturn } from './useMultiTenantLogin';
 export { useMultiTenantLogin } from './useMultiTenantLogin';
