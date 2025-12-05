@@ -33,17 +33,17 @@
 
 ## 2. 子功能清单
 
-| 子功能         | 目录              | 说明            | 详细设计                                 | 状态        |
-| -------------- | ----------------- | --------------- | ---------------------------------------- | ----------- |
-| login          | `login/`          | 登录表单、OAuth | [login.md](./login.md)                   | 🔄 部分实现 |
-| **tenant**     | `tenant/`         | 多租户登录流程  | [tenant.md](./tenant.md)                 | ✅ 已实现   |
-| mfa            | `mfa/`            | MFA 验证和设置  | [mfa.md](./mfa.md)                       | Draft       |
-| session        | `session/`        | 会话管理、登出  | [session.md](./session.md)               | Draft       |
-| password-reset | `password-reset/` | 忘记密码流程    | [password-reset.md](./password-reset.md) | Draft       |
-| password       | `password/`       | 修改密码        | [password.md](./password.md)             | Draft       |
-| auth-provider  | `auth-provider/`  | OAuth 绑定/解绑 | [auth-provider.md](./auth-provider.md)   | Draft       |
-| activation     | `activation/`     | Admin 邀请激活  | [activation.md](./activation.md)         | Draft       |
-| register       | `register/`       | 用户自助注册    | 待写                                     | 待写        |
+| 子功能         | 目录              | 说明            | 详细设计                                 | 状态      |
+| -------------- | ----------------- | --------------- | ---------------------------------------- | --------- |
+| login          | `login/`          | 登录表单、OAuth | [login.md](./login.md)                   | ✅ 已实现 |
+| **tenant**     | `tenant/`         | 多租户登录流程  | [tenant.md](./tenant.md)                 | ✅ 已实现 |
+| mfa            | `mfa/`            | MFA 验证和设置  | [mfa.md](./mfa.md)                       | Draft     |
+| **session**    | `session/`        | 会话管理、登出  | [session.md](./session.md)               | ✅ 已实现 |
+| password-reset | `password-reset/` | 忘记密码流程    | [password-reset.md](./password-reset.md) | Draft     |
+| password       | `password/`       | 修改密码        | [password.md](./password.md)             | Draft     |
+| auth-provider  | `auth-provider/`  | OAuth 绑定/解绑 | [auth-provider.md](./auth-provider.md)   | Draft     |
+| activation     | `activation/`     | Admin 邀请激活  | [activation.md](./activation.md)         | Draft     |
+| register       | `register/`       | 用户自助注册    | 待写                                     | 待写      |
 
 ---
 
@@ -92,13 +92,14 @@
 
 | Phase | 子功能               | 目标                      | 优先级 | 依赖         | 工作模式       |
 | ----- | -------------------- | ------------------------- | ------ | ------------ | -------------- |
-| 1     | login                | Email + Password 登录可用 | P0     | AAC ✅       | 🔄 部分完成    |
+| 1     | login                | Email + Password 登录可用 | P0     | AAC ✅       | ✅ **已实现**  |
 | 1.1   | **tenant**           | 多租户登录流程            | P0     | AAC ✅       | ✅ **已实现**  |
+| 1.2   | **session**          | Token/Session 管理        | P0     | AAC ✅       | ✅ **已实现**  |
 | 2     | register             | 用户自助注册可用          | P0     | AAC 🔲       | 规整→实施→✅   |
 | 3     | password-reset       | 忘记密码流程可用          | P0     | AAC 🔲       | 规整→实施→✅   |
 | 4     | password             | 用户可修改密码            | P0     | AAC 🔲       | 规整→实施→✅   |
 | 5     | activation           | Admin 邀请激活可用        | P0     | AAC 🔲       | 规整→实施→✅   |
-| 6     | session              | 查看和管理活动会话        | P1     | AAC 🔲       | 规整→实施→✅   |
+| 6     | session (管理)       | 查看和管理活动会话        | P1     | AAC 🔲       | 规整→实施→✅   |
 | 7     | login (GitHub OAuth) | GitHub OAuth 登录可用     | P1     | AAC OAuth 🔲 | 🔲 待 AAC 实施 |
 | 8     | mfa (验证)           | TOTP 验证可用             | P1     | AAC 🔲       | 规整→实施→✅   |
 | 9     | mfa (设置)           | 用户可启用/禁用 MFA       | P1     | AAC 🔲       | 规整→实施→✅   |
@@ -134,10 +135,10 @@
 | 文档              | 内容               | 状态          |
 | ----------------- | ------------------ | ------------- |
 | README.md         | 模块概览（本文档） | ✅            |
-| login.md          | 登录子功能         | 🔄 部分实现   |
+| login.md          | 登录子功能         | ✅ **已实现** |
 | **tenant.md**     | 多租户登录         | ✅ **已实现** |
 | mfa.md            | MFA 子功能         | Draft         |
-| session.md        | 会话管理           | Draft         |
+| **session.md**    | 会话管理           | ✅ **已实现** |
 | password-reset.md | 密码重置           | Draft         |
 | password.md       | 密码管理           | Draft         |
 | auth-provider.md  | 认证方式管理       | Draft         |

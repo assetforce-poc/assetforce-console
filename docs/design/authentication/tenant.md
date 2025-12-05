@@ -157,13 +157,11 @@ interface MultiTenantLoginState {
 **流程逻辑**：
 
 1. **authenticate(username, password)**
-
    - 调用 `authenticate` mutation
    - 单租户：直接触发 onSuccess
    - 多租户：切换到 `tenant-selection` 步骤
 
 2. **selectTenant(realm)**
-
    - 调用 `selectTenant` mutation
    - 成功后触发 onSuccess
 

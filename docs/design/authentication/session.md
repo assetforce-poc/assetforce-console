@@ -1,19 +1,53 @@
 # session - 会话管理子功能详细设计
 
-- **Status**: Draft (暂存内容待规整)
+- **Status**: ✅ 已实现 (Task 032)
 - **Parent**: [authentication/README.md](./README.md)
+- **Package**: `@assetforce/auth`
 
 ---
 
-## 1. 功能清单
+## 实现概述 (Task 032)
 
-| 功能         | 组件                | GraphQL                      | 优先级 |
-| ------------ | ------------------- | ---------------------------- | ------ |
-| Token 刷新   | (自动)              | `refreshToken` mutation      | P0     |
-| 单设备登出   | LogoutConfirmDialog | `logout` mutation            | P0     |
-| 全设备登出   | SessionList         | `logoutAllSessions` mutation | P1     |
-| 查看活动会话 | SessionList         | `myActiveSessions` query     | P1     |
-| 撤销指定会话 | SessionList         | `revokeSession` mutation     | P1     |
+### 技术方案
+
+- **Session 存储**: iron-session (httpOnly cookie)
+- **Token 存储**: 服务端 session (不暴露给客户端)
+- **API 路由**: Next.js Route Handlers
+
+### 已实现功能
+
+| 功能            | API Endpoint                   | 状态 |
+| --------------- | ------------------------------ | ---- |
+| 登录            | `POST /api/auth/signin`        | ✅   |
+| 登出            | `POST /api/auth/signout`       | ✅   |
+| 获取会话        | `GET /api/auth/session`        | ✅   |
+| 选择租户        | `POST /api/auth/select-tenant` | ✅   |
+| 刷新 Token      | `POST /api/auth/refresh`       | ✅   |
+| Session 持久化  | httpOnly cookie                | ✅   |
+| F5 刷新保持登录 | AuthProvider + cookie          | ✅   |
+| 路由保护        | middleware                     | ✅   |
+
+### 代码位置
+
+| 组件         | 路径                                       |
+| ------------ | ------------------------------------------ |
+| Auth Package | `packages/auth/`                           |
+| API Routes   | `apps/customer-portal/src/app/api/auth/`   |
+| Middleware   | `apps/customer-portal/src/middleware.ts`   |
+| AuthProvider | `packages/auth/src/react/AuthProvider.tsx` |
+| useAuth Hook | `packages/auth/src/react/useAuth.ts`       |
+
+---
+
+## 1. 功能清单 (原设计)
+
+| 功能         | 组件                | API/GraphQL                  | 优先级 | 状态 |
+| ------------ | ------------------- | ---------------------------- | ------ | ---- |
+| Token 刷新   | (自动)              | `/api/auth/refresh`          | P0     | ✅   |
+| 单设备登出   | LogoutConfirmDialog | `/api/auth/signout`          | P0     | ✅   |
+| 全设备登出   | SessionList         | `logoutAllSessions` mutation | P1     | 🔲   |
+| 查看活动会话 | SessionList         | `myActiveSessions` query     | P1     | 🔲   |
+| 撤销指定会话 | SessionList         | `revokeSession` mutation     | P1     | 🔲   |
 
 ---
 
