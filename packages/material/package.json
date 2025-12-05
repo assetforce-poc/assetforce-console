@@ -16,10 +16,10 @@
   },
   "dependencies": {
     "@emotion/react": "~11.14.0",
-    "@emotion/styled": "~11.14.0",
-    "@mui/material": "~7.3.5",
-    "@mui/icons-material": "~7.3.5",
-    "@mui/material-nextjs": "~7.3.5"
+    "@emotion/styled": "~11.14.1",
+    "@mui/material": "~7.3.6",
+    "@mui/icons-material": "~7.3.6",
+    "@mui/material-nextjs": "~7.3.6"
   },
   "peerDependencies": {
     "react": "19.0.0",
@@ -28,8 +28,8 @@
   "devDependencies": {
     "@assetforce/eslint-config": "*",
     "@assetforce/typescript-config": "*",
-    "@types/react": "~19.0.1",
-    "@types/react-dom": "~19.0.1",
-    "typescript": "~5.7.2"
+    "@types/react": "~19.2.7",
+    "@types/react-dom": "~19.2.3",
+    "typescript": "~5.9.3"
   }
 }

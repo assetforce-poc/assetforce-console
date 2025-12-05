@@ -16,12 +16,11 @@
   },
   "dependencies": {
     "@assetforce/material": "*",
-    "@mui/material": "~7.2.0",
-    "react": "19.0.0"
+    "react": "19.2.1"
   },
   "devDependencies": {
     "@assetforce/typescript-config": "*",
-    "@types/react": "~19.0.1",
-    "typescript": "~5.7.2"
+    "@types/react": "~19.2.7",
+    "typescript": "~5.9.3"
   }
 }
