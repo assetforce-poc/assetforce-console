@@ -1,21 +1,59 @@
 'use client';
 
+import { useAuth } from '@assetforce/auth/react';
 import { type AuthResult, MultiTenantLoginForm } from '@assetforce/authentication/tenant';
-import { Box, Container, Paper, Typography } from '@assetforce/material';
-import { useRouter } from 'next/navigation';
+import { Box, CircularProgress, Container, Paper, Typography } from '@assetforce/material';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { isAuthenticated, isLoading, refresh } = useAuth();
 
-  const handleSuccess = (result: AuthResult) => {
-    // TODO: Store token and redirect to dashboard
+  // Get callback URL from query params
+  const callbackUrl = searchParams.get('callbackUrl') ?? '/';
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.replace(callbackUrl);
+    }
+  }, [isAuthenticated, isLoading, callbackUrl, router]);
+
+  const handleSuccess = async (result: AuthResult) => {
     console.log('Login successful:', result);
-    router.push('/');
+    // Refresh AuthProvider state before navigation
+    await refresh();
+    router.push(callbackUrl);
   };
 
   const handleError = (message: string) => {
     console.error('Login error:', message);
   };
+
+  // Show loading while checking auth state
+  if (isLoading) {
+    return (
+      <Container maxWidth="sm">
+        <Box
+          sx={{
+            minHeight: '100vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  // If authenticated, show nothing (will redirect)
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <Container maxWidth="sm">
@@ -39,5 +77,30 @@ export default function LoginPage() {
         </Paper>
       </Box>
     </Container>
+  );
+}
+
+function LoginFallback() {
+  return (
+    <Container maxWidth="sm">
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    </Container>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginFallback />}>
+      <LoginContent />
+    </Suspense>
   );
 }

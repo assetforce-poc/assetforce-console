@@ -99,10 +99,11 @@ export const createAuth = (config: AuthConfig): AuthInstance => {
     const route = segments.pop() as RouteKey | undefined;
 
     // Get session with mutable cookie store
-    const { session: clientSession, raw: session, cookieStore } = await getSessionFromHeaders(
-      request.headers,
-      sessionOptions
-    );
+    const {
+      session: clientSession,
+      raw: session,
+      cookieStore,
+    } = await getSessionFromHeaders(request.headers, sessionOptions);
 
     // Find handler
     const routeHandler = route ? HANDLERS[route] : undefined;
