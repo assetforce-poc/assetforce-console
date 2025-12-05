@@ -1,11 +1,12 @@
 # Docker Compose for assetforce-console development
 # Usage:
-#   Development: docker-compose up dev
-#   Production:  docker-compose --profile prod up customer-portal admin-console
+#   Development (combined):   docker-compose up dev
+#   Development (separate):   docker-compose up customer-portal-dev admin-console-dev
+#   Production:               docker-compose --profile prod up customer-portal admin-console
 
 services:
   # ==========================================================================
-  # Development Mode - Hot reload with volume mounts
+  # Development Mode - Hot reload with volume mounts (combined)
   # ==========================================================================
   dev:
     build:
@@ -36,6 +37,58 @@ services:
       # Auth configuration
       - AUTH_ENDPOINT=http://host.docker.internal:8081/graphql
       - AUTH_SECRET=this-is-a-dev-secret-min-32-chars!
+    networks:
+      - assetforce-network
+
+  # ==========================================================================
+  # Development Mode - Customer Portal (separate container)
+  # ==========================================================================
+  customer-portal-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: customer-portal-dev
+      args:
+        GITHUB_PACKAGES_TOKEN: ${GITHUB_PACKAGES_TOKEN}
+    container_name: assetforce-customer-portal-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/customer-portal/.next
+    environment:
+      - NODE_ENV=development
+      - GITHUB_PACKAGES_TOKEN=${GITHUB_PACKAGES_TOKEN}
+      - AAC_GRAPHQL_URL=http://host.docker.internal:8081/graphql
+      - IMC_GRAPHQL_URL=http://host.docker.internal:8082/graphql
+      - AUTH_ENDPOINT=http://host.docker.internal:8081/graphql
+      - AUTH_SECRET=this-is-a-dev-secret-min-32-chars!
+    networks:
+      - assetforce-network
+
+  # ==========================================================================
+  # Development Mode - Admin Console (separate container)
+  # ==========================================================================
+  admin-console-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: admin-console-dev
+      args:
+        GITHUB_PACKAGES_TOKEN: ${GITHUB_PACKAGES_TOKEN}
+    container_name: assetforce-admin-console-dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/admin-console/.next
+    environment:
+      - NODE_ENV=development
+      - GITHUB_PACKAGES_TOKEN=${GITHUB_PACKAGES_TOKEN}
+      - AAC_GRAPHQL_URL=http://host.docker.internal:8081/graphql
+      - IMC_GRAPHQL_URL=http://host.docker.internal:8082/graphql
     networks:
       - assetforce-network
 

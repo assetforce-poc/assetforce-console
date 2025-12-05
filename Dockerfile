@@ -123,7 +123,7 @@ ENV HOSTNAME="0.0.0.0"
 CMD ["node", "apps/admin-console/server.js"]
 
 # =============================================================================
-# Stage 5: Development - For local development with hot-reload
+# Stage 5: Development - For local development with hot-reload (combined)
 # =============================================================================
 FROM base AS dev
 WORKDIR /app
@@ -148,3 +148,53 @@ COPY . .
 EXPOSE 3000 3001
 
 CMD ["yarn", "dev"]
+
+# =============================================================================
+# Stage 5a: Development - Customer Portal (separate container)
+# =============================================================================
+FROM base AS customer-portal-dev
+WORKDIR /app
+
+COPY package.json yarn.lock .npmrc ./
+COPY apps/customer-portal/package.json ./apps/customer-portal/
+COPY apps/admin-console/package.json ./apps/admin-console/
+COPY packages/material/package.json ./packages/material/
+COPY packages/graphql/package.json ./packages/graphql/
+COPY packages/auth/package.json ./packages/auth/
+COPY packages/feature/authentication/package.json ./packages/feature/authentication/
+
+ARG GITHUB_PACKAGES_TOKEN
+RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+    yarn install && \
+    sed -i '$ d' .npmrc
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["yarn", "workspace", "@assetforce/customer-portal", "dev"]
+
+# =============================================================================
+# Stage 5b: Development - Admin Console (separate container)
+# =============================================================================
+FROM base AS admin-console-dev
+WORKDIR /app
+
+COPY package.json yarn.lock .npmrc ./
+COPY apps/customer-portal/package.json ./apps/customer-portal/
+COPY apps/admin-console/package.json ./apps/admin-console/
+COPY packages/material/package.json ./packages/material/
+COPY packages/graphql/package.json ./packages/graphql/
+COPY packages/auth/package.json ./packages/auth/
+COPY packages/feature/authentication/package.json ./packages/feature/authentication/
+
+ARG GITHUB_PACKAGES_TOKEN
+RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+    yarn install && \
+    sed -i '$ d' .npmrc
+
+COPY . .
+
+EXPOSE 3001
+
+CMD ["yarn", "workspace", "@assetforce/admin-console", "dev"]
