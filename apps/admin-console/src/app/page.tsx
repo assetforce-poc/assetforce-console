@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Container, Grid2, Icons, Paper, Typography } from '@assetforce/material';
+import { Box, Container, Grid, Icons, Paper, Typography } from '@assetforce/material';
 
 const stats = [
   { title: 'Users', value: '—', icon: Icons.People },
@@ -19,9 +19,9 @@ export default function Home() {
           Manage users, roles, and tenants
         </Typography>
 
-        <Grid2 container spacing={3}>
+        <Grid container spacing={3}>
           {stats.map((stat) => (
-            <Grid2 size={{ xs: 12, sm: 4 }} key={stat.title}>
+            <Grid size={{ xs: 12, sm: 4 }} key={stat.title}>
               <Paper sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
                 <stat.icon sx={{ fontSize: 40, color: 'primary.main' }} />
                 <Box>
@@ -31,9 +31,9 @@ export default function Home() {
                   </Typography>
                 </Box>
               </Paper>
-            </Grid2>
+            </Grid>
           ))}
-        </Grid2>
+        </Grid>
       </Box>
     </Container>
   );

@@ -30,16 +30,49 @@ RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc &
     sed -i '$ d' .npmrc
 
 # =============================================================================
-# Stage 3: Builder - Build all packages and apps
+# Stage 3a: Builder - Build customer-portal
 # =============================================================================
-FROM base AS builder
+FROM base AS builder-customer-portal
 WORKDIR /app
+
+ARG GITHUB_PACKAGES_TOKEN
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build all packages first, then apps
-RUN yarn build
+RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+    yarn turbo build --filter=@assetforce/customer-portal && \
+    sed -i '$ d' .npmrc
+
+# =============================================================================
+# Stage 3b: Builder - Build admin-console
+# =============================================================================
+FROM base AS builder-admin-console
+WORKDIR /app
+
+ARG GITHUB_PACKAGES_TOKEN
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+    yarn turbo build --filter=@assetforce/admin-console && \
+    sed -i '$ d' .npmrc
+
+# =============================================================================
+# Stage 3 (legacy): Builder - Build all packages and apps
+# =============================================================================
+FROM base AS builder
+WORKDIR /app
+
+ARG GITHUB_PACKAGES_TOKEN
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+    yarn build && \
+    sed -i '$ d' .npmrc
 
 # =============================================================================
 # Stage 4a: Runner - Customer Portal (production)
@@ -53,9 +86,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/apps/customer-portal/public ./apps/customer-portal/public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/customer-portal/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/customer-portal/.next/static ./apps/customer-portal/.next/static
+COPY --from=builder-customer-portal /app/apps/customer-portal/public ./apps/customer-portal/public
+COPY --from=builder-customer-portal --chown=nextjs:nodejs /app/apps/customer-portal/.next/standalone ./
+COPY --from=builder-customer-portal --chown=nextjs:nodejs /app/apps/customer-portal/.next/static ./apps/customer-portal/.next/static
 
 USER nextjs
 
@@ -77,9 +110,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/apps/admin-console/public ./apps/admin-console/public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/admin-console/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/admin-console/.next/static ./apps/admin-console/.next/static
+COPY --from=builder-admin-console /app/apps/admin-console/public ./apps/admin-console/public
+COPY --from=builder-admin-console --chown=nextjs:nodejs /app/apps/admin-console/.next/standalone ./
+COPY --from=builder-admin-console --chown=nextjs:nodejs /app/apps/admin-console/.next/static ./apps/admin-console/.next/static
 
 USER nextjs
 
