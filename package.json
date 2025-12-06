@@ -24,6 +24,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@assetforce/eslint-config": "*"
+    "@assetforce/eslint-config": "*",
+    "@assetforce/jest-config": "0.2.0"
   }
 }

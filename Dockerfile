@@ -20,7 +20,9 @@ COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
 COPY packages/auth/package.json ./packages/auth/
+COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
+COPY packages/feature/common/package.json ./packages/feature/common/
 
 # Install dependencies
 # GITHUB_PACKAGES_TOKEN is required for @assetforce/* packages
@@ -135,7 +137,9 @@ COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
 COPY packages/auth/package.json ./packages/auth/
+COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
+COPY packages/feature/common/package.json ./packages/feature/common/
 
 ARG GITHUB_PACKAGES_TOKEN
 RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
@@ -161,7 +165,9 @@ COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
 COPY packages/auth/package.json ./packages/auth/
+COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
+COPY packages/feature/common/package.json ./packages/feature/common/
 
 ARG GITHUB_PACKAGES_TOKEN
 RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
@@ -186,7 +192,9 @@ COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
 COPY packages/auth/package.json ./packages/auth/
+COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
+COPY packages/feature/common/package.json ./packages/feature/common/
 
 ARG GITHUB_PACKAGES_TOKEN
 RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
