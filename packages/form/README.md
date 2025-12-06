@@ -70,9 +70,9 @@ Root form component.
 ```tsx
 <Form
   defaultValues={{ email: '', password: '' }}
-  schema={zodSchema}           // Optional: zod validation
-  onSubmit={(values) => {}}    // Submit handler
-  mode="onChange"              // 'onChange' | 'onBlur' | 'onSubmit' | 'onTouched'
+  schema={zodSchema} // Optional: zod validation
+  onSubmit={(values) => {}} // Submit handler
+  mode="onChange" // 'onChange' | 'onBlur' | 'onSubmit' | 'onTouched'
 >
   {children}
 </Form>
@@ -86,8 +86,8 @@ Field component that connects to the form.
 <Field
   name="email"
   component={TextInput}
-  props={{ label: 'Email' }}   // Extra props passed to component
-  rules={{ required: 'Required' }}  // Inline validation rules
+  props={{ label: 'Email' }} // Extra props passed to component
+  rules={{ required: 'Required' }} // Inline validation rules
 />
 ```
 
@@ -123,9 +123,9 @@ const MyComponent = () => {
   const { isValid, isDirty, isSubmitting, submitCount } = form.state;
 
   // Actions
-  await form.trigger('email');  // Validate field
-  form.reset();                 // Reset form
-  form.submit();                // Programmatic submit
+  await form.trigger('email'); // Validate field
+  form.reset(); // Reset form
+  form.submit(); // Programmatic submit
 
   return <div>...</div>;
 };
@@ -179,6 +179,7 @@ const ItemsForm = () => (
 ```
 
 **FieldArray API:**
+
 - `fields` - Array of items with unique `id` for React key
 - `append(value)` - Add item to end
 - `prepend(value)` - Add item to start
@@ -234,9 +235,7 @@ const DateRangeForm = () => {
 
 // Conditional required field
 const ConditionalForm = () => {
-  useCrossFieldValidation(
-    requiredWhen('otherField', 'hasOther', (v) => v === true, 'This field is required')
-  );
+  useCrossFieldValidation(requiredWhen('otherField', 'hasOther', (v) => v === true, 'This field is required'));
 
   return (
     <>
@@ -286,10 +285,11 @@ const ValidatedFileUpload = withFieldValidator(FileUpload);
     maxSize: 5 * 1024 * 1024, // 5MB
     accept: '.pdf,.doc,.docx',
   }}
-/>
+/>;
 ```
 
 **How it works:**
+
 1. Intercepts the component's `onError` callback
 2. Extracts the error message from the first error
 3. Sets the error in form state for immediate UI feedback
@@ -381,16 +381,19 @@ yarn workspace @assetforce/form test:watch  # Run tests in watch mode
 ## Implemented Features
 
 ### P0 ✅
+
 - Form, Field, useFormContext
 - Zod schema validation
 - Namespace API (values, errors, meta)
 - withFieldValidator HOC
 
 ### P1 ✅
+
 - `values.watch()` - Reactive value watching
 - `useWatch()` hook
 
 ### P2 ✅
+
 - FieldArray support
 - Nested object support (dot notation)
 - Cross-field validation helpers (matchField, dateRange, requiredWhen)

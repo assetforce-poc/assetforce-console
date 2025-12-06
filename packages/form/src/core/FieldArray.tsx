@@ -22,9 +22,7 @@ import type { FieldArrayProps, FieldArrayRenderProps, FieldArrayItem } from './t
  * </FieldArray>
  * ```
  */
-export const FieldArray = <T extends Record<string, unknown> = Record<string, unknown>>(
-  props: FieldArrayProps<T>
-) => {
+export const FieldArray = <T extends Record<string, unknown> = Record<string, unknown>>(props: FieldArrayProps<T>) => {
   const { name, children } = props;
 
   // Access adapter context for field array operations
@@ -36,10 +34,7 @@ export const FieldArray = <T extends Record<string, unknown> = Record<string, un
   });
 
   // Helper to generate nested field names
-  const getName = useCallback(
-    (index: number, fieldName: string) => `${name}.${index}.${fieldName}`,
-    [name]
-  );
+  const getName = useCallback((index: number, fieldName: string) => `${name}.${index}.${fieldName}`, [name]);
 
   // Build render props
   const renderProps: FieldArrayRenderProps<T> = useMemo(

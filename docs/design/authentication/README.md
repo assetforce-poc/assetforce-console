@@ -1,8 +1,8 @@
 # @assetforce/authentication - 模块设计
 
-- **Version**: 1.2
+- **Version**: 1.3
 - **Created**: 2025-12-03
-- **Last Updated**: 2025-12-04
+- **Last Updated**: 2025-12-06
 - **Status**: Draft
 - **Package**: `packages/feature/authentication`
 
@@ -43,7 +43,7 @@
 | password       | `password/`       | 修改密码        | [password.md](./password.md)             | Draft     |
 | auth-provider  | `auth-provider/`  | OAuth 绑定/解绑 | [auth-provider.md](./auth-provider.md)   | Draft     |
 | activation     | `activation/`     | Admin 邀请激活  | [activation.md](./activation.md)         | Draft     |
-| register       | `register/`       | 用户自助注册    | 待写                                     | 待写      |
+| register       | `register/`       | 用户自助注册    | [register.md](./register.md)             | Draft     |
 
 ---
 
@@ -95,7 +95,7 @@
 | 1     | login                | Email + Password 登录可用 | P0     | AAC ✅       | ✅ **已实现**  |
 | 1.1   | **tenant**           | 多租户登录流程            | P0     | AAC ✅       | ✅ **已实现**  |
 | 1.2   | **session**          | Token/Session 管理        | P0     | AAC ✅       | ✅ **已实现**  |
-| 2     | register             | 用户自助注册可用          | P0     | AAC 🔲       | 规整→实施→✅   |
+| 2     | register             | 用户自助注册可用          | P0     | AAC ✅       | 规整→实施→✅   |
 | 3     | password-reset       | 忘记密码流程可用          | P0     | AAC 🔲       | 规整→实施→✅   |
 | 4     | password             | 用户可修改密码            | P0     | AAC 🔲       | 规整→实施→✅   |
 | 5     | activation           | Admin 邀请激活可用        | P0     | AAC 🔲       | 规整→实施→✅   |
@@ -143,7 +143,7 @@
 | password.md       | 密码管理           | Draft         |
 | auth-provider.md  | 认证方式管理       | Draft         |
 | activation.md     | 账户激活           | Draft         |
-| register.md       | 用户注册           | 待写          |
+| register.md       | 用户注册           | Draft         |
 | fragments.md      | GraphQL Fragments  | Draft         |
 
 ---

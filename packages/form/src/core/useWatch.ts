@@ -17,9 +17,7 @@ import type { FormValues } from './types';
  * ```
  */
 export function useWatch<TValues extends FormValues = FormValues>(): TValues;
-export function useWatch<TValues extends FormValues, K extends keyof TValues>(
-  name: K
-): TValues[K];
+export function useWatch<TValues extends FormValues, K extends keyof TValues>(name: K): TValues[K];
 export function useWatch(name: string): unknown;
 export function useWatch(names: string[]): unknown[];
 export function useWatch<TValues extends FormValues = FormValues>(

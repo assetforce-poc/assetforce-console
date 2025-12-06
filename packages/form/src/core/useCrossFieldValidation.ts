@@ -58,9 +58,7 @@ export const useCrossFieldValidation = <TValues extends FormValues = FormValues>
     });
 
     // Check if values have actually changed
-    const hasChanged = rule.watch.some(
-      (fieldName) => prevValuesRef.current[fieldName] !== currentValues[fieldName]
-    );
+    const hasChanged = rule.watch.some((fieldName) => prevValuesRef.current[fieldName] !== currentValues[fieldName]);
 
     if (!hasChanged) {
       return;

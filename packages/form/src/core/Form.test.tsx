@@ -18,18 +18,14 @@ const TextInput = ({ field, fieldState }: FieldProps) => (
       onChange={(e) => field.onChange(e.target.value)}
       onBlur={field.onBlur}
     />
-    {fieldState.error && (
-      <span data-testid={`error-${field.name}`}>{fieldState.error.message}</span>
-    )}
+    {fieldState.error && <span data-testid={`error-${field.name}`}>{fieldState.error.message}</span>}
   </div>
 );
 
 // Component to test useFormContext
 const FormValues = () => {
   const form = useFormContext();
-  return (
-    <div data-testid="form-values">{JSON.stringify(form.values.get())}</div>
-  );
+  return <div data-testid="form-values">{JSON.stringify(form.values.get())}</div>;
 };
 
 describe('Form', () => {
@@ -126,11 +122,7 @@ describe('Field', () => {
     // Field accepts rules prop - actual validation is covered by zod schema test
     render(
       <Form defaultValues={{ name: '' }}>
-        <Field
-          name="name"
-          component={TextInput}
-          rules={{ required: 'Name is required' }}
-        />
+        <Field name="name" component={TextInput} rules={{ required: 'Name is required' }} />
       </Form>
     );
 
@@ -145,19 +137,13 @@ describe('useFormContext', () => {
       return null;
     };
 
-    expect(() => render(<ErrorComponent />)).toThrow(
-      'useFormContext must be used within a Form component'
-    );
+    expect(() => render(<ErrorComponent />)).toThrow('useFormContext must be used within a Form component');
   });
 
   it('should provide values API', async () => {
     const ValuesSetter = () => {
       const form = useFormContext();
-      return (
-        <button onClick={() => form.values.set('name', 'Updated')}>
-          Update
-        </button>
-      );
+      return <button onClick={() => form.values.set('name', 'Updated')}>Update</button>;
     };
 
     render(
@@ -181,12 +167,8 @@ describe('useFormContext', () => {
       const form = useFormContext();
       return (
         <>
-          <button onClick={() => form.errors.set('name', 'Custom error')}>
-            Set Error
-          </button>
-          <button onClick={() => form.errors.clear('name')}>
-            Clear Error
-          </button>
+          <button onClick={() => form.errors.set('name', 'Custom error')}>Set Error</button>
+          <button onClick={() => form.errors.clear('name')}>Clear Error</button>
         </>
       );
     };

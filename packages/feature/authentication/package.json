@@ -8,15 +8,21 @@
   "exports": {
     ".": "./index.ts",
     "./login": "./login/index.ts",
-    "./tenant": "./tenant/index.ts"
+    "./tenant": "./tenant/index.ts",
+    "./register": "./register/index.ts",
+    "./verify-email": "./verify-email/index.ts"
   },
   "scripts": {
     "lint": "eslint .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@assetforce/feature-common": "*",
+    "@assetforce/form": "*",
+    "@assetforce/graphql": "*",
     "@assetforce/material": "*",
-    "react": "19.2.1"
+    "react": "19.2.1",
+    "zod": "~4.1.13"
   },
   "devDependencies": {
     "@assetforce/typescript-config": "*",

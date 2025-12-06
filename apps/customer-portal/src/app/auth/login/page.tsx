@@ -2,7 +2,8 @@
 
 import { useAuth } from '@assetforce/auth/react';
 import { type AuthResult, MultiTenantLoginForm } from '@assetforce/authentication/tenant';
-import { Box, CircularProgress, Container, Paper, Typography } from '@assetforce/material';
+import { Box, CircularProgress, Container, Link as MuiLink, Paper, Typography } from '@assetforce/material';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
 
@@ -74,6 +75,12 @@ function LoginContent() {
             Sign in to access your account
           </Typography>
           <MultiTenantLoginForm onSuccess={handleSuccess} onError={handleError} />
+          <Typography variant="body2" align="center" sx={{ mt: 3 }}>
+            Don&apos;t have an account?{' '}
+            <MuiLink component={Link} href="/auth/register">
+              Sign up
+            </MuiLink>
+          </Typography>
         </Paper>
       </Box>
     </Container>
