@@ -1,0 +1,63 @@
+{
+  "name": "@assetforce/form",
+  "version": "0.1.0",
+  "description": "Stable form abstraction layer with pluggable backend (default: react-hook-form + zod)",
+  "author": "chomin <cho-min@smfl.co.jp>",
+  "contributors": [
+    "geminiyellow <geminiyellow@gmail.com>"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "peerDependencies": {
+    "@hookform/resolvers": "~5.2.0",
+    "react": "~19.2.0",
+    "react-hook-form": "~7.68.0",
+    "zod": "~4.1.0"
+  },
+  "devDependencies": {
+    "@assetforce/jest-config": "*",
+    "@hookform/resolvers": "~5.2.2",
+    "@testing-library/dom": "~10.4.0",
+    "@testing-library/jest-dom": "~6.6.3",
+    "@testing-library/react": "~16.3.0",
+    "@types/jest": "~29.5.14",
+    "@types/react": "~19.2.7",
+    "jest": "~29.7.0",
+    "jest-environment-jsdom": "~29.7.0",
+    "react": "~19.2.1",
+    "react-dom": "~19.2.1",
+    "react-hook-form": "~7.68.0",
+    "ts-jest": "~29.4.0",
+    "tsup": "~8.5.1",
+    "typescript": "~5.9.3",
+    "zod": "~4.1.13"
+  },
+  "keywords": [
+    "form",
+    "react-hook-form",
+    "zod",
+    "validation",
+    "abstraction"
+  ],
+  "license": "UNLICENSED"
+}
