@@ -1,0 +1,27 @@
+{
+  "name": "@assetforce/user",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./hooks": "./hooks/index.ts",
+    "./components": "./components/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@assetforce/graphql": "*",
+    "@assetforce/material": "*",
+    "react": "19.2.1"
+  },
+  "devDependencies": {
+    "@assetforce/typescript-config": "*",
+    "@types/react": "~19.2.7",
+    "typescript": "~5.9.3"
+  }
+}
