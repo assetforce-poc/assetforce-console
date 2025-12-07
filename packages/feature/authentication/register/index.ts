@@ -3,8 +3,8 @@ export type { UseEmailAvailabilityOptions, UseEmailAvailabilityReturn, UseRegist
 export { useEmailAvailability, useRegister } from './hooks';
 
 // Components
-export { RegisterForm, RegistrationSuccess } from './components';
 export type { RegisterFormProps, RegistrationSuccessProps } from './components';
+export { RegisterForm, RegistrationSuccess } from './components';
 
 // Types
 export type { EmailAvailability, EmailVerificationResult, RegisterInput, RegisterResult, TenantStatus } from './types';

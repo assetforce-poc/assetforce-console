@@ -1,8 +1,8 @@
 'use client';
 
-import { Form, Field, useFormContext, useWatch } from '@assetforce/form';
-import { Alert, Box, Button, Link as MuiLink, Stack, Typography } from '@assetforce/material';
 import { FormCheckboxField, FormPasswordField, FormTextField } from '@assetforce/feature-common/fields';
+import { Field, Form, useFormContext, useWatch } from '@assetforce/form';
+import { Alert, Box, Button, Link as MuiLink, Stack, Typography } from '@assetforce/material';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
@@ -54,9 +54,7 @@ function EmailFieldWithCheck() {
   useEffect(() => {
     if (available === false && reason) {
       const friendlyMessage =
-        reason === 'EMAIL_ALREADY_EXISTS'
-          ? 'This email is already registered'
-          : 'Email is not available';
+        reason === 'EMAIL_ALREADY_EXISTS' ? 'This email is already registered' : 'Email is not available';
       form.errors.set('email', friendlyMessage);
     }
   }, [available, reason, form]);
@@ -72,6 +70,7 @@ function EmailFieldWithCheck() {
         autoComplete: 'email',
         loading,
         placeholder: 'you@example.com',
+        'data-testid': 'register-email',
       }}
     />
   );
@@ -137,10 +136,10 @@ export function RegisterForm({ onSuccess, onError, onLoginClick }: RegisterFormP
         acceptTerms: false,
       }}
     >
-      <Stack spacing={3}>
+      <Stack spacing={3} data-testid="register-form">
         {/* Header */}
         <Box>
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography variant="h4" component="h1" gutterBottom data-testid="register-title">
             Create Account
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -164,6 +163,7 @@ export function RegisterForm({ onSuccess, onError, onLoginClick }: RegisterFormP
               label: 'First Name',
               required: true,
               autoComplete: 'given-name',
+              'data-testid': 'register-firstName',
             }}
           />
           <Field
@@ -173,6 +173,7 @@ export function RegisterForm({ onSuccess, onError, onLoginClick }: RegisterFormP
               label: 'Last Name',
               required: true,
               autoComplete: 'family-name',
+              'data-testid': 'register-lastName',
             }}
           />
         </Stack>
@@ -189,6 +190,7 @@ export function RegisterForm({ onSuccess, onError, onLoginClick }: RegisterFormP
             required: true,
             autoComplete: 'new-password',
             helperText: 'At least 8 characters',
+            'data-testid': 'register-password',
           }}
         />
 
@@ -210,11 +212,19 @@ export function RegisterForm({ onSuccess, onError, onLoginClick }: RegisterFormP
               </>
             ),
             required: true,
+            'data-testid': 'register-acceptTerms',
           }}
         />
 
         {/* Submit Button */}
-        <Button type="submit" variant="contained" size="large" disabled={loading} fullWidth>
+        <Button
+          type="submit"
+          variant="contained"
+          size="large"
+          disabled={loading}
+          fullWidth
+          data-testid="register-submit"
+        >
           {loading ? 'Creating Account...' : 'Create Account'}
         </Button>
 
@@ -222,11 +232,11 @@ export function RegisterForm({ onSuccess, onError, onLoginClick }: RegisterFormP
         <Typography variant="body2" align="center">
           Already have an account?{' '}
           {onLoginClick ? (
-            <MuiLink component="button" type="button" onClick={onLoginClick}>
+            <MuiLink component="button" type="button" onClick={onLoginClick} data-testid="register-login-link">
               Sign in
             </MuiLink>
           ) : (
-            <MuiLink component={Link} href="/auth/login">
+            <MuiLink component={Link} href="/auth/login" data-testid="register-login-link">
               Sign in
             </MuiLink>
           )}

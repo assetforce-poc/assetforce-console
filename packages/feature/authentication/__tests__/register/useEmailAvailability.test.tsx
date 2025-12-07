@@ -2,13 +2,13 @@
  * Unit tests for useEmailAvailability hook
  */
 
-import { renderHook, waitFor, act } from '@testing-library/react';
-import { MockedProvider } from '@apollo/client/testing/react';
 import type { MockedResponse } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
+import { act,renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 
-import { useEmailAvailability } from '../../register/hooks/useEmailAvailability';
 import { CHECK_EMAIL_AVAILABILITY } from '../../register/graphql';
+import { useEmailAvailability } from '../../register/hooks/useEmailAvailability';
 
 // ============ Mock Helpers ============
 
@@ -186,12 +186,9 @@ describe('useEmailAvailability', () => {
 
       const email2 = 'second@example.com';
 
-      const { result } = renderHook(
-        () => useEmailAvailability({ debounceMs: 50 }),
-        {
-          wrapper: createWrapper([createAvailableMock(email2)]),
-        }
-      );
+      const { result } = renderHook(() => useEmailAvailability({ debounceMs: 50 }), {
+        wrapper: createWrapper([createAvailableMock(email2)]),
+      });
 
       // First input
       act(() => {
@@ -338,6 +335,21 @@ describe('useEmailAvailability', () => {
       // Should still be null because reset cancelled the debounce
       expect(result.current.available).toBeNull();
       expect(result.current.loading).toBe(false);
+    });
+
+    it('should handle reset when no debounce is pending', () => {
+      const { result } = renderHook(() => useEmailAvailability(), {
+        wrapper: createWrapper([]),
+      });
+
+      // Call reset without any prior checkEmail call
+      // This covers the case where debounceRef.current is null
+      act(() => {
+        result.current.reset();
+      });
+
+      expect(result.current.available).toBeNull();
+      expect(result.current.reason).toBeNull();
     });
   });
 });

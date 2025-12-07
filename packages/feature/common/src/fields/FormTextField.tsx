@@ -45,6 +45,8 @@ export interface FormTextFieldProps extends FieldControllerProps {
   autoFocus?: boolean;
   /** Auto complete attribute */
   autoComplete?: string;
+  /** Test ID for E2E testing */
+  'data-testid'?: string;
 }
 
 /**
@@ -76,6 +78,7 @@ export function FormTextField({
   endAdornment,
   autoFocus = false,
   autoComplete,
+  'data-testid': testId,
 }: FormTextFieldProps) {
   const hasError = fieldState.invalid && (fieldState.isTouched || fieldState.isDirty);
   const errorMessage = fieldState.error?.message;
@@ -97,13 +100,12 @@ export function FormTextField({
       autoComplete={autoComplete}
       error={hasError}
       helperText={hasError ? errorMessage : helperText}
+      data-testid={testId}
       slotProps={{
         input: {
           endAdornment:
             loading || endAdornment ? (
-              <InputAdornment position="end">
-                {loading ? <CircularProgress size={20} /> : endAdornment}
-              </InputAdornment>
+              <InputAdornment position="end">{loading ? <CircularProgress size={20} /> : endAdornment}</InputAdornment>
             ) : undefined,
         },
       }}

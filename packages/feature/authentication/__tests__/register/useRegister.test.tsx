@@ -2,13 +2,13 @@
  * Unit tests for useRegister hook
  */
 
-import { renderHook, waitFor } from '@testing-library/react';
-import { MockedProvider } from '@apollo/client/testing/react';
 import type { MockedResponse } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 
-import { useRegister } from '../../register/hooks/useRegister';
 import { REGISTER_MUTATION } from '../../register/graphql';
+import { useRegister } from '../../register/hooks/useRegister';
 import type { RegisterInput, RegisterResult } from '../../register/types';
 
 // ============ Test Data ============
@@ -153,6 +153,28 @@ describe('useRegister', () => {
       expect(registerResult.success).toBe(false);
       expect(registerResult.message).toBe('Network error');
       expect(registerResult.requiresVerification).toBe(false);
+      expect(registerResult.email).toBe(validInput.email);
+    });
+
+    it('should handle non-Error exceptions with fallback message', async () => {
+      // Mock that throws a non-Error value
+      const nonErrorMock: MockedResponse = {
+        request: {
+          query: REGISTER_MUTATION,
+          variables: { input: validInput },
+        },
+        error: 'string error' as unknown as Error, // Non-Error type
+      };
+
+      const { result } = renderHook(() => useRegister(), {
+        wrapper: createWrapper([nonErrorMock]),
+      });
+
+      const registerResult = await result.current.register(validInput);
+
+      expect(registerResult.success).toBe(false);
+      // Should use fallback message since it's not an Error instance
+      expect(registerResult.message).toBeDefined();
       expect(registerResult.email).toBe(validInput.email);
     });
 

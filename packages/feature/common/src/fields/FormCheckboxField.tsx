@@ -16,6 +16,8 @@ export interface FormCheckboxFieldProps extends FieldControllerProps {
   color?: CheckboxProps['color'];
   /** Checkbox size */
   size?: CheckboxProps['size'];
+  /** Test ID for E2E testing */
+  'data-testid'?: string;
 }
 
 /**
@@ -48,6 +50,7 @@ export function FormCheckboxField({
   disabled = false,
   color = 'primary',
   size = 'medium',
+  'data-testid': testId,
 }: FormCheckboxFieldProps) {
   const hasError = fieldState.invalid && (fieldState.isTouched || fieldState.isDirty);
   const errorMessage = fieldState.error?.message;
@@ -55,6 +58,7 @@ export function FormCheckboxField({
   return (
     <>
       <FormControlLabel
+        data-testid={testId}
         control={
           <Checkbox
             name={field.name}

@@ -3,8 +3,8 @@ export type { UseVerifyEmailReturn } from './hooks';
 export { useVerifyEmail } from './hooks';
 
 // Components
-export { VerifyEmailResult } from './components';
 export type { VerifyEmailResultProps } from './components';
+export { VerifyEmailResult } from './components';
 
 // Types
 export type { EmailVerificationResult, TenantStatus } from './types';

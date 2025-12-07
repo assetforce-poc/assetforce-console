@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, CircularProgress, Paper, Stack, Typography, Icons } from '@assetforce/material';
+import { Box, Button, CircularProgress, Icons,Paper, Stack, Typography } from '@assetforce/material';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -139,8 +139,8 @@ function SuccessState({ result }: { result: EmailVerificationResult }) {
           }}
         >
           <Typography variant="body2">
-            <strong>Note:</strong> You don&apos;t belong to any organization yet. You may need to be
-            invited or apply to join one.
+            <strong>Note:</strong> You don&apos;t belong to any organization yet. You may need to be invited or apply to
+            join one.
           </Typography>
         </Box>
       )}

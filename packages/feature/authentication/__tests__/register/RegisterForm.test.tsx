@@ -2,10 +2,10 @@
  * Component tests for RegisterForm
  */
 
+import type { MockedResponse } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MockedProvider } from '@apollo/client/testing/react';
-import type { MockedResponse } from '@apollo/client/testing';
 import type { ReactNode } from 'react';
 
 import { RegisterForm } from '../../register/components/RegisterForm';
@@ -13,13 +13,7 @@ import { CHECK_EMAIL_AVAILABILITY, REGISTER_MUTATION } from '../../register/grap
 
 // Mock next/link
 jest.mock('next/link', () => {
-  return function MockLink({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) {
+  return function MockLink({ children, href }: { children: React.ReactNode; href: string }) {
     return <a href={href}>{children}</a>;
   };
 });
@@ -46,6 +40,23 @@ function createEmailAvailableMock(email: string): MockedResponse {
         checkEmailAvailability: {
           available: true,
           reason: null,
+        },
+      },
+    },
+  };
+}
+
+function createEmailUnavailableMock(email: string): MockedResponse {
+  return {
+    request: {
+      query: CHECK_EMAIL_AVAILABILITY,
+      variables: { email },
+    },
+    result: {
+      data: {
+        checkEmailAvailability: {
+          available: false,
+          reason: 'EMAIL_ALREADY_EXISTS',
         },
       },
     },
@@ -199,10 +210,7 @@ describe('RegisterForm', () => {
       const onSuccess = jest.fn();
 
       render(<RegisterForm onSuccess={onSuccess} />, {
-        wrapper: createWrapper([
-          createEmailAvailableMock(validFormData.email),
-          createRegisterSuccessMock(),
-        ]),
+        wrapper: createWrapper([createEmailAvailableMock(validFormData.email), createRegisterSuccessMock()]),
       });
 
       // Fill form
@@ -232,10 +240,7 @@ describe('RegisterForm', () => {
       const onError = jest.fn();
 
       render(<RegisterForm onError={onError} />, {
-        wrapper: createWrapper([
-          createEmailAvailableMock(validFormData.email),
-          createRegisterFailureMock(),
-        ]),
+        wrapper: createWrapper([createEmailAvailableMock(validFormData.email), createRegisterFailureMock()]),
       });
 
       // Fill form
@@ -254,6 +259,60 @@ describe('RegisterForm', () => {
       });
 
       expect(onError).toHaveBeenCalledWith('Email already exists');
+    });
+  });
+
+  describe('email availability check', () => {
+    it('should show error when email is already registered', async () => {
+      const takenEmail = 'taken@example.com';
+      const user = userEvent.setup();
+
+      render(<RegisterForm />, {
+        wrapper: createWrapper([createEmailUnavailableMock(takenEmail)]),
+      });
+
+      // Type email that is taken
+      await user.type(getEmailInput(), takenEmail);
+
+      // Wait for debounce and email check
+      await waitFor(
+        () => {
+          expect(screen.getByText(/already registered/i)).toBeInTheDocument();
+        },
+        { timeout: 2000 }
+      );
+    });
+  });
+
+  describe('error alert', () => {
+    it('should close error alert when close button clicked', async () => {
+      const user = userEvent.setup();
+
+      render(<RegisterForm />, {
+        wrapper: createWrapper([createEmailAvailableMock(validFormData.email), createRegisterFailureMock()]),
+      });
+
+      // Fill form and submit to trigger error
+      await user.type(getFirstNameInput(), validFormData.firstName);
+      await user.type(getLastNameInput(), validFormData.lastName);
+      await user.type(getEmailInput(), validFormData.email);
+      await user.type(getPasswordInput(), validFormData.password);
+      await user.click(getTermsCheckbox());
+      await user.click(getSubmitButton());
+
+      // Wait for error alert to appear
+      await waitFor(() => {
+        expect(screen.getByRole('alert')).toBeInTheDocument();
+      });
+
+      // Click close button on alert
+      const closeButton = screen.getByRole('button', { name: /close/i });
+      await user.click(closeButton);
+
+      // Alert should be dismissed
+      await waitFor(() => {
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      });
     });
   });
 

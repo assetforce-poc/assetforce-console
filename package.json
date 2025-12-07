@@ -11,9 +11,13 @@
     "build": "turbo build",
     "dev": "dotenvx run -f .env.local -f .env -- turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "e2e": "playwright test --config=e2e/playwright.config.cjs",
+    "e2e:ui": "playwright test --config=e2e/playwright.config.cjs --ui",
+    "e2e:auth": "playwright test --config=e2e/playwright.config.cjs auth/"
   },
   "devDependencies": {
+    "@assetforce/playwright-config": "^0.2.0",
     "@dotenvx/dotenvx": "~1.51.1",
     "prettier": "~3.7.4",
     "turbo": "^2.6.3",

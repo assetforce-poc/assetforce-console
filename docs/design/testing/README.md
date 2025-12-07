@@ -35,11 +35,11 @@ packages/feature/[name]/jest.config.js
 
 ### 3. 环境隔离
 
-| 测试类型 | 环境 | Mock 策略 |
-|----------|------|-----------|
-| Unit Tests | jsdom | MSW mock GraphQL |
-| Component Tests | jsdom | MSW mock GraphQL |
-| E2E Tests | 真实浏览器 | Docker 真实后端 |
+| 测试类型        | 环境       | Mock 策略        |
+| --------------- | ---------- | ---------------- |
+| Unit Tests      | jsdom      | MSW mock GraphQL |
+| Component Tests | jsdom      | MSW mock GraphQL |
+| E2E Tests       | 真实浏览器 | Docker 真实后端  |
 
 ---
 
@@ -250,6 +250,7 @@ docker-compose -f docker-compose-test.yml --profile e2e up -d
 ### E2E 测试数据
 
 Keycloak test realm 配置:
+
 - Realm: `assetforce-test`
 - 测试用户: 通过 `e2e/setup-keycloak-test-user.sh` 创建
 
@@ -257,10 +258,10 @@ Keycloak test realm 配置:
 
 ## Test Coverage Targets
 
-| 包 | Line | Branch | 说明 |
-|----|------|--------|------|
-| @assetforce/authentication | 80% | 70% | Hooks + Components |
-| E2E (Critical Paths) | N/A | N/A | 100% 关键路径覆盖 |
+| 包                         | Line | Branch | 说明               |
+| -------------------------- | ---- | ------ | ------------------ |
+| @assetforce/authentication | 80%  | 70%    | Hooks + Components |
+| E2E (Critical Paths)       | N/A  | N/A    | 100% 关键路径覆盖  |
 
 ---
 

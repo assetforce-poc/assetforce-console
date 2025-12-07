@@ -57,8 +57,7 @@ function VerifyEmailContent() {
             Invalid Verification Link
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            The verification link is missing or invalid. Please check your email for the correct
-            link.
+            The verification link is missing or invalid. Please check your email for the correct link.
           </Typography>
         </Box>
       </Container>

@@ -68,11 +68,7 @@ function RegisterContent() {
         }}
       >
         <Paper elevation={3} sx={{ p: 4 }}>
-          <RegisterForm
-            onSuccess={handleSuccess}
-            onError={handleError}
-            onLoginClick={handleLoginClick}
-          />
+          <RegisterForm onSuccess={handleSuccess} onError={handleError} onLoginClick={handleLoginClick} />
         </Paper>
       </Box>
     </Container>

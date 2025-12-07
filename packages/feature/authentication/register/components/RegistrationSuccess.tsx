@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Paper, Stack, Typography, Icons } from '@assetforce/material';
+import { Box, Button, Icons,Paper, Stack, Typography } from '@assetforce/material';
 import Link from 'next/link';
 
 export interface RegistrationSuccessProps {
@@ -79,12 +79,7 @@ export function RegistrationSuccess({ email, onResend }: RegistrationSuccessProp
             <br />
             Check your spam folder or{' '}
             {onResend ? (
-              <Button
-                variant="text"
-                size="small"
-                onClick={onResend}
-                sx={{ p: 0, minWidth: 0, textTransform: 'none' }}
-              >
+              <Button variant="text" size="small" onClick={onResend} sx={{ p: 0, minWidth: 0, textTransform: 'none' }}>
                 resend verification email
               </Button>
             ) : (

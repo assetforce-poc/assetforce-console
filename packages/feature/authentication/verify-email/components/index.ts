@@ -1,2 +1,2 @@
-export { VerifyEmailResult } from './VerifyEmailResult';
 export type { VerifyEmailResultProps } from './VerifyEmailResult';
+export { VerifyEmailResult } from './VerifyEmailResult';

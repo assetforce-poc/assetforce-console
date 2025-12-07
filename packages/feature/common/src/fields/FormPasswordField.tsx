@@ -20,6 +20,8 @@ export interface FormPasswordFieldProps extends FieldControllerProps {
   fullWidth?: boolean;
   /** Auto complete attribute */
   autoComplete?: string;
+  /** Test ID for E2E testing */
+  'data-testid'?: string;
 }
 
 /**
@@ -47,6 +49,7 @@ export function FormPasswordField({
   disabled = false,
   fullWidth = true,
   autoComplete = 'current-password',
+  'data-testid': testId,
 }: FormPasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -73,6 +76,7 @@ export function FormPasswordField({
       autoComplete={autoComplete}
       error={hasError}
       helperText={hasError ? errorMessage : helperText}
+      data-testid={testId}
       slotProps={{
         input: {
           endAdornment: (
