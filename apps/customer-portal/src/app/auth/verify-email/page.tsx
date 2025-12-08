@@ -1,7 +1,7 @@
 'use client';
 
 import { VerifyEmailResult } from '@assetforce/authentication/verify-email';
-import { Box, Container, Typography, Icons } from '@assetforce/material';
+import { Box, Container, Icons,Typography } from '@assetforce/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback } from 'react';
 

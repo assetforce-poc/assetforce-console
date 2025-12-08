@@ -72,8 +72,7 @@ export function useEmailAvailability(options?: UseEmailAvailabilityOptions): Use
   // Handle query error
   useEffect(() => {
     if (error) {
-      console.error('Email availability check failed:', error);
-      // Don't block registration on check failure
+      // Don't block registration on check failure - silently ignore
       setAvailable(null);
       setReason(null);
     }
