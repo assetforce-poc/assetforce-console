@@ -1,6 +1,7 @@
 'use client';
 
 import { Chip, type ChipProps } from '@assetforce/material';
+
 import type { UserStatus } from '../types';
 
 interface UserStatusChipProps {

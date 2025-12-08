@@ -1,4 +1,5 @@
 import { useQuery } from '@assetforce/graphql';
+
 import { GET_USERS } from '../graphql';
 import type { User, UserStatus } from '../types';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, CircularProgress, Icons,Paper, Stack, Typography } from '@assetforce/material';
+import { Box, Button, CircularProgress, Icons, Paper, Stack, Typography } from '@assetforce/material';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Icons,Paper, Stack, Typography } from '@assetforce/material';
+import { Box, Button, Icons, Paper, Stack, Typography } from '@assetforce/material';
 import Link from 'next/link';
 
 export interface RegistrationSuccessProps {

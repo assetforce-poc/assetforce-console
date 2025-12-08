@@ -14,6 +14,11 @@ const isCI = !!process.env.CI;
 
 module.exports = createDevConfig({
   testDir: './auth',
+  // Increase timeout for Next.js Turbopack compilation in dev mode
+  // Turbopack dev mode compiles on-demand, taking 8-10s per page
+  timeout: 90000, // 90 seconds (default 30s)
+  // Run tests sequentially to avoid concurrent compilation overhead
+  workers: 1,
   // Only configure webServer in CI - locally, start the server manually
   ...(isCI && {
     webServer: {

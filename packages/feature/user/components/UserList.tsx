@@ -2,6 +2,7 @@
 
 import { Box, Typography } from '@assetforce/material';
 import { DataGrid, type GridColDef } from '@assetforce/material';
+
 import type { User } from '../types';
 import { UserStatusChip } from './UserStatusChip';
 
