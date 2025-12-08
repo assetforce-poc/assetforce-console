@@ -47,7 +47,9 @@ function createSuccessMock(input: RegisterInput): MockedResponse {
     },
     result: {
       data: {
-        register: successResult,
+        registration: {
+          register: successResult,
+        },
       },
     },
   };
@@ -61,7 +63,9 @@ function createFailureMock(input: RegisterInput): MockedResponse {
     },
     result: {
       data: {
-        register: failureResult,
+        registration: {
+          register: failureResult,
+        },
       },
     },
   };
@@ -186,7 +190,9 @@ describe('useRegister', () => {
         },
         result: {
           data: {
-            register: null,
+            registration: {
+              register: null,
+            },
           },
         },
       };

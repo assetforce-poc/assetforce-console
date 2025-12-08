@@ -37,9 +37,11 @@ function createEmailAvailableMock(email: string): MockedResponse {
     },
     result: {
       data: {
-        checkEmailAvailability: {
-          available: true,
-          reason: null,
+        registration: {
+          email: {
+            available: true,
+            reason: null,
+          },
         },
       },
     },
@@ -54,9 +56,11 @@ function createEmailUnavailableMock(email: string): MockedResponse {
     },
     result: {
       data: {
-        checkEmailAvailability: {
-          available: false,
-          reason: 'EMAIL_ALREADY_EXISTS',
+        registration: {
+          email: {
+            available: false,
+            reason: 'EMAIL_ALREADY_EXISTS',
+          },
         },
       },
     },
@@ -79,12 +83,14 @@ function createRegisterSuccessMock(): MockedResponse {
     },
     result: {
       data: {
-        register: {
-          success: true,
-          accountId: 'test-account-123',
-          message: 'Registration successful',
-          requiresVerification: true,
-          appliedTenant: null,
+        registration: {
+          register: {
+            success: true,
+            accountId: 'test-account-123',
+            message: 'Registration successful',
+            requiresVerification: true,
+            appliedTenant: null,
+          },
         },
       },
     },
@@ -107,12 +113,14 @@ function createRegisterFailureMock(): MockedResponse {
     },
     result: {
       data: {
-        register: {
-          success: false,
-          accountId: null,
-          message: 'Email already exists',
-          requiresVerification: false,
-          appliedTenant: null,
+        registration: {
+          register: {
+            success: false,
+            accountId: null,
+            message: 'Email already exists',
+            requiresVerification: false,
+            appliedTenant: null,
+          },
         },
       },
     },

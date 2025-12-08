@@ -20,9 +20,11 @@ function createAvailableMock(email: string): MockedResponse {
     },
     result: {
       data: {
-        checkEmailAvailability: {
-          available: true,
-          reason: null,
+        registration: {
+          email: {
+            available: true,
+            reason: null,
+          },
         },
       },
     },
@@ -37,9 +39,11 @@ function createUnavailableMock(email: string): MockedResponse {
     },
     result: {
       data: {
-        checkEmailAvailability: {
-          available: false,
-          reason: 'EMAIL_ALREADY_EXISTS',
+        registration: {
+          email: {
+            available: false,
+            reason: 'EMAIL_ALREADY_EXISTS',
+          },
         },
       },
     },

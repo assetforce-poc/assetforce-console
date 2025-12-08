@@ -37,7 +37,7 @@ export const mockRegisterFailure: RegisterResult = {
 // ============ Handlers ============
 
 export const handlers = [
-  // CheckEmailAvailability query
+  // CheckEmailAvailability query (new namespace API)
   graphql.query('CheckEmailAvailability', ({ variables }) => {
     const { email } = variables as { email: string };
 
@@ -45,19 +45,23 @@ export const handlers = [
     if (email === 'taken@example.com') {
       return HttpResponse.json({
         data: {
-          checkEmailAvailability: mockEmailTaken,
+          registration: {
+            email: mockEmailTaken,
+          },
         },
       });
     }
 
     return HttpResponse.json({
       data: {
-        checkEmailAvailability: mockEmailAvailable,
+        registration: {
+          email: mockEmailAvailable,
+        },
       },
     });
   }),
 
-  // Register mutation
+  // Register mutation (new namespace API)
   graphql.mutation('Register', ({ variables }) => {
     const { input } = variables as { input: RegisterInput };
 
@@ -65,14 +69,18 @@ export const handlers = [
     if (input.email === 'taken@example.com') {
       return HttpResponse.json({
         data: {
-          register: mockRegisterFailure,
+          registration: {
+            register: mockRegisterFailure,
+          },
         },
       });
     }
 
     return HttpResponse.json({
       data: {
-        register: mockRegisterSuccess,
+        registration: {
+          register: mockRegisterSuccess,
+        },
       },
     });
   }),
