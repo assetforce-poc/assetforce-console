@@ -40,9 +40,10 @@ export interface UseRegisterReturn {
  * ```
  */
 export function useRegister(): UseRegisterReturn {
-  const [registerMutation, { loading }] = useMutation<{ register: RegisterResult }, { input: RegisterInput }>(
-    REGISTER_MUTATION
-  );
+  const [registerMutation, { loading }] = useMutation<
+    { registration: { register: RegisterResult } },
+    { input: RegisterInput }
+  >(REGISTER_MUTATION);
 
   const register = useCallback(
     async (input: RegisterInput): Promise<RegisterResult> => {
@@ -51,7 +52,7 @@ export function useRegister(): UseRegisterReturn {
           variables: { input },
         });
 
-        if (!data?.register) {
+        if (!data?.registration?.register) {
           return {
             success: false,
             message: 'No response from server',
@@ -61,7 +62,7 @@ export function useRegister(): UseRegisterReturn {
         }
 
         // Include email in result for convenience
-        return { ...data.register, email: input.email };
+        return { ...data.registration.register, email: input.email };
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Registration failed';
         return {

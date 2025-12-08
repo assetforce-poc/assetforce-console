@@ -55,7 +55,7 @@ export function useEmailAvailability(options?: UseEmailAvailabilityOptions): Use
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [executeQuery, { loading, data, error }] = useLazyQuery<
-    { checkEmailAvailability: EmailAvailability },
+    { registration: { email: EmailAvailability } },
     { email: string }
   >(CHECK_EMAIL_AVAILABILITY, {
     fetchPolicy: 'network-only',
@@ -63,9 +63,9 @@ export function useEmailAvailability(options?: UseEmailAvailabilityOptions): Use
 
   // Handle query result
   useEffect(() => {
-    if (data?.checkEmailAvailability) {
-      setAvailable(data.checkEmailAvailability.available);
-      setReason(data.checkEmailAvailability.reason ?? null);
+    if (data?.registration?.email) {
+      setAvailable(data.registration.email.available);
+      setReason(data.registration.email.reason ?? null);
     }
   }, [data]);
 
