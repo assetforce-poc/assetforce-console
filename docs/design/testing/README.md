@@ -252,7 +252,10 @@ docker-compose -f docker-compose-test.yml --profile e2e up -d
 Keycloak test realm 配置:
 
 - Realm: `assetforce-test`
-- 测试用户: 通过 `e2e/setup-keycloak-test-user.sh` 创建
+- 测试用户:
+  - `single-tenant-user` / `Test123!` - 单租户用户
+  - `multi-tenant-user` / `Test123!` - 多租户用户
+  - 通过 Keycloak REST API 创建
 
 ---
 
