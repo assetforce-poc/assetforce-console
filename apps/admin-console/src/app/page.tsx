@@ -1,21 +1,14 @@
 'use client';
 
-import { Box, Button, CircularProgress, Container, Grid, Icons, Paper, Typography } from '@assetforce/material';
-import { useUsers } from '@assetforce/user';
+import { Box, Button, Container, Grid, Icons, Paper, Typography } from '@assetforce/material';
 import Link from 'next/link';
 
-const DEFAULT_REALM_ID = 'assetforce-test';
-
 export default function Home() {
-  const { users, loading } = useUsers({ realmId: DEFAULT_REALM_ID });
-
-  const activeUsers = users.filter((u) => u.status === 'ACTIVE').length;
-  const pendingUsers = users.filter((u) => !u.isVerified).length;
-
+  // TODO: Re-enable user stats after feature/user module is properly implemented
   const stats = [
-    { title: 'Total Users', value: loading ? null : users.length, icon: Icons.People, href: '/users' },
-    { title: 'Active', value: loading ? null : activeUsers, icon: Icons.CheckCircle, href: '/users' },
-    { title: 'Pending Verification', value: loading ? null : pendingUsers, icon: Icons.HourglassEmpty, href: '/users' },
+    { title: 'Total Users', value: '-', icon: Icons.People, href: '/users' },
+    { title: 'Active', value: '-', icon: Icons.CheckCircle, href: '/users' },
+    { title: 'Pending Verification', value: '-', icon: Icons.HourglassEmpty, href: '/users' },
   ];
 
   return (
@@ -45,9 +38,7 @@ export default function Home() {
               >
                 <stat.icon sx={{ fontSize: 40, color: 'primary.main' }} />
                 <Box>
-                  <Typography variant="h5">
-                    {stat.value === null ? <CircularProgress size={24} /> : stat.value}
-                  </Typography>
+                  <Typography variant="h5">{stat.value}</Typography>
                   <Typography variant="body2" color="text.secondary">
                     {stat.title}
                   </Typography>

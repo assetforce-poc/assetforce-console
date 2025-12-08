@@ -1,0 +1,11 @@
+mutation RegisterInRegistration($input: RegisterInput!) {
+  registration {
+    register(input: $input) {
+      success
+      accountId
+      message
+      requiresVerification
+      appliedTenant
+    }
+  }
+}

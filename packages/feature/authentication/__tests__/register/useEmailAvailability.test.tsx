@@ -7,7 +7,7 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 
-import { CHECK_EMAIL_AVAILABILITY } from '../../register/graphql';
+import { CHECK_EMAIL_AVAILABILITY } from '../../register';
 import { useEmailAvailability } from '../../register/hooks/useEmailAvailability';
 
 // ============ Mock Helpers ============

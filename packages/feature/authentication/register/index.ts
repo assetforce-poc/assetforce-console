@@ -11,4 +11,7 @@ export type { EmailAvailability, EmailVerificationResult, RegisterInput, Registe
 export { RegisterErrorCodes, VerificationErrorCodes } from './types';
 
 // GraphQL (for advanced use cases)
-export { CHECK_EMAIL_AVAILABILITY, REGISTER_MUTATION, VERIFY_EMAIL_MUTATION } from './graphql';
+// GraphQL queries/mutations - re-exported from generated files
+export { CheckEmailAvailabilityInRegistrationDocument as CHECK_EMAIL_AVAILABILITY } from '../generated/graphql';
+export { RegisterInRegistrationDocument as REGISTER_MUTATION } from '../generated/graphql';
+export { VerifyEmailInRegistrationDocument as VERIFY_EMAIL_MUTATION } from '../generated/graphql';

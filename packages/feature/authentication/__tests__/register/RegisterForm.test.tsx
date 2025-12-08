@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 
 import { RegisterForm } from '../../register/components/RegisterForm';
-import { CHECK_EMAIL_AVAILABILITY, REGISTER_MUTATION } from '../../register/graphql';
+import { CHECK_EMAIL_AVAILABILITY, REGISTER_MUTATION } from '../../register';
 
 // Mock next/link
 jest.mock('next/link', () => {

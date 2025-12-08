@@ -7,7 +7,7 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 
-import { REGISTER_MUTATION } from '../../register/graphql';
+import { REGISTER_MUTATION } from '../../register';
 import { useRegister } from '../../register/hooks/useRegister';
 import type { RegisterInput, RegisterResult } from '../../register/types';
 

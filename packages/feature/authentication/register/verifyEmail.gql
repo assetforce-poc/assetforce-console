@@ -1,0 +1,15 @@
+mutation VerifyEmailInRegistration($token: String!) {
+  registration {
+    verifyEmail(token: $token) {
+      success
+      message
+      accountId
+      tenantStatus {
+        hasTenants
+        requiresTenantSelection
+        pendingApproval
+        activeTenants
+      }
+    }
+  }
+}

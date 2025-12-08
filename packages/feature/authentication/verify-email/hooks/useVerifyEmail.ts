@@ -3,7 +3,7 @@
 import { useMutation } from '@assetforce/graphql';
 import { useCallback } from 'react';
 
-import { VERIFY_EMAIL_MUTATION } from '../../register/graphql';
+import { VerifyEmailInRegistrationDocument as VERIFY_EMAIL_MUTATION } from '../../generated/graphql';
 import type { EmailVerificationResult } from '../types';
 
 export interface UseVerifyEmailReturn {
@@ -40,7 +40,7 @@ export interface UseVerifyEmailReturn {
  */
 export function useVerifyEmail(): UseVerifyEmailReturn {
   const [verifyMutation, { loading }] = useMutation<
-    { verifyEmailForRegistration: EmailVerificationResult },
+    { registration: { verifyEmail: EmailVerificationResult } },
     { token: string }
   >(VERIFY_EMAIL_MUTATION);
 
@@ -51,14 +51,14 @@ export function useVerifyEmail(): UseVerifyEmailReturn {
           variables: { token },
         });
 
-        if (!data?.verifyEmailForRegistration) {
+        if (!data?.registration?.verifyEmail) {
           return {
             success: false,
             message: 'No response from server',
           };
         }
 
-        return data.verifyEmailForRegistration;
+        return data.registration.verifyEmail;
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Verification failed';
         return {

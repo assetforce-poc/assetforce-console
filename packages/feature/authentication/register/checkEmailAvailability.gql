@@ -1,0 +1,8 @@
+query CheckEmailAvailabilityInRegistration($email: String!) {
+  registration {
+    email(address: $email) {
+      available
+      reason
+    }
+  }
+}

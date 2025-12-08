@@ -3,7 +3,7 @@
 import { useLazyQuery } from '@assetforce/graphql';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { CHECK_EMAIL_AVAILABILITY } from '../graphql';
+import { CheckEmailAvailabilityInRegistrationDocument as CHECK_EMAIL_AVAILABILITY } from '../../generated/graphql';
 import type { EmailStatus } from '../types';
 
 export interface UseEmailAvailabilityOptions {

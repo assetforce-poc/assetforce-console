@@ -3,7 +3,7 @@
 import { useMutation } from '@assetforce/graphql';
 import { useCallback } from 'react';
 
-import { REGISTER_MUTATION } from '../graphql';
+import { RegisterInRegistrationDocument as REGISTER_MUTATION } from '../../generated/graphql';
 import type { RegisterInput, RegisterResult } from '../types';
 
 export interface UseRegisterReturn {
