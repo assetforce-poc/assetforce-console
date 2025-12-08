@@ -35,9 +35,9 @@ yarn type-check
 
 ### Multi Tenant Mode
 
-| Username              | Password   | Tenants | Description                                         |
-| --------------------- | ---------- | ------- | --------------------------------------------------- |
-| `multi-tenant-user`   | `Test123!` | 2       | User with multiple tenants (shows tenant selection) |
+| Username            | Password   | Tenants | Description                                         |
+| ------------------- | ---------- | ------- | --------------------------------------------------- |
+| `multi-tenant-user` | `Test123!` | 2       | User with multiple tenants (shows tenant selection) |
 
 **Available Tenants:**
 
@@ -48,9 +48,9 @@ yarn type-check
 
 ### Single Tenant Mode
 
-| Username              | Password   | Tenants | Description                      |
-| --------------------- | ---------- | ------- | -------------------------------- |
-| `single-tenant-user`  | `Test123!` | 1       | User with single tenant (direct) |
+| Username             | Password   | Tenants | Description                      |
+| -------------------- | ---------- | ------- | -------------------------------- |
+| `single-tenant-user` | `Test123!` | 1       | User with single tenant (direct) |
 
 ## Login Page
 

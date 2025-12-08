@@ -26,12 +26,21 @@ export interface RegisterInput {
 
 // ============ Response Types ============
 
-export interface EmailAvailability {
+/**
+ * Email availability status (new namespace API)
+ * Replaces deprecated EmailAvailability
+ */
+export interface EmailStatus {
   /** Whether the email is available for registration */
   available: boolean;
   /** Reason if not available: EMAIL_ALREADY_EXISTS, INVALID_FORMAT, etc. */
   reason?: string;
 }
+
+/**
+ * @deprecated Use EmailStatus instead. Will be removed in v2.0.0
+ */
+export type EmailAvailability = EmailStatus;
 
 export interface RegisterResult {
   /** Whether registration was successful */

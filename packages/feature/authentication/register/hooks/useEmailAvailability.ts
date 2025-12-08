@@ -4,7 +4,7 @@ import { useLazyQuery } from '@assetforce/graphql';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CHECK_EMAIL_AVAILABILITY } from '../graphql';
-import type { EmailAvailability } from '../types';
+import type { EmailStatus } from '../types';
 
 export interface UseEmailAvailabilityOptions {
   /** Debounce delay in milliseconds (default: 500) */
@@ -55,7 +55,7 @@ export function useEmailAvailability(options?: UseEmailAvailabilityOptions): Use
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [executeQuery, { loading, data, error }] = useLazyQuery<
-    { registration: { email: EmailAvailability } },
+    { registration: { email: EmailStatus } },
     { email: string }
   >(CHECK_EMAIL_AVAILABILITY, {
     fetchPolicy: 'network-only',
