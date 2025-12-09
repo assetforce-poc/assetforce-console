@@ -13,9 +13,8 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "codegen": "turbo codegen",
-    "e2e": "playwright test --config=e2e/playwright.config.cjs",
-    "e2e:ui": "playwright test --config=e2e/playwright.config.cjs --ui",
-    "e2e:auth": "playwright test --config=e2e/playwright.config.cjs auth/"
+    "e2e": "bash scripts/test/e2e.sh",
+    "e2e:ui": "bash scripts/test/e2e.sh all --ui"
   },
   "devDependencies": {
     "@assetforce/playwright-config": "^0.2.0",

@@ -1,0 +1,24 @@
+#import "@assetforce/graphql"
+
+query ListAccounts($status: AccountStatus, $queries: ListQueriesInput) {
+  account {
+    list(status: $status, queries: $queries) {
+      items {
+        id
+        username
+        email
+        status
+        emailVerified
+        createdAt
+      }
+      total
+      pagination {
+        current
+        size
+        total
+        hasNext
+        hasPrev
+      }
+    }
+  }
+}
