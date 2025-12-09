@@ -29,15 +29,6 @@ export type AuthResult = {
   tokenType?: Maybe<Scalars['String']['output']>;
 };
 
-/** Result of email availability check */
-export type EmailAvailability = {
-  __typename?: 'EmailAvailability';
-  /** Whether the email is available for registration */
-  available: Scalars['Boolean']['output'];
-  /** Reason if not available: EMAIL_ALREADY_EXISTS, INVALID_FORMAT, etc. */
-  reason?: Maybe<Scalars['String']['output']>;
-};
-
 /** Email availability status (replaces EmailAvailability) */
 export type EmailStatus = {
   __typename?: 'EmailStatus';
