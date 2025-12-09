@@ -1,7 +1,7 @@
 /* eslint-disable */
 import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
-export type InputMaybe<T> = T | null | undefined;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -331,22 +331,12 @@ export type Mutation = {
   logout: Scalars['Boolean']['output'];
   /** Refresh access token */
   refreshToken: AuthResult;
-  /**
-   * Register a new user account
-   * @deprecated Use registration.register instead. Removal planned: 2025-12-30
-   */
-  register: RegisterResult;
   /** Registration-related mutations (new namespace) */
   registration: RegistrationMutations;
   /** Step 4: Select tenant and get final token with IdentityContext */
   selectTenant: AuthResult;
   /** Verify account email by admin (bypasses email verification flow) */
   verifyEmailByAdmin: EmailVerificationResult;
-  /**
-   * Verify email using verification token
-   * @deprecated Use registration.verifyEmail instead. Removal planned: 2025-12-30
-   */
-  verifyEmailForRegistration: EmailVerificationResult;
 };
 
 
@@ -366,11 +356,6 @@ export type MutationRefreshTokenArgs = {
 };
 
 
-export type MutationRegisterArgs = {
-  input: RegisterInput;
-};
-
-
 export type MutationSelectTenantArgs = {
   realmId: Scalars['String']['input'];
   subject: Scalars['String']['input'];
@@ -379,11 +364,6 @@ export type MutationSelectTenantArgs = {
 
 export type MutationVerifyEmailByAdminArgs = {
   accountId: Scalars['String']['input'];
-};
-
-
-export type MutationVerifyEmailForRegistrationArgs = {
-  token: Scalars['String']['input'];
 };
 
 /**
@@ -409,22 +389,12 @@ export type PreAuthResult = {
 export type Query = {
   __typename?: 'Query';
   _service: _Service;
-  /**
-   * Check if email is available for registration
-   * @deprecated Use registration.email instead. Removal planned: 2025-12-30
-   */
-  checkEmailAvailability: EmailAvailability;
   /** Current authenticated session */
   currentSession?: Maybe<Session>;
   /** Registration-related queries (new namespace) */
   registration: RegistrationQueries;
   /** Validate a JWT token */
   validateToken?: Maybe<TokenValidation>;
-};
-
-
-export type QueryCheckEmailAvailabilityArgs = {
-  email: Scalars['String']['input'];
 };
 
 

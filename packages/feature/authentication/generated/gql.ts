@@ -11,14 +11,8 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * 3. It does not support dead code elimination, so it will add unused operations.
  *
  * Therefore it is highly recommended to use the babel or swc plugin for production.
- * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
-type Documents = {
-    "query CheckEmailAvailabilityInRegistration($email: String!) {\n  registration {\n    email(address: $email) {\n      available\n      reason\n    }\n  }\n}": typeof types.CheckEmailAvailabilityInRegistrationDocument,
-    "mutation RegisterInRegistration($input: RegisterInput!) {\n  registration {\n    register(input: $input) {\n      success\n      accountId\n      message\n      requiresVerification\n      appliedTenant\n    }\n  }\n}": typeof types.RegisterInRegistrationDocument,
-    "mutation VerifyEmailInRegistration($token: String!) {\n  registration {\n    verifyEmail(token: $token) {\n      success\n      message\n      accountId\n      tenantStatus {\n        hasTenants\n        requiresTenantSelection\n        pendingApproval\n        activeTenants\n      }\n    }\n  }\n}": typeof types.VerifyEmailInRegistrationDocument,
-};
-const documents: Documents = {
+const documents = {
     "query CheckEmailAvailabilityInRegistration($email: String!) {\n  registration {\n    email(address: $email) {\n      available\n      reason\n    }\n  }\n}": types.CheckEmailAvailabilityInRegistrationDocument,
     "mutation RegisterInRegistration($input: RegisterInput!) {\n  registration {\n    register(input: $input) {\n      success\n      accountId\n      message\n      requiresVerification\n      appliedTenant\n    }\n  }\n}": types.RegisterInRegistrationDocument,
     "mutation VerifyEmailInRegistration($token: String!) {\n  registration {\n    verifyEmail(token: $token) {\n      success\n      message\n      accountId\n      tenantStatus {\n        hasTenants\n        requiresTenantSelection\n        pendingApproval\n        activeTenants\n      }\n    }\n  }\n}": types.VerifyEmailInRegistrationDocument,

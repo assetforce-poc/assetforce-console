@@ -19,6 +19,7 @@ COPY apps/customer-portal/package.json ./apps/customer-portal/
 COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
+COPY packages/graphql-config/package.json ./packages/graphql-config/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
