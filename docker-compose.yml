@@ -51,6 +51,7 @@ services:
       args:
         GITHUB_PACKAGES_TOKEN: ${GITHUB_PACKAGES_TOKEN}
     container_name: assetforce-customer-portal-dev
+    restart: unless-stopped
     ports:
       - "3000:3000"
     volumes:
