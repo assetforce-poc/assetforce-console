@@ -8,8 +8,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 
-import { RegisterForm } from '../../register/components/RegisterForm';
 import { CHECK_EMAIL_AVAILABILITY, REGISTER_MUTATION } from '../../register';
+import { RegisterForm } from '../../register/components/RegisterForm';
 
 // Mock next/link
 jest.mock('next/link', () => {

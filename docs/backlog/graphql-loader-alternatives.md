@@ -9,6 +9,7 @@
 使用 **GraphQL Codegen** 生成 TypeScript 类型和 Document 对象。
 
 ### 工作流程
+
 1. 编写 `.gql` 文件（GraphQL 查询/变更）
 2. 运行 `yarn codegen` 生成 `generated/graphql.ts`
 3. 从 `generated/graphql` 导入 Document
@@ -19,6 +20,7 @@ import { RegisterInRegistrationDocument as REGISTER_MUTATION } from '../generate
 ```
 
 ### 优点
+
 - ✅ 完全 ESM 兼容
 - ✅ 与 Turbopack 完美配合
 - ✅ 更好的类型安全（生成准确的 TypeScript 类型）
@@ -26,6 +28,7 @@ import { RegisterInRegistrationDocument as REGISTER_MUTATION } from '../generate
 - ✅ 构建产物更小（tree-shakeable）
 
 ### 缺点
+
 - ❌ 需要手动运行 codegen（或配置 watch）
 - ❌ 导入路径较长
 - ❌ Git diff 包含生成的文件
@@ -136,10 +139,10 @@ yarn next dev  # 而不是 --turbopack
 
 ## 决策记录
 
-| Date | Decision | Reason |
-|------|----------|--------|
+| Date       | Decision             | Reason                                                 |
+| ---------- | -------------------- | ------------------------------------------------------ |
 | 2025-12-09 | 采用方案 A (Codegen) | Turbopack + ESM 兼容性问题，codegen 提供更好的类型安全 |
-| - | 保留方案 B 文档 | 作为备选方案，等待 Turbopack 改进 |
+| -          | 保留方案 B 文档      | 作为备选方案，等待 Turbopack 改进                      |
 
 ---
 
