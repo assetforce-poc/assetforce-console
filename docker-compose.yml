@@ -119,6 +119,29 @@ services:
       - imc
 
   # ==========================================================================
+  # E2E Test Mode - Customer Portal (Production Build)
+  # ==========================================================================
+  customer-portal-e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: customer-portal
+      args:
+        GITHUB_PACKAGES_TOKEN: ${GITHUB_PACKAGES_TOKEN}
+    container_name: assetforce-customer-portal-e2e
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      # Use host.docker.internal to connect to host services (AAC/IMC)
+      - AAC_GRAPHQL_URL=http://host.docker.internal:8081/graphql
+      - IMC_GRAPHQL_URL=http://host.docker.internal:8082/graphql
+      - AUTH_ENDPOINT=http://host.docker.internal:8081/graphql
+      - AUTH_SECRET=this-is-a-dev-secret-min-32-chars!
+    networks:
+      - assetforce-network
+
+  # ==========================================================================
   # Production Mode - Admin Console
   # ==========================================================================
   admin-console:
