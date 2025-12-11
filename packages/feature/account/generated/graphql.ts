@@ -45,6 +45,61 @@ export type AccountConnection = {
   total: Scalars['Int']['output'];
 };
 
+/**
+ * Account detail with extended information.
+ * Includes basic info, attributes, and sessions.
+ */
+export type AccountDetail = {
+  __typename?: 'AccountDetail';
+  /** Keycloak user attributes (key-value pairs) */
+  attributes: Array<AttributeEntry>;
+  /** Account creation timestamp */
+  createdAt: Scalars['String']['output'];
+  /** Email address */
+  email?: Maybe<Scalars['String']['output']>;
+  /** Email verified status */
+  emailVerified: Scalars['Boolean']['output'];
+  /** First name */
+  firstName?: Maybe<Scalars['String']['output']>;
+  /** Keycloak User ID (self-referencing ID) */
+  id: Scalars['String']['output'];
+  /** Last name */
+  lastName?: Maybe<Scalars['String']['output']>;
+  /** Active sessions for this account */
+  sessions: Array<SessionInfo>;
+  /** Account status */
+  status: AccountStatus;
+  /** Last updated timestamp */
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  /** Username */
+  username: Scalars['String']['output'];
+};
+
+/** Email-related mutations for an account */
+export type AccountEmailMutations = {
+  __typename?: 'AccountEmailMutations';
+  /**
+   * Verify email address.
+   * - User self-verify: Click email link (context.role = USER)
+   * - Admin verify: Manual activation (context.role = ADMIN)
+   */
+  verify: VerifyEmailResult;
+};
+
+
+/** Email-related mutations for an account */
+export type AccountEmailMutationsVerifyArgs = {
+  accountId: Scalars['String']['input'];
+  context: OperationContext;
+};
+
+/** Account-related mutations */
+export type AccountMutations = {
+  __typename?: 'AccountMutations';
+  /** Email-related operations for an account */
+  email: AccountEmailMutations;
+};
+
 /** Account-related queries */
 export type AccountQueries = {
   __typename?: 'AccountQueries';
@@ -54,6 +109,11 @@ export type AccountQueries = {
    * Phase 9: Implements pagination logic via queries.pagination
    */
   list: AccountConnection;
+  /**
+   * Get account detail by ID (Phase 9 - UM-005).
+   * Returns extended account information including attributes and sessions.
+   */
+  one: AccountDetail;
 };
 
 
@@ -61,6 +121,12 @@ export type AccountQueries = {
 export type AccountQueriesListArgs = {
   queries?: InputMaybe<ListQueriesInput>;
   status?: InputMaybe<AccountStatus>;
+};
+
+
+/** Account-related queries */
+export type AccountQueriesOneArgs = {
+  id: Scalars['String']['input'];
 };
 
 /** Account status enumeration */
@@ -73,6 +139,20 @@ export type AccountStatus =
   | 'PENDING_VERIFICATION'
   /** User disabled or has required actions */
   | 'SUSPENDED';
+
+/**
+ * Key-value attribute entry.
+ * Sensitive values like emailVerificationToken are masked.
+ */
+export type AttributeEntry = {
+  __typename?: 'AttributeEntry';
+  /** Whether this is a sensitive field */
+  isSensitive: Scalars['Boolean']['output'];
+  /** Attribute key */
+  key: Scalars['String']['output'];
+  /** Attribute value (masked if sensitive) */
+  value: Scalars['String']['output'];
+};
 
 /**  Output Types */
 export type AuthResult = {
@@ -381,6 +461,8 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  /** Account-related mutations (namespace API) */
+  account: AccountMutations;
   /** Step 1: Initial authentication - verify credentials, return subject for tenant selection */
   authenticate: PreAuthResult;
   /** Login with username and password (single tenant mode) */
@@ -423,6 +505,35 @@ export type MutationSelectTenantArgs = {
 export type MutationVerifyEmailByAdminArgs = {
   accountId: Scalars['String']['input'];
 };
+
+/**
+ * Operation context for mutations.
+ * Captures who is performing the operation and why (for audit).
+ */
+export type OperationContext = {
+  /** Optional: Reason for this operation (for audit) */
+  reason?: InputMaybe<Scalars['String']['input']>;
+  /** Who is performing this operation */
+  role: OperationRole;
+  /** Optional: Token for user self-service operations */
+  token?: InputMaybe<Scalars['String']['input']>;
+  /** Optional: User ID of the operator (for audit) */
+  updatedBy?: InputMaybe<Scalars['String']['input']>;
+};
+
+/**
+ * Operation role enumeration.
+ * Defines who is performing an operation.
+ */
+export type OperationRole =
+  /** Administrator operation */
+  | 'ADMIN'
+  /** Anonymous/unauthenticated operation */
+  | 'ANONYMOUS'
+  /** System automated operation */
+  | 'SYSTEM'
+  /** End user self-service operation */
+  | 'USER';
 
 /** Pagination information for list queries */
 export type Pagination = {
@@ -589,6 +700,21 @@ export type Session = {
   username: Scalars['String']['output'];
 };
 
+/** Session information for an account. */
+export type SessionInfo = {
+  __typename?: 'SessionInfo';
+  /** Session ID */
+  id: Scalars['String']['output'];
+  /** IP address */
+  ipAddress?: Maybe<Scalars['String']['output']>;
+  /** Last access time */
+  lastAccess?: Maybe<Scalars['String']['output']>;
+  /** Session start time */
+  start?: Maybe<Scalars['String']['output']>;
+  /** User agent */
+  userAgent?: Maybe<Scalars['String']['output']>;
+};
+
 /** Sort input parameters */
 export type SortInput = {
   /** Sort direction: ASC or DESC */
@@ -642,10 +768,35 @@ export type VerificationResult = {
   tenantStatus?: Maybe<TenantStatus>;
 };
 
+/** Result of email verification operation. */
+export type VerifyEmailResult = {
+  __typename?: 'VerifyEmailResult';
+  /** Account ID if successful */
+  accountId?: Maybe<Scalars['String']['output']>;
+  /** Success message or error details */
+  message?: Maybe<Scalars['String']['output']>;
+  /** Whether verification was successful */
+  success: Scalars['Boolean']['output'];
+};
+
 export type _Service = {
   __typename?: '_Service';
   sdl: Scalars['String']['output'];
 };
+
+export type GetAccountDetailQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetAccountDetailQuery = { __typename?: 'Query', account: { __typename?: 'AccountQueries', one: { __typename?: 'AccountDetail', id: string, username: string, email?: string | null, status: AccountStatus, emailVerified: boolean, createdAt: string, updatedAt?: string | null, firstName?: string | null, lastName?: string | null, attributes: Array<{ __typename?: 'AttributeEntry', key: string, value: string, isSensitive: boolean }>, sessions: Array<{ __typename?: 'SessionInfo', id: string, ipAddress?: string | null, userAgent?: string | null, start?: string | null, lastAccess?: string | null }> } } };
+
+export type VerifyEmailByAdminMutationVariables = Exact<{
+  accountId: Scalars['String']['input'];
+}>;
+
+
+export type VerifyEmailByAdminMutation = { __typename?: 'Mutation', verifyEmailByAdmin: { __typename?: 'EmailVerificationResult', success: boolean, message?: string | null } };
 
 export type ListAccountsQueryVariables = Exact<{
   status?: InputMaybe<AccountStatus>;
@@ -656,4 +807,6 @@ export type ListAccountsQueryVariables = Exact<{
 export type ListAccountsQuery = { __typename?: 'Query', account: { __typename?: 'AccountQueries', list: { __typename?: 'AccountConnection', total: number, items: Array<{ __typename?: 'Account', id: string, username: string, email?: string | null, status: AccountStatus, emailVerified: boolean, createdAt: string }>, pagination: { __typename?: 'Pagination', current: number, size: number, total: number, hasNext: boolean, hasPrev: boolean } } } };
 
 
+export const GetAccountDetailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAccountDetail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"attributes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isSensitive"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sessions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ipAddress"}},{"kind":"Field","name":{"kind":"Name","value":"userAgent"}},{"kind":"Field","name":{"kind":"Name","value":"start"}},{"kind":"Field","name":{"kind":"Name","value":"lastAccess"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetAccountDetailQuery, GetAccountDetailQueryVariables>;
+export const VerifyEmailByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"VerifyEmailByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accountId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verifyEmailByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"accountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]} as unknown as DocumentNode<VerifyEmailByAdminMutation, VerifyEmailByAdminMutationVariables>;
 export const ListAccountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListAccounts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"status"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AccountStatus"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"queries"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ListQueriesInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"list"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"status"},"value":{"kind":"Variable","name":{"kind":"Name","value":"status"}}},{"kind":"Argument","name":{"kind":"Name","value":"queries"},"value":{"kind":"Variable","name":{"kind":"Name","value":"queries"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"pagination"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"current"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"hasNext"}},{"kind":"Field","name":{"kind":"Name","value":"hasPrev"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ListAccountsQuery, ListAccountsQueryVariables>;

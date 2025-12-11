@@ -1,6 +1,6 @@
 'use client';
 
-import { VerifyEmailResult } from '@assetforce/authentication/verify-email';
+import { type EmailVerificationResult, VerifyEmailResult } from '@assetforce/authentication/verify-email';
 import { Box, Container, Icons, Typography } from '@assetforce/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback } from 'react';
@@ -11,7 +11,7 @@ function VerifyEmailContent() {
   const token = searchParams.get('token');
 
   const handleSuccess = useCallback(
-    (result: { tenantStatus?: { requiresTenantSelection?: boolean } }) => {
+    (result: EmailVerificationResult) => {
       console.log('Email verification successful:', result);
       // If user needs to select tenant, redirect to tenant selection
       if (result.tenantStatus?.requiresTenantSelection) {

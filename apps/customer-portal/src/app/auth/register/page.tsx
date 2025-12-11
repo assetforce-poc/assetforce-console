@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@assetforce/auth/react';
-import { RegisterForm } from '@assetforce/authentication/register';
+import { RegisterForm, type RegisterResult } from '@assetforce/authentication/register';
 import { Box, CircularProgress, Container, Paper } from '@assetforce/material';
 import { useRouter } from 'next/navigation';
 import { Suspense, useCallback, useEffect } from 'react';
@@ -18,7 +18,7 @@ function RegisterContent() {
   }, [isAuthenticated, isLoading, router]);
 
   const handleSuccess = useCallback(
-    (result: { accountId?: string; email?: string }) => {
+    (result: RegisterResult) => {
       console.log('Registration successful:', result);
       router.push(`/auth/registration-success?email=${encodeURIComponent(result.email || '')}`);
     },

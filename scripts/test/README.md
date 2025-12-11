@@ -27,12 +27,14 @@ yarn e2e:ui
 ## Test Modules
 
 ### Customer Portal (`auth`)
+
 - **Tests**: User registration, login, email verification
 - **Config**: `e2e/playwright.config.cjs`
 - **Location**: `e2e/auth/`
 - **App**: http://localhost:3000
 
 ### Admin Console (`admin`)
+
 - **Tests**: Account listing, user management
 - **Config**: `playwright.admin.config.cjs`
 - **Location**: `e2e/admin/`
@@ -41,6 +43,7 @@ yarn e2e:ui
 ## Prerequisites
 
 1. **Start development environment**:
+
    ```bash
    cd /path/to/assetforce-infra
    ./scripts/dev.sh

@@ -7,7 +7,9 @@
   "types": "./index.ts",
   "exports": {
     ".": "./index.ts",
-    "./list": "./list/index.ts"
+    "./list": "./list/index.ts",
+    "./detail": "./detail/index.ts",
+    "./detail/components": "./detail/components/index.ts"
   },
   "scripts": {
     "lint": "eslint .",

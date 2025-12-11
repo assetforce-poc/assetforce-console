@@ -1,85 +1,57 @@
 /**
  * Register Feature Types
- * Matches AAC GraphQL schema (Task 033)
+ * All types derived from generated GraphQL schema (Task 033)
  */
 
-// ============ Input Types ============
+import type {
+  EmailStatus as GqlEmailStatus,
+  EmailVerificationResult as GqlEmailVerificationResult,
+  RegisterInput as GqlRegisterInput,
+  RegisterResult as GqlRegisterResult,
+  TenantStatus as GqlTenantStatus,
+} from '../generated/graphql';
 
-export interface RegisterInput {
-  /** User's email address */
-  email: string;
-  /** Password */
-  password: string;
-  /** First name */
-  firstName: string;
-  /** Last name */
-  lastName: string;
-  /** Must accept terms of service */
-  acceptTerms: boolean;
-  /** Optional: Username (if not provided, email will be used) */
-  username?: string;
-  /** Optional: Realm/Tenant to apply for */
-  realm?: string;
-  /** Optional: Preferred locale */
-  locale?: string;
-}
+// ============ Type Aliases from GraphQL ============
 
-// ============ Response Types ============
+/**
+ * Registration input data
+ * Directly from GraphQL schema
+ */
+export type RegisterInput = GqlRegisterInput;
+
+/**
+ * Registration result with client-side extension
+ * Extends GraphQL type to include email for client convenience
+ */
+export type RegisterResult = GqlRegisterResult & {
+  /** Email used for registration (client-side only, not from server) */
+  email?: string;
+};
 
 /**
  * Email availability status (new namespace API)
- * Replaces deprecated EmailAvailability
+ * Directly from GraphQL schema
  */
-export interface EmailStatus {
-  /** Whether the email is available for registration */
-  available: boolean;
-  /** Reason if not available: EMAIL_ALREADY_EXISTS, INVALID_FORMAT, etc. */
-  reason?: string;
-}
+export type EmailStatus = GqlEmailStatus;
 
 /**
  * @deprecated Use EmailStatus instead. Will be removed in v2.0.0
  */
 export type EmailAvailability = EmailStatus;
 
-export interface RegisterResult {
-  /** Whether registration was successful */
-  success: boolean;
-  /** Keycloak User ID (account ID) */
-  accountId?: string;
-  /** Success message or error details */
-  message?: string;
-  /** Always true for email-based registration */
-  requiresVerification: boolean;
-  /** If realm provided: the tenant applied to */
-  appliedTenant?: string;
-  /** Email used for registration (client-side, not from server) */
-  email?: string;
-}
+/**
+ * Tenant status information
+ * Directly from GraphQL schema
+ */
+export type TenantStatus = GqlTenantStatus;
 
-export interface TenantStatus {
-  /** Has any tenant roles */
-  hasTenants: boolean;
-  /** No tenants → need to apply */
-  requiresTenantSelection: boolean;
-  /** Has tenants but all pending approval */
-  pendingApproval: boolean;
-  /** List of active tenant IDs */
-  activeTenants: string[];
-}
+/**
+ * Email verification result
+ * Directly from GraphQL schema
+ */
+export type EmailVerificationResult = GqlEmailVerificationResult;
 
-export interface EmailVerificationResult {
-  /** Whether verification was successful */
-  success: boolean;
-  /** Message or error details */
-  message?: string;
-  /** Account ID if successful */
-  accountId?: string;
-  /** User's tenant membership status */
-  tenantStatus?: TenantStatus;
-}
-
-// ============ Error Codes ============
+// ============ Error Codes (Not in GraphQL Schema) ============
 
 export const RegisterErrorCodes = {
   EMAIL_ALREADY_EXISTS: 'EMAIL_ALREADY_EXISTS',

@@ -114,29 +114,62 @@ test.describe('Account Listing', () => {
 
       // Either loading is visible or data is already loaded
       const isLoadingVisible = await loading.isVisible().catch(() => false);
-      const isDataVisible = await page.getByTestId('account-list').isVisible().catch(() => false);
+      const isDataVisible = await page
+        .getByTestId('account-list')
+        .isVisible()
+        .catch(() => false);
 
       expect(isLoadingVisible || isDataVisible).toBe(true);
     });
   });
 
   test.describe('Error Handling', () => {
-    test.skip('should display error message when backend is unavailable', async ({ page }) => {
-      // Skip: Requires backend to be stopped
-      // To test: Stop AAC service before running
+    test('should display error message when backend is unavailable', async ({ page }) => {
+      // Intercept GraphQL request and simulate network error
+      await page.route('**/api/graphql/aac', (route) => {
+        route.abort('failed');
+      });
 
       await page.goto(urls.accounts);
 
       // Should show error alert
       await expect(page.getByTestId('account-list-error')).toBeVisible({ timeout: 10000 });
-      await expect(page.getByText(/Failed to load accounts/i)).toBeVisible();
+      await expect(page.getByText(/Unable to connect to the server|Failed to load accounts/i)).toBeVisible();
     });
   });
 
   test.describe('Empty State', () => {
-    test.skip('should display empty state message when no accounts exist', async ({ page }) => {
-      // Skip: Requires database to be empty
-      // To test: Clear all accounts from Keycloak before running
+    test('should display empty state message when no accounts exist', async ({ page }) => {
+      // Intercept GraphQL request and return empty result
+      await page.route('**/api/graphql/aac', async (route) => {
+        const request = route.request();
+        const postData = request.postData();
+
+        // Only mock the account list query (query name is "ListAccounts")
+        if (postData?.includes('ListAccounts')) {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              data: {
+                account: {
+                  list: {
+                    items: [],
+                    total: 0,
+                    pageInfo: {
+                      hasNextPage: false,
+                      hasPreviousPage: false,
+                    },
+                  },
+                },
+              },
+            }),
+          });
+        } else {
+          // Let other requests pass through
+          await route.continue();
+        }
+      });
 
       await page.goto(urls.accounts);
 
@@ -160,7 +193,8 @@ test.describe('Account Listing', () => {
       await expect(page.getByText(/1–\d+ of \d+/)).toBeVisible();
     });
 
-    test('should change page when clicking pagination controls', async ({ page }) => {
+    test('should navigate to next page when multiple pages exist', async ({ page }) => {
+      // With seeded pagination accounts (25 total), we have 2 pages (20 + 5)
       await page.goto(urls.accounts);
 
       // Wait for data
@@ -173,29 +207,70 @@ test.describe('Account Listing', () => {
       // Get pagination controls
       const pagination = page.getByTestId('account-list-pagination');
 
-      // Find total count to determine if we have multiple pages
-      const paginationText = await pagination.getByText(/1–\d+ of \d+/).textContent();
-      const totalMatch = paginationText?.match(/of (\d+)/);
-      const total = totalMatch ? parseInt(totalMatch[1]) : 0;
+      // Click next page button (should be enabled with 25 accounts)
+      const nextButton = pagination.getByLabel('Go to next page');
+      await expect(nextButton).toBeEnabled();
+      await nextButton.click();
 
-      if (total > 20) {
-        // Click next page button
-        const nextButton = pagination.getByLabel('Go to next page');
-        await nextButton.click();
+      // Wait for new data to load
+      await page.waitForTimeout(1000);
 
-        // Wait for new data to load
-        await page.waitForTimeout(1000);
+      // First row should be different
+      const firstRowAfter = page.locator('[data-testid^="account-row-"]').first();
+      const newUsername = await firstRowAfter.locator('td').first().textContent();
 
-        // First row should be different
-        const firstRowAfter = page.locator('[data-testid^="account-row-"]').first();
-        const newUsername = await firstRowAfter.locator('td').first().textContent();
+      expect(newUsername).not.toBe(initialUsername);
+    });
 
-        expect(newUsername).not.toBe(initialUsername);
-      } else {
-        // If only one page, next button should be disabled
-        const nextButton = pagination.getByLabel('Go to next page');
-        await expect(nextButton).toBeDisabled();
-      }
+    test('should disable next button when only one page exists', async ({ page }) => {
+      // Mock single page response (< 20 items)
+      await page.route('**/api/graphql/aac', async (route) => {
+        const request = route.request();
+        const postData = request.postData();
+
+        if (postData?.includes('ListAccounts')) {
+          // Return only 10 accounts (single page)
+          const mockAccounts = Array.from({ length: 10 }, (_, i) => ({
+            id: `mock-${i}`,
+            username: `mock-user-${i}`,
+            email: `mock${i}@test.com`,
+            status: 'ACTIVE',
+            emailVerified: true,
+            createdAt: new Date().toISOString(),
+          }));
+
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              data: {
+                account: {
+                  list: {
+                    items: mockAccounts,
+                    total: 10,
+                    pageInfo: {
+                      hasNextPage: false,
+                      hasPreviousPage: false,
+                    },
+                  },
+                },
+              },
+            }),
+          });
+        } else {
+          await route.continue();
+        }
+      });
+
+      await page.goto(urls.accounts);
+
+      // Wait for data
+      await expect(page.getByTestId('account-list')).toBeVisible({ timeout: 10000 });
+
+      // Next button should be disabled with only 10 accounts
+      const pagination = page.getByTestId('account-list-pagination');
+      const nextButton = pagination.getByLabel('Go to next page');
+      await expect(nextButton).toBeDisabled();
     });
 
     test('should change rows per page', async ({ page }) => {
@@ -243,10 +318,10 @@ test.describe('Account Listing', () => {
       await expect(page.getByTestId('account-list')).toBeVisible({ timeout: 10000 });
 
       // Should have made request to AAC endpoint, not IMC
-      expect(graphqlRequests.some(url => url.includes('/api/graphql/aac'))).toBe(true);
+      expect(graphqlRequests.some((url) => url.includes('/api/graphql/aac'))).toBe(true);
 
       // Should NOT use IMC endpoint for accounts
-      const imcRequests = graphqlRequests.filter(url => url.includes('/api/graphql/imc'));
+      const imcRequests = graphqlRequests.filter((url) => url.includes('/api/graphql/imc'));
       // IMC might be called for other data, but not for the accounts query
       // We can't check query content in request URL, so just verify AAC was called
       expect(graphqlRequests.length).toBeGreaterThan(0);

@@ -14,6 +14,7 @@ import {
   TableRow,
   Typography,
 } from '@assetforce/material';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { useAccounts } from '../hooks';
@@ -70,6 +71,7 @@ export interface AccountListProps {
  * ```
  */
 export function AccountList({ status, search }: AccountListProps) {
+  const router = useRouter();
   const [page, setPage] = useState(0); // MUI TablePagination uses 0-indexed
   const [size, setSize] = useState(DEFAULT_PAGE_SIZE);
 
@@ -87,6 +89,10 @@ export function AccountList({ status, search }: AccountListProps) {
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSize(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleRowClick = (accountId: string) => {
+    router.push(`/accounts/${accountId}`);
   };
 
   if (loading) {
@@ -130,7 +136,13 @@ export function AccountList({ status, search }: AccountListProps) {
           </TableHead>
           <TableBody>
             {data.items.map((account) => (
-              <TableRow key={account.id} data-testid={`account-row-${account.id}`} hover>
+              <TableRow
+                key={account.id}
+                data-testid={`account-row-${account.id}`}
+                hover
+                onClick={() => handleRowClick(account.id)}
+                sx={{ cursor: 'pointer' }}
+              >
                 <TableCell>{account.username}</TableCell>
                 <TableCell>{account.email}</TableCell>
                 <TableCell>

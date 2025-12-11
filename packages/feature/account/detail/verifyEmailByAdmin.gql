@@ -1,0 +1,8 @@
+#import "@assetforce/graphql"
+
+mutation VerifyEmailByAdmin($accountId: String!) {
+  verifyEmailByAdmin(accountId: $accountId) {
+    success
+    message
+  }
+}

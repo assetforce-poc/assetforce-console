@@ -1,0 +1,29 @@
+#import "@assetforce/graphql"
+
+query GetAccountDetail($id: String!) {
+  account {
+    one(id: $id) {
+      id
+      username
+      email
+      status
+      emailVerified
+      createdAt
+      updatedAt
+      firstName
+      lastName
+      attributes {
+        key
+        value
+        isSensitive
+      }
+      sessions {
+        id
+        ipAddress
+        userAgent
+        start
+        lastAccess
+      }
+    }
+  }
+}

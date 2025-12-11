@@ -53,7 +53,7 @@ export function VerifyEmailResult({ token, onSuccess, onError }: VerifyEmailResu
         onSuccess?.(result);
       } else {
         const message = result.message || 'Verification failed';
-        setState({ status: 'error', message, code: result.message });
+        setState({ status: 'error', message, code: result.message ?? undefined });
         onError?.(message);
       }
     };
