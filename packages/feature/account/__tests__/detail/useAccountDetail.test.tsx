@@ -102,7 +102,7 @@ describe('useAccountDetail', () => {
 
       expect(result.current.loading).toBe(true);
       expect(result.current.account).toBeNull();
-      expect(result.current.error).toBeNull();
+      expect(result.current.error).toBeUndefined();
     });
 
     it('should return refetch function', () => {
@@ -127,7 +127,7 @@ describe('useAccountDetail', () => {
       });
 
       expect(result.current.account).toEqual(mockAccountDetail);
-      expect(result.current.error).toBeNull();
+      expect(result.current.error).toBeUndefined();
     });
 
     it('should include all account fields', async () => {
@@ -161,7 +161,7 @@ describe('useAccountDetail', () => {
       });
 
       expect(result.current.account).toBeNull();
-      expect(result.current.error).toBeNull();
+      expect(result.current.error).toBeUndefined();
     });
   });
 

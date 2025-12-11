@@ -85,7 +85,9 @@ describe('SessionHistoryCard', () => {
       render(<SessionHistoryCard sessions={mockSessions} />);
 
       // Check that timestamps are formatted (exact format may vary by locale)
-      expect(screen.getByText(/2024/)).toBeInTheDocument();
+      // Multiple timestamps exist (start + lastAccess for each session)
+      const timestamps = screen.getAllByText(/2024/);
+      expect(timestamps.length).toBeGreaterThan(0);
     });
 
     it('should render DataGrid with correct number of rows', () => {

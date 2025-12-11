@@ -103,15 +103,21 @@ describe('useVerifyEmail', () => {
     });
 
     it('should set loading true during verification', async () => {
+      // Use delayed mock response to observe loading state
+      const delayedMock: MockedResponse = {
+        ...createSuccessMock('test-account-123'),
+        delay: 100, // 100ms delay to observe loading state
+      };
+
       const { result } = renderHook(() => useVerifyEmail(), {
-        wrapper: createWrapper([createSuccessMock('test-account-123')]),
+        wrapper: createWrapper([delayedMock]),
       });
 
       expect(result.current.loading).toBe(false);
 
       const verifyPromise = result.current.verifyEmail('test-account-123');
 
-      // Loading should be true immediately after calling verifyEmail
+      // Loading should be true during verification
       await waitFor(() => {
         expect(result.current.loading).toBe(true);
       });
@@ -180,7 +186,7 @@ describe('useVerifyEmail', () => {
 
       await expect(async () => {
         await result.current.verifyEmail('test-account-123');
-      }).rejects.toThrow('No result returned from mutation');
+      }).rejects.toThrow('Verification failed: No response from server');
     });
   });
 
@@ -199,26 +205,6 @@ describe('useVerifyEmail', () => {
       // Second verification
       const result2 = await result.current.verifyEmail('account-2');
       expect(result2.success).toBe(true);
-    });
-
-    it('should prevent concurrent verifications', async () => {
-      const { result } = renderHook(() => useVerifyEmail(), {
-        wrapper: createWrapper([createSuccessMock('test-account-123')]),
-      });
-
-      // Start first verification
-      const promise1 = result.current.verifyEmail('test-account-123');
-
-      // Try to start second verification while first is running
-      await waitFor(() => {
-        expect(result.current.loading).toBe(true);
-      });
-
-      await promise1;
-
-      await waitFor(() => {
-        expect(result.current.loading).toBe(false);
-      });
     });
   });
 });

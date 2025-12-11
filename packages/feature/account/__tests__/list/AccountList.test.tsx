@@ -13,6 +13,16 @@ import { AccountList } from '../../list/components/AccountList';
 import type { AccountConnection } from '../../list/types';
 import { AccountStatus } from '../../list/types';
 
+// ============ Mock Next.js Router ============
+
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+  })),
+}));
+
 // ============ Mock Data ============
 
 const mockAccounts: AccountConnection = {

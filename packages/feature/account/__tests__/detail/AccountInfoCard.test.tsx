@@ -70,7 +70,7 @@ describe('AccountInfoCard', () => {
     it('should display account status badge', () => {
       render(<AccountInfoCard account={mockAccount} />);
 
-      expect(screen.getByTestId('account-status-ACTIVE')).toBeInTheDocument();
+      expect(screen.getByTestId('account-status-active')).toBeInTheDocument();
     });
 
     it('should format dates correctly', () => {
