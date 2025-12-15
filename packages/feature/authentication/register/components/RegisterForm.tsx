@@ -15,8 +15,8 @@ import type { RegisterResult } from '../types';
 const registerSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email format'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  firstName: z.string().min(1, 'First name is required').max(50, 'First name is too long'),
-  lastName: z.string().min(1, 'Last name is required').max(50, 'Last name is too long'),
+  firstName: z.string().max(50, 'First name is too long').or(z.literal('')),
+  lastName: z.string().max(50, 'Last name is too long').or(z.literal('')),
   acceptTerms: z.boolean().refine((val) => val === true, {
     message: 'You must accept the terms of service',
   }),
@@ -154,30 +154,6 @@ export function RegisterForm({ onSuccess, onError, onLoginClick }: RegisterFormP
           </Alert>
         )}
 
-        {/* Name Fields */}
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-          <Field
-            name="firstName"
-            component={FormTextField}
-            props={{
-              label: 'First Name',
-              required: true,
-              autoComplete: 'given-name',
-              'data-testid': 'register-firstName',
-            }}
-          />
-          <Field
-            name="lastName"
-            component={FormTextField}
-            props={{
-              label: 'Last Name',
-              required: true,
-              autoComplete: 'family-name',
-              'data-testid': 'register-lastName',
-            }}
-          />
-        </Stack>
-
         {/* Email Field with availability check */}
         <EmailFieldWithCheck />
 
@@ -193,6 +169,32 @@ export function RegisterForm({ onSuccess, onError, onLoginClick }: RegisterFormP
             'data-testid': 'register-password',
           }}
         />
+
+        {/* Name Fields (Optional) */}
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          <Field
+            name="firstName"
+            component={FormTextField}
+            props={{
+              label: 'First Name',
+              required: false,
+              autoComplete: 'given-name',
+              placeholder: 'Optional',
+              'data-testid': 'register-firstName',
+            }}
+          />
+          <Field
+            name="lastName"
+            component={FormTextField}
+            props={{
+              label: 'Last Name',
+              required: false,
+              autoComplete: 'family-name',
+              placeholder: 'Optional',
+              'data-testid': 'register-lastName',
+            }}
+          />
+        </Stack>
 
         {/* Terms Checkbox */}
         <Field

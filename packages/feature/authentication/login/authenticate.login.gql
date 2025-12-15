@@ -1,0 +1,41 @@
+# authenticate.login - Universal login mutation
+# Handles all login scenarios:
+# - Without tenant: Returns available tenants for selection
+# - With tenant: Direct login to specific tenant
+# - Single tenant: Auto-enters and returns token
+# - No tenants: Returns empty array (onboarding required)
+
+mutation AuthenticateLogin($username: String!, $password: String!, $tenant: String) {
+  authenticate {
+    login(username: $username, password: $password, tenant: $tenant) {
+      success
+      subject
+      tenants {
+        id
+        name
+        displayName
+        zoneId
+        type
+        description
+        isActive
+      }
+      accessToken
+      refreshToken
+      expiresIn
+      tokenType
+      identityContext {
+        zone
+        tenant
+        subject {
+          accountId
+          userId
+          username
+          email
+          displayName
+        }
+        groups
+      }
+      error
+    }
+  }
+}

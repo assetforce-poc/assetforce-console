@@ -10,7 +10,8 @@
     "./login": "./login/index.ts",
     "./tenant": "./tenant/index.ts",
     "./register": "./register/index.ts",
-    "./verify-email": "./verify-email/index.ts"
+    "./verify-email": "./verify-email/index.ts",
+    "./generated/graphql": "./generated/graphql.ts"
   },
   "scripts": {
     "lint": "eslint .",

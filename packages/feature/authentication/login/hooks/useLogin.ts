@@ -5,9 +5,16 @@ import { useCallback, useState } from 'react';
 /**
  * API Response types (matches @assetforce/auth server responses)
  */
+interface Tenant {
+  id: string;
+  name: string;
+}
+
 interface SignInResponse {
   success: boolean;
-  requiresTenantSelection?: boolean;
+  tenant?: {
+    available?: Tenant[];
+  };
   error?: string;
 }
 
@@ -25,6 +32,7 @@ export interface MFAChallenge {
 export type LoginResult =
   | { type: 'success' }
   | { type: 'tenant_selection_required' }
+  | { type: 'tenant_onboarding_required' }
   | { type: 'mfa_required'; challenge: MFAChallenge }
   | { type: 'error'; message: string };
 
@@ -60,6 +68,8 @@ export interface UseLoginReturn {
  *     router.push('/dashboard');
  *   } else if (result.type === 'tenant_selection_required') {
  *     router.push('/auth/select-tenant');
+ *   } else if (result.type === 'tenant_onboarding_required') {
+ *     router.push('/tenant/request');
  *   } else if (result.type === 'error') {
  *     setError(result.message);
  *   }
@@ -105,12 +115,20 @@ export function useLogin(options?: UseLoginOptions): UseLoginReturn {
           };
         }
 
-        // Check if tenant selection is required
-        if (data.requiresTenantSelection) {
+        // Determine tenant status from available array
+        const tenantCount = data.tenant?.available?.length ?? 0;
+
+        if (tenantCount === 0) {
+          // No tenant: requires onboarding
+          return { type: 'tenant_onboarding_required' };
+        }
+
+        if (tenantCount > 1) {
+          // Multiple tenants: requires selection
           return { type: 'tenant_selection_required' };
         }
 
-        // Success
+        // Single tenant: success
         return { type: 'success' };
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Network error';

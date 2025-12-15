@@ -4,7 +4,7 @@
 
 import type { MockedResponse } from '@apollo/client/testing';
 import { MockedProvider } from '@apollo/client/testing/react';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 
 import { REGISTER_MUTATION } from '../../register';
@@ -107,13 +107,16 @@ describe('useRegister', () => {
         wrapper: createWrapper([createSuccessMock(validInput)]),
       });
 
-      const registerResult = await result.current.register(validInput);
+      let registerResult: RegisterResult | undefined;
+      await act(async () => {
+        registerResult = await result.current.register(validInput);
+      });
 
-      expect(registerResult.success).toBe(true);
-      expect(registerResult.accountId).toBe('test-account-123');
-      expect(registerResult.message).toBe('Registration successful');
-      expect(registerResult.requiresVerification).toBe(true);
-      expect(registerResult.email).toBe(validInput.email);
+      expect(registerResult!.success).toBe(true);
+      expect(registerResult!.accountId).toBe('test-account-123');
+      expect(registerResult!.message).toBe('Registration successful');
+      expect(registerResult!.requiresVerification).toBe(true);
+      expect(registerResult!.email).toBe(validInput.email);
     });
 
     it('should return loading false after mutation completes', async () => {
@@ -122,7 +125,9 @@ describe('useRegister', () => {
       });
 
       // Execute mutation and wait for completion
-      await result.current.register(validInput);
+      await act(async () => {
+        await result.current.register(validInput);
+      });
 
       // Loading should be false after completion
       await waitFor(() => {
@@ -138,11 +143,14 @@ describe('useRegister', () => {
         wrapper: createWrapper([createFailureMock(failInput)]),
       });
 
-      const registerResult = await result.current.register(failInput);
+      let registerResult: RegisterResult | undefined;
+      await act(async () => {
+        registerResult = await result.current.register(failInput);
+      });
 
-      expect(registerResult.success).toBe(false);
-      expect(registerResult.message).toBe('Email already exists');
-      expect(registerResult.email).toBe(failInput.email);
+      expect(registerResult!.success).toBe(false);
+      expect(registerResult!.message).toBe('Email already exists');
+      expect(registerResult!.email).toBe(failInput.email);
     });
   });
 
@@ -152,12 +160,15 @@ describe('useRegister', () => {
         wrapper: createWrapper([createNetworkErrorMock(validInput)]),
       });
 
-      const registerResult = await result.current.register(validInput);
+      let registerResult: RegisterResult | undefined;
+      await act(async () => {
+        registerResult = await result.current.register(validInput);
+      });
 
-      expect(registerResult.success).toBe(false);
-      expect(registerResult.message).toBe('Network error');
-      expect(registerResult.requiresVerification).toBe(false);
-      expect(registerResult.email).toBe(validInput.email);
+      expect(registerResult!.success).toBe(false);
+      expect(registerResult!.message).toBe('Network error');
+      expect(registerResult!.requiresVerification).toBe(false);
+      expect(registerResult!.email).toBe(validInput.email);
     });
 
     it('should handle non-Error exceptions with fallback message', async () => {
@@ -174,12 +185,15 @@ describe('useRegister', () => {
         wrapper: createWrapper([nonErrorMock]),
       });
 
-      const registerResult = await result.current.register(validInput);
+      let registerResult: RegisterResult | undefined;
+      await act(async () => {
+        registerResult = await result.current.register(validInput);
+      });
 
-      expect(registerResult.success).toBe(false);
+      expect(registerResult!.success).toBe(false);
       // Should use fallback message since it's not an Error instance
-      expect(registerResult.message).toBeDefined();
-      expect(registerResult.email).toBe(validInput.email);
+      expect(registerResult!.message).toBeDefined();
+      expect(registerResult!.email).toBe(validInput.email);
     });
 
     it('should handle null response from server', async () => {
@@ -201,10 +215,13 @@ describe('useRegister', () => {
         wrapper: createWrapper([nullResponseMock]),
       });
 
-      const registerResult = await result.current.register(validInput);
+      let registerResult: RegisterResult | undefined;
+      await act(async () => {
+        registerResult = await result.current.register(validInput);
+      });
 
-      expect(registerResult.success).toBe(false);
-      expect(registerResult.message).toBe('No response from server');
+      expect(registerResult!.success).toBe(false);
+      expect(registerResult!.message).toBe('No response from server');
     });
   });
 });

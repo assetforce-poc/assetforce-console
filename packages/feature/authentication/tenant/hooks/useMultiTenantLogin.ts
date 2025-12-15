@@ -20,9 +20,10 @@ interface ApiTenant {
  */
 interface SignInResponse {
   success: boolean;
-  requiresTenantSelection?: boolean;
+  tenant?: {
+    available?: ApiTenant[];
+  };
   subject?: string;
-  availableTenants?: ApiTenant[];
   error?: string;
 }
 
@@ -36,6 +37,8 @@ interface SelectTenantResponse {
  */
 export interface AuthResult {
   success: boolean;
+  /** True if user has no tenants and needs to join/create one */
+  requiresTenantOnboarding?: boolean;
   error?: string;
 }
 
@@ -127,19 +130,23 @@ export const useMultiTenantLogin = (options?: UseMultiTenantLoginOptions): UseMu
           return;
         }
 
-        // Check if tenant selection is required
-        if (data.requiresTenantSelection && data.availableTenants) {
-          const availableRealms = data.availableTenants.map(toRealm);
+        // Determine tenant status from available array
+        const availableTenants = data.tenant?.available ?? [];
+        const tenantCount = availableTenants.length;
 
-          if (availableRealms.length === 0) {
-            setState((prev) => ({
-              ...prev,
-              error: 'No tenants available for this user',
-            }));
-            options?.onError?.('No tenants available for this user');
-            return;
-          }
+        if (tenantCount === 0) {
+          // No tenant - mark as complete and let onSuccess handler redirect to tenant onboarding
+          setState({
+            step: 'complete',
+            subject: data.subject,
+          });
+          options?.onSuccess?.({ success: true, requiresTenantOnboarding: true });
+          return;
+        }
 
+        if (tenantCount > 1) {
+          // Multiple tenants - show selection UI
+          const availableRealms = availableTenants.map(toRealm);
           setState({
             step: 'tenant-selection',
             subject: data.subject,

@@ -30,7 +30,7 @@ COPY packages/feature/account/package.json ./packages/feature/account/
 # Install dependencies
 # GITHUB_PACKAGES_TOKEN is required for @assetforce/* packages
 ARG GITHUB_PACKAGES_TOKEN
-RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+RUN node -e "require('fs').appendFileSync('.npmrc','//npm.pkg.github.com/:_authToken='+process.env.GITHUB_PACKAGES_TOKEN+'\\n')" && \
     yarn install --frozen-lockfile && \
     sed -i '$ d' .npmrc
 
@@ -45,7 +45,7 @@ ARG GITHUB_PACKAGES_TOKEN
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+RUN node -e "require('fs').appendFileSync('.npmrc','//npm.pkg.github.com/:_authToken='+process.env.GITHUB_PACKAGES_TOKEN+'\\n')" && \
     yarn turbo build --filter=@assetforce/customer-portal && \
     sed -i '$ d' .npmrc
 
@@ -60,7 +60,7 @@ ARG GITHUB_PACKAGES_TOKEN
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+RUN node -e "require('fs').appendFileSync('.npmrc','//npm.pkg.github.com/:_authToken='+process.env.GITHUB_PACKAGES_TOKEN+'\\n')" && \
     yarn turbo build --filter=@assetforce/admin-console && \
     sed -i '$ d' .npmrc
 
@@ -75,7 +75,7 @@ ARG GITHUB_PACKAGES_TOKEN
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+RUN node -e "require('fs').appendFileSync('.npmrc','//npm.pkg.github.com/:_authToken='+process.env.GITHUB_PACKAGES_TOKEN+'\\n')" && \
     yarn build && \
     sed -i '$ d' .npmrc
 
@@ -139,14 +139,16 @@ COPY apps/customer-portal/package.json ./apps/customer-portal/
 COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
+COPY packages/graphql-config/package.json ./packages/graphql-config/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 COPY packages/feature/common/package.json ./packages/feature/common/
 COPY packages/feature/user/package.json ./packages/feature/user/
+COPY packages/feature/account/package.json ./packages/feature/account/
 
 ARG GITHUB_PACKAGES_TOKEN
-RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+RUN node -e "require('fs').appendFileSync('.npmrc','//npm.pkg.github.com/:_authToken='+process.env.GITHUB_PACKAGES_TOKEN+'\\n')" && \
     yarn install && \
     sed -i '$ d' .npmrc
 
@@ -168,14 +170,16 @@ COPY apps/customer-portal/package.json ./apps/customer-portal/
 COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
+COPY packages/graphql-config/package.json ./packages/graphql-config/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 COPY packages/feature/common/package.json ./packages/feature/common/
 COPY packages/feature/user/package.json ./packages/feature/user/
+COPY packages/feature/account/package.json ./packages/feature/account/
 
 ARG GITHUB_PACKAGES_TOKEN
-RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+RUN node -e "require('fs').appendFileSync('.npmrc','//npm.pkg.github.com/:_authToken='+process.env.GITHUB_PACKAGES_TOKEN+'\\n')" && \
     yarn install && \
     sed -i '$ d' .npmrc
 
@@ -196,14 +200,16 @@ COPY apps/customer-portal/package.json ./apps/customer-portal/
 COPY apps/admin-console/package.json ./apps/admin-console/
 COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
+COPY packages/graphql-config/package.json ./packages/graphql-config/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 COPY packages/feature/common/package.json ./packages/feature/common/
 COPY packages/feature/user/package.json ./packages/feature/user/
+COPY packages/feature/account/package.json ./packages/feature/account/
 
 ARG GITHUB_PACKAGES_TOKEN
-RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}" >> .npmrc && \
+RUN node -e "require('fs').appendFileSync('.npmrc','//npm.pkg.github.com/:_authToken='+process.env.GITHUB_PACKAGES_TOKEN+'\\n')" && \
     yarn install && \
     sed -i '$ d' .npmrc
 

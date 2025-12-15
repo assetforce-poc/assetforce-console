@@ -26,6 +26,14 @@ function LoginContent() {
     console.log('Login successful:', result);
     // Refresh AuthProvider state before navigation
     await refresh();
+
+    // No tenant: redirect to tenant request page
+    if (result.requiresTenantOnboarding) {
+      router.push('/tenant/request');
+      return;
+    }
+
+    // Has tenant(s): let home page (/) or route guards handle
     router.push(callbackUrl);
   };
 

@@ -1,7 +1,7 @@
 export {
   type AuthenticateResult,
   fromAuthResult,
-  fromPreAuthResult,
+  fromLoginResult,
   toIdentityContext,
   toTenant,
   toUser,
@@ -9,4 +9,5 @@ export {
 export { AACClient, type AACClientOptions, createAACClient } from './client';
 
 // AuthClient interface and result types (for custom implementations)
-export type { AuthClient, AuthResult, IdentityContext, PreAuthResult, Realm, Subject } from './types';
+// Note: IdentityContext, LoginResult, Subject, Tenant are re-exported from generated GraphQL types
+export type { AuthClient, AuthResult, IdentityContext, LoginResult, Realm, Subject, Tenant } from './types';

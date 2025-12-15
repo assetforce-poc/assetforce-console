@@ -1,96 +1,103 @@
-import type { AuthClient, AuthResult, GraphQLResponse, PreAuthResult } from './types';
+import type { AuthClient, AuthResult, GraphQLResponse, LoginResult } from './types';
 
 /**
  * AAC GraphQL Mutations
  */
 const AUTHENTICATE_MUTATION = `
   mutation Authenticate($username: String!, $password: String!) {
-    authenticate(username: $username, password: $password) {
-      success
-      subject
-      availableRealms {
-        realmId
-        realmName
-        displayName
-        zoneId
-        realmType
-        description
-        isActive
-      }
-      accessToken
-      refreshToken
-      expiresIn
-      tokenType
-      identityContext {
-        zone
-        realm
-        subject {
-          accountId
-          userId
-          username
-          email
-          displayName
+    authenticate {
+      login(username: $username, password: $password) {
+        success
+        subject
+        tenants {
+          id
+          name
+          zoneId
+          type
+          description
+          isActive
         }
-        groups
+        accessToken
+        refreshToken
+        expiresIn
+        tokenType
+        identityContext {
+          zone
+          tenant
+          subject {
+            accountId
+            userId
+            username
+            email
+            displayName
+          }
+          groups
+        }
+        error
       }
-      error
     }
   }
 `;
 
-const SELECT_TENANT_MUTATION = `
-  mutation SelectTenant($subject: String!, $realmId: String!) {
-    selectTenant(subject: $subject, realmId: $realmId) {
-      success
-      accessToken
-      refreshToken
-      expiresIn
-      tokenType
-      identityContext {
-        zone
-        realm
-        subject {
-          accountId
-          userId
-          username
-          email
-          displayName
+const ENTER_TENANT_MUTATION = `
+  mutation EnterTenant($subject: String!, $tenantId: String!) {
+    authenticate {
+      enter(subject: $subject, tenantId: $tenantId) {
+        success
+        accessToken
+        refreshToken
+        expiresIn
+        tokenType
+        identityContext {
+          zone
+          tenant
+          subject {
+            accountId
+            userId
+            username
+            email
+            displayName
+          }
+          groups
         }
-        groups
+        error
       }
-      error
     }
   }
 `;
 
 const REFRESH_TOKEN_MUTATION = `
   mutation RefreshToken($refreshToken: String!) {
-    refreshToken(refreshToken: $refreshToken) {
-      success
-      accessToken
-      refreshToken
-      expiresIn
-      tokenType
-      identityContext {
-        zone
-        realm
-        subject {
-          accountId
-          userId
-          username
-          email
-          displayName
+    authenticate {
+      refreshToken(refreshToken: $refreshToken) {
+        success
+        accessToken
+        refreshToken
+        expiresIn
+        tokenType
+        identityContext {
+          zone
+          tenant
+          subject {
+            accountId
+            userId
+            username
+            email
+            displayName
+          }
+          groups
         }
-        groups
+        error
       }
-      error
     }
   }
 `;
 
 const LOGOUT_MUTATION = `
   mutation Logout {
-    logout
+    authenticate {
+      logout
+    }
   }
 `;
 
@@ -171,38 +178,46 @@ export class AACClient implements AuthClient {
   /**
    * Authenticate with username and password
    *
-   * @returns PreAuthResult - may require tenant selection if multiple realms
+   * @returns LoginResult - may require tenant selection if multiple tenants
    */
-  async authenticate(username: string, password: string): Promise<PreAuthResult> {
-    const data = await this.execute<{ authenticate: PreAuthResult }>(AUTHENTICATE_MUTATION, { username, password });
-    return data.authenticate;
+  async authenticate(username: string, password: string): Promise<LoginResult> {
+    const data = await this.execute<{ authenticate: { login: LoginResult } }>(AUTHENTICATE_MUTATION, {
+      username,
+      password,
+    });
+    return data.authenticate.login;
   }
 
   /**
-   * Select tenant after authentication
+   * Enter tenant after authentication (select tenant)
    *
-   * @param subject - Subject ID from PreAuthResult
-   * @param realmId - Selected realm ID
+   * @param subject - Subject ID from LoginResult
+   * @param tenantId - Selected tenant ID
    */
-  async selectTenant(subject: string, realmId: string): Promise<AuthResult> {
-    const data = await this.execute<{ selectTenant: AuthResult }>(SELECT_TENANT_MUTATION, { subject, realmId });
-    return data.selectTenant;
+  async selectTenant(subject: string, tenantId: string): Promise<AuthResult> {
+    const data = await this.execute<{ authenticate: { enter: AuthResult } }>(ENTER_TENANT_MUTATION, {
+      subject,
+      tenantId,
+    });
+    return data.authenticate.enter;
   }
 
   /**
    * Refresh access token
    */
   async refreshToken(refreshToken: string): Promise<AuthResult> {
-    const data = await this.execute<{ refreshToken: AuthResult }>(REFRESH_TOKEN_MUTATION, { refreshToken });
-    return data.refreshToken;
+    const data = await this.execute<{ authenticate: { refreshToken: AuthResult } }>(REFRESH_TOKEN_MUTATION, {
+      refreshToken,
+    });
+    return data.authenticate.refreshToken;
   }
 
   /**
    * Logout current session
    */
   async logout(accessToken: string): Promise<boolean> {
-    const data = await this.execute<{ logout: boolean }>(LOGOUT_MUTATION, {}, accessToken);
-    return data.logout;
+    const data = await this.execute<{ authenticate: { logout: boolean } }>(LOGOUT_MUTATION, {}, accessToken);
+    return data.authenticate.logout;
   }
 }
 

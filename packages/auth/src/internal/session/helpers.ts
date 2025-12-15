@@ -23,6 +23,18 @@ export function assignSessionData(session: IronSession<SessionData>, data: Sessi
  * Strips sensitive data (tokens) before sending to client.
  */
 export function toClientSession(data: SessionData): Session | null {
+  // Special case: authenticated but no tenant (needs onboarding)
+  if (data.requiresTenantOnboarding && data._pendingSubject) {
+    return {
+      isValid: true,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours for onboarding
+      user: null,
+      identity: null,
+      tenant: null,
+      requiresTenantOnboarding: true,
+    };
+  }
+
   if (!data.accessToken || !data.expiresAt) {
     return null;
   }

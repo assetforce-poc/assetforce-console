@@ -1,0 +1,27 @@
+# authenticate.enter - Enter a tenant after credential verification
+# Used when user has multiple tenants and selected one
+
+mutation AuthenticateEnter($subject: String!, $tenantId: String!) {
+  authenticate {
+    enter(subject: $subject, tenantId: $tenantId) {
+      success
+      accessToken
+      refreshToken
+      expiresIn
+      tokenType
+      identityContext {
+        zone
+        tenant
+        subject {
+          accountId
+          userId
+          username
+          email
+          displayName
+        }
+        groups
+      }
+      error
+    }
+  }
+}

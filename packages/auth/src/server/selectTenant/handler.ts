@@ -1,4 +1,4 @@
-import type { HandlerContext, RouteHandler, SessionWithPendingSubject } from '../types';
+import type { HandlerContext, RouteHandler } from '../types';
 
 /**
  * POST /api/auth/select-tenant - Select tenant for multi-tenant scenario
@@ -23,7 +23,7 @@ export const selectTenantHandler: RouteHandler = async ({ request, session, api 
     });
   }
 
-  const pendingSubject = (session as SessionWithPendingSubject)._pendingSubject;
+  const pendingSubject = session._pendingSubject;
 
   if (!pendingSubject) {
     return new Response(JSON.stringify({ success: false, error: 'No pending subject' }), {

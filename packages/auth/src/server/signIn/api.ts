@@ -1,9 +1,9 @@
 import type { IronSession } from 'iron-session';
 
-import { type AuthClient, fromPreAuthResult } from '../../internal/aac';
+import { type AuthClient, fromLoginResult } from '../../internal/aac';
 import { assignSessionData } from '../../internal/session';
 import type { SessionData } from '../../types';
-import type { SessionWithPendingSubject, SignInCredentials, SignInResult } from '../types';
+import type { SignInCredentials, SignInResult } from '../types';
 
 /**
  * Create signIn API method
@@ -13,24 +13,41 @@ export const createSignIn =
   async (credentials: SignInCredentials, session: IronSession<SessionData>): Promise<SignInResult> => {
     try {
       const result = await authClient.authenticate(credentials.username, credentials.password);
-      const authResult = fromPreAuthResult(result);
+      const authResult = fromLoginResult(result);
 
       if (!authResult.success) {
         return { success: false, error: authResult.error };
+      }
+
+      // No tenant: requires onboarding
+      if (authResult.requiresTenantOnboarding) {
+        session.pendingTenantSelection = false;
+        session.requiresTenantOnboarding = true;
+        session._pendingSubject = authResult.subject;
+        await session.save();
+
+        return {
+          success: true,
+          tenant: {
+            available: [],
+          },
+          subject: authResult.subject,
+        };
       }
 
       // Multi-tenant: requires selection
       if (authResult.requiresTenantSelection) {
         session.pendingTenantSelection = true;
         session.availableTenants = authResult.availableTenants;
-        (session as SessionWithPendingSubject)._pendingSubject = authResult.subject;
+        session._pendingSubject = authResult.subject;
         await session.save();
 
         return {
           success: true,
-          requiresTenantSelection: true,
+          tenant: {
+            available: authResult.availableTenants,
+          },
           subject: authResult.subject,
-          availableTenants: authResult.availableTenants,
         };
       }
 

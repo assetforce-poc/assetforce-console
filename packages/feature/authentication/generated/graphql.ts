@@ -45,6 +45,61 @@ export type AccountConnection = {
   total: Scalars['Int']['output'];
 };
 
+/**
+ * Account detail with extended information.
+ * Includes basic info, attributes, and sessions.
+ */
+export type AccountDetail = {
+  __typename?: 'AccountDetail';
+  /** Keycloak user attributes (key-value pairs) */
+  attributes: Array<AttributeEntry>;
+  /** Account creation timestamp */
+  createdAt: Scalars['String']['output'];
+  /** Email address */
+  email?: Maybe<Scalars['String']['output']>;
+  /** Email verified status */
+  emailVerified: Scalars['Boolean']['output'];
+  /** First name */
+  firstName?: Maybe<Scalars['String']['output']>;
+  /** Keycloak User ID (self-referencing ID) */
+  id: Scalars['String']['output'];
+  /** Last name */
+  lastName?: Maybe<Scalars['String']['output']>;
+  /** Active sessions for this account */
+  sessions: Array<SessionInfo>;
+  /** Account status */
+  status: AccountStatus;
+  /** Last updated timestamp */
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  /** Username */
+  username: Scalars['String']['output'];
+};
+
+/** Email-related mutations for an account */
+export type AccountEmailMutations = {
+  __typename?: 'AccountEmailMutations';
+  /**
+   * Verify email address.
+   * - User self-verify: Click email link (context.role = USER)
+   * - Admin verify: Manual activation (context.role = ADMIN)
+   */
+  verify: VerifyEmailResult;
+};
+
+
+/** Email-related mutations for an account */
+export type AccountEmailMutationsVerifyArgs = {
+  accountId: Scalars['String']['input'];
+  context: OperationContext;
+};
+
+/** Account-related mutations */
+export type AccountMutations = {
+  __typename?: 'AccountMutations';
+  /** Email-related operations for an account */
+  email: AccountEmailMutations;
+};
+
 /** Account-related queries */
 export type AccountQueries = {
   __typename?: 'AccountQueries';
@@ -54,6 +109,11 @@ export type AccountQueries = {
    * Phase 9: Implements pagination logic via queries.pagination
    */
   list: AccountConnection;
+  /**
+   * Get account detail by ID (Phase 9 - UM-005).
+   * Returns extended account information including attributes and sessions.
+   */
+  one: AccountDetail;
 };
 
 
@@ -61,6 +121,12 @@ export type AccountQueries = {
 export type AccountQueriesListArgs = {
   queries?: InputMaybe<ListQueriesInput>;
   status?: InputMaybe<AccountStatus>;
+};
+
+
+/** Account-related queries */
+export type AccountQueriesOneArgs = {
+  id: Scalars['String']['input'];
 };
 
 /** Account status enumeration */
@@ -74,6 +140,20 @@ export type AccountStatus =
   /** User disabled or has required actions */
   | 'SUSPENDED';
 
+/**
+ * Key-value attribute entry.
+ * Sensitive values like emailVerificationToken are masked.
+ */
+export type AttributeEntry = {
+  __typename?: 'AttributeEntry';
+  /** Whether this is a sensitive field */
+  isSensitive: Scalars['Boolean']['output'];
+  /** Attribute key */
+  key: Scalars['String']['output'];
+  /** Attribute value (masked if sensitive) */
+  value: Scalars['String']['output'];
+};
+
 /**  Output Types */
 export type AuthResult = {
   __typename?: 'AuthResult';
@@ -84,6 +164,49 @@ export type AuthResult = {
   refreshToken?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
   tokenType?: Maybe<Scalars['String']['output']>;
+};
+
+/** Authentication-related mutations */
+export type AuthenticateMutations = {
+  __typename?: 'AuthenticateMutations';
+  /**
+   * Enter a tenant after credential verification.
+   * Used when user has multiple tenants and selected one.
+   */
+  enter: AuthResult;
+  /**
+   * Universal login operation.
+   * - With tenant: Direct login to specific tenant
+   * - Without tenant: Returns available tenants for selection
+   * - Single tenant: Auto-enters and returns full auth result
+   * - No tenants: Returns empty list (user needs onboarding)
+   */
+  login: LoginResult;
+  /** Logout current session */
+  logout: Scalars['Boolean']['output'];
+  /** Refresh access token */
+  refreshToken: AuthResult;
+};
+
+
+/** Authentication-related mutations */
+export type AuthenticateMutationsEnterArgs = {
+  subject: Scalars['String']['input'];
+  tenantId: Scalars['String']['input'];
+};
+
+
+/** Authentication-related mutations */
+export type AuthenticateMutationsLoginArgs = {
+  password: Scalars['String']['input'];
+  tenant?: InputMaybe<Scalars['String']['input']>;
+  username: Scalars['String']['input'];
+};
+
+
+/** Authentication-related mutations */
+export type AuthenticateMutationsRefreshTokenArgs = {
+  refreshToken: Scalars['String']['input'];
 };
 
 /** Email availability status (replaces EmailAvailability) */
@@ -353,12 +476,13 @@ export type ErrorType =
    */
   | 'UNKNOWN';
 
-/** 4D Identity Context - Zone/Realm/Subject/Groups */
+/** 4D Identity Context - Zone/Tenant/Subject/Groups */
 export type IdentityContext = {
   __typename?: 'IdentityContext';
   groups: Array<Scalars['String']['output']>;
-  realm: Scalars['String']['output'];
   subject: Subject;
+  /** Tenant ID (Keycloak realm name) */
+  tenant: Scalars['String']['output'];
   zone?: Maybe<Scalars['String']['output']>;
 };
 
@@ -379,28 +503,60 @@ export type LoginInput = {
   username: Scalars['String']['input'];
 };
 
+/** Login result - unified response for all login scenarios. */
+export type LoginResult = {
+  __typename?: 'LoginResult';
+  /** Token fields - only present when single tenant (auto-entered) */
+  accessToken?: Maybe<Scalars['String']['output']>;
+  /** Error message if authentication failed */
+  error?: Maybe<Scalars['String']['output']>;
+  expiresIn?: Maybe<Scalars['Int']['output']>;
+  identityContext?: Maybe<IdentityContext>;
+  refreshToken?: Maybe<Scalars['String']['output']>;
+  /** User subject (for tenant selection if needed) */
+  subject?: Maybe<Scalars['String']['output']>;
+  /** Whether authentication was successful */
+  success: Scalars['Boolean']['output'];
+  /**
+   * Available tenants:
+   * - Empty: User has no tenants (needs onboarding)
+   * - Single: Auto-entered (includes token fields)
+   * - Multiple: User must call enter() to select
+   */
+  tenants?: Maybe<Array<Tenant>>;
+  tokenType?: Maybe<Scalars['String']['output']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  /** Step 1: Initial authentication - verify credentials, return subject for tenant selection */
-  authenticate: PreAuthResult;
-  /** Login with username and password (single tenant mode) */
+  /** Account-related mutations (namespace API) */
+  account: AccountMutations;
+  /** Authentication-related mutations (new namespace) */
+  authenticate: AuthenticateMutations;
+  /**
+   * Login with username and password (single tenant mode)
+   * @deprecated Use authenticate.login instead
+   */
   login: AuthResult;
-  /** Logout current session */
+  /**
+   * Logout current session
+   * @deprecated Use authenticate.logout instead
+   */
   logout: Scalars['Boolean']['output'];
-  /** Refresh access token */
+  /**
+   * Refresh access token
+   * @deprecated Use authenticate.refreshToken instead
+   */
   refreshToken: AuthResult;
   /** Registration-related mutations (new namespace) */
   registration: RegistrationMutations;
-  /** Step 4: Select tenant and get final token with IdentityContext */
+  /**
+   * Step 4: Select tenant and get final token with IdentityContext
+   * @deprecated Use authenticate.enter instead
+   */
   selectTenant: AuthResult;
   /** Verify account email by admin (bypasses email verification flow) */
   verifyEmailByAdmin: EmailVerificationResult;
-};
-
-
-export type MutationAuthenticateArgs = {
-  password: Scalars['String']['input'];
-  username: Scalars['String']['input'];
 };
 
 
@@ -423,6 +579,35 @@ export type MutationSelectTenantArgs = {
 export type MutationVerifyEmailByAdminArgs = {
   accountId: Scalars['String']['input'];
 };
+
+/**
+ * Operation context for mutations.
+ * Captures who is performing the operation and why (for audit).
+ */
+export type OperationContext = {
+  /** Optional: Reason for this operation (for audit) */
+  reason?: InputMaybe<Scalars['String']['input']>;
+  /** Who is performing this operation */
+  role: OperationRole;
+  /** Optional: Token for user self-service operations */
+  token?: InputMaybe<Scalars['String']['input']>;
+  /** Optional: User ID of the operator (for audit) */
+  updatedBy?: InputMaybe<Scalars['String']['input']>;
+};
+
+/**
+ * Operation role enumeration.
+ * Defines who is performing an operation.
+ */
+export type OperationRole =
+  /** Administrator operation */
+  | 'ADMIN'
+  /** Anonymous/unauthenticated operation */
+  | 'ANONYMOUS'
+  /** System automated operation */
+  | 'SYSTEM'
+  /** End user self-service operation */
+  | 'USER';
 
 /** Pagination information for list queries */
 export type Pagination = {
@@ -448,7 +633,8 @@ export type PaginationInput = {
 };
 
 /**
- *  Pre-authentication result
+ *  Pre-authentication result (DEPRECATED - use LoginResult)
+ *  - No realms: returns empty availableRealms (user needs tenant onboarding)
  *  - Single realm: returns token directly (no selection needed)
  *  - Multiple realms: returns availableRealms list (user must call selectTenant)
  */
@@ -456,7 +642,12 @@ export type PreAuthResult = {
   __typename?: 'PreAuthResult';
   /** Token fields - only present when single realm (auto-selected) */
   accessToken?: Maybe<Scalars['String']['output']>;
-  /** Available realms/tenants - only present when multiple realms exist */
+  /**
+   * Available realms/tenants list:
+   * - Empty array: User has no tenants (needs onboarding)
+   * - Single item: Auto-selected (includes token fields)
+   * - Multiple items: Requires user selection
+   */
   availableRealms?: Maybe<Array<Realm>>;
   error?: Maybe<Scalars['String']['output']>;
   expiresIn?: Maybe<Scalars['Int']['output']>;
@@ -485,7 +676,7 @@ export type QueryValidateTokenArgs = {
   token: Scalars['String']['input'];
 };
 
-/** Realm/Tenant information (from IMC) */
+/** Realm/Tenant information (DEPRECATED - use Tenant type) */
 export type Realm = {
   __typename?: 'Realm';
   description?: Maybe<Scalars['String']['output']>;
@@ -503,10 +694,10 @@ export type RegisterInput = {
   acceptTerms: Scalars['Boolean']['input'];
   /** Required: User's email address */
   email: Scalars['String']['input'];
-  /** Required: First name */
-  firstName: Scalars['String']['input'];
-  /** Required: Last name */
-  lastName: Scalars['String']['input'];
+  /** Optional: First name */
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  /** Optional: Last name */
+  lastName?: InputMaybe<Scalars['String']['input']>;
   /** Optional: Preferred locale (e.g., 'en-US', 'ja-JP') */
   locale?: InputMaybe<Scalars['String']['input']>;
   /** Required: Password */
@@ -539,6 +730,8 @@ export type RegistrationMutations = {
   __typename?: 'RegistrationMutations';
   /** Register a new user account */
   register: RegisterResult;
+  /** Resend verification email to an unverified account */
+  resendVerificationEmail: ResendVerificationResult;
   /** Verify email using verification token */
   verifyEmail: VerificationResult;
 };
@@ -547,6 +740,12 @@ export type RegistrationMutations = {
 /** Registration-related mutations */
 export type RegistrationMutationsRegisterArgs = {
   input: RegisterInput;
+};
+
+
+/** Registration-related mutations */
+export type RegistrationMutationsResendVerificationEmailArgs = {
+  email: Scalars['String']['input'];
 };
 
 
@@ -568,6 +767,15 @@ export type RegistrationQueriesEmailArgs = {
   address: Scalars['String']['input'];
 };
 
+/** Resend verification email result */
+export type ResendVerificationResult = {
+  __typename?: 'ResendVerificationResult';
+  /** Success message or error code */
+  message: Scalars['String']['output'];
+  /** Whether the resend operation was successful */
+  success: Scalars['Boolean']['output'];
+};
+
 /** Search input parameters */
 export type SearchInput = {
   /** Fields to search in */
@@ -584,9 +792,24 @@ export type Session = {
   expiresAt?: Maybe<Scalars['String']['output']>;
   identityContext?: Maybe<IdentityContext>;
   isActive: Scalars['Boolean']['output'];
-  realm: Scalars['String']['output'];
   sessionId: Scalars['String']['output'];
+  tenant: Scalars['String']['output'];
   username: Scalars['String']['output'];
+};
+
+/** Session information for an account. */
+export type SessionInfo = {
+  __typename?: 'SessionInfo';
+  /** Session ID */
+  id: Scalars['String']['output'];
+  /** IP address */
+  ipAddress?: Maybe<Scalars['String']['output']>;
+  /** Last access time */
+  lastAccess?: Maybe<Scalars['String']['output']>;
+  /** Session start time */
+  start?: Maybe<Scalars['String']['output']>;
+  /** User agent */
+  userAgent?: Maybe<Scalars['String']['output']>;
 };
 
 /** Sort input parameters */
@@ -604,6 +827,25 @@ export type Subject = {
   email?: Maybe<Scalars['String']['output']>;
   userId?: Maybe<Scalars['String']['output']>;
   username: Scalars['String']['output'];
+};
+
+/** Tenant information (business abstraction over Keycloak Realm) */
+export type Tenant = {
+  __typename?: 'Tenant';
+  /** Description */
+  description?: Maybe<Scalars['String']['output']>;
+  /** Display name for UI */
+  displayName?: Maybe<Scalars['String']['output']>;
+  /** Tenant ID (Keycloak realm name) */
+  id: Scalars['String']['output'];
+  /** Whether tenant is active */
+  isActive: Scalars['Boolean']['output'];
+  /** Tenant name */
+  name: Scalars['String']['output'];
+  /** Tenant type (e.g., ENTERPRISE, TRIAL) */
+  type: Scalars['String']['output'];
+  /** Zone ID (foreign key reference) */
+  zoneId: Scalars['String']['output'];
 };
 
 /** User's tenant membership status */
@@ -624,7 +866,7 @@ export type TokenValidation = {
   accountId?: Maybe<Scalars['String']['output']>;
   error?: Maybe<Scalars['String']['output']>;
   expiresAt?: Maybe<Scalars['String']['output']>;
-  realm?: Maybe<Scalars['String']['output']>;
+  tenant?: Maybe<Scalars['String']['output']>;
   username?: Maybe<Scalars['String']['output']>;
   valid: Scalars['Boolean']['output'];
 };
@@ -642,10 +884,38 @@ export type VerificationResult = {
   tenantStatus?: Maybe<TenantStatus>;
 };
 
+/** Result of email verification operation. */
+export type VerifyEmailResult = {
+  __typename?: 'VerifyEmailResult';
+  /** Account ID if successful */
+  accountId?: Maybe<Scalars['String']['output']>;
+  /** Success message or error details */
+  message?: Maybe<Scalars['String']['output']>;
+  /** Whether verification was successful */
+  success: Scalars['Boolean']['output'];
+};
+
 export type _Service = {
   __typename?: '_Service';
   sdl: Scalars['String']['output'];
 };
+
+export type AuthenticateEnterMutationVariables = Exact<{
+  subject: Scalars['String']['input'];
+  tenantId: Scalars['String']['input'];
+}>;
+
+
+export type AuthenticateEnterMutation = { __typename?: 'Mutation', authenticate: { __typename?: 'AuthenticateMutations', enter: { __typename?: 'AuthResult', success: boolean, accessToken?: string | null, refreshToken?: string | null, expiresIn?: number | null, tokenType?: string | null, error?: string | null, identityContext?: { __typename?: 'IdentityContext', zone?: string | null, tenant: string, groups: Array<string>, subject: { __typename?: 'Subject', accountId: string, userId?: string | null, username: string, email?: string | null, displayName?: string | null } } | null } } };
+
+export type AuthenticateLoginMutationVariables = Exact<{
+  username: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  tenant?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type AuthenticateLoginMutation = { __typename?: 'Mutation', authenticate: { __typename?: 'AuthenticateMutations', login: { __typename?: 'LoginResult', success: boolean, subject?: string | null, accessToken?: string | null, refreshToken?: string | null, expiresIn?: number | null, tokenType?: string | null, error?: string | null, tenants?: Array<{ __typename?: 'Tenant', id: string, name: string, displayName?: string | null, zoneId: string, type: string, description?: string | null, isActive: boolean }> | null, identityContext?: { __typename?: 'IdentityContext', zone?: string | null, tenant: string, groups: Array<string>, subject: { __typename?: 'Subject', accountId: string, userId?: string | null, username: string, email?: string | null, displayName?: string | null } } | null } } };
 
 export type CheckEmailAvailabilityInRegistrationQueryVariables = Exact<{
   email: Scalars['String']['input'];
@@ -668,7 +938,17 @@ export type VerifyEmailInRegistrationMutationVariables = Exact<{
 
 export type VerifyEmailInRegistrationMutation = { __typename?: 'Mutation', registration: { __typename?: 'RegistrationMutations', verifyEmail: { __typename?: 'VerificationResult', success: boolean, message?: string | null, accountId?: string | null, tenantStatus?: { __typename?: 'TenantStatus', hasTenants: boolean, requiresTenantSelection: boolean, pendingApproval: boolean, activeTenants: Array<string> } | null } } };
 
+export type ResendVerificationEmailInRegistrationMutationVariables = Exact<{
+  email: Scalars['String']['input'];
+}>;
 
+
+export type ResendVerificationEmailInRegistrationMutation = { __typename?: 'Mutation', registration: { __typename?: 'RegistrationMutations', resendVerificationEmail: { __typename?: 'ResendVerificationResult', success: boolean, message: string } } };
+
+
+export const AuthenticateEnterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AuthenticateEnter"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"subject"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tenantId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"authenticate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"enter"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"Variable","name":{"kind":"Name","value":"subject"}}},{"kind":"Argument","name":{"kind":"Name","value":"tenantId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tenantId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"}},{"kind":"Field","name":{"kind":"Name","value":"expiresIn"}},{"kind":"Field","name":{"kind":"Name","value":"tokenType"}},{"kind":"Field","name":{"kind":"Name","value":"identityContext"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"zone"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accountId"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"groups"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]}}]} as unknown as DocumentNode<AuthenticateEnterMutation, AuthenticateEnterMutationVariables>;
+export const AuthenticateLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AuthenticateLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"username"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"authenticate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"username"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}},{"kind":"Argument","name":{"kind":"Name","value":"tenant"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"tenants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"zoneId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}}]}},{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"}},{"kind":"Field","name":{"kind":"Name","value":"expiresIn"}},{"kind":"Field","name":{"kind":"Name","value":"tokenType"}},{"kind":"Field","name":{"kind":"Name","value":"identityContext"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"zone"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accountId"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"groups"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]}}]} as unknown as DocumentNode<AuthenticateLoginMutation, AuthenticateLoginMutationVariables>;
 export const CheckEmailAvailabilityInRegistrationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CheckEmailAvailabilityInRegistration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"available"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}}]}}]}}]}}]} as unknown as DocumentNode<CheckEmailAvailabilityInRegistrationQuery, CheckEmailAvailabilityInRegistrationQueryVariables>;
 export const RegisterInRegistrationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterInRegistration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisterInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"accountId"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"requiresVerification"}},{"kind":"Field","name":{"kind":"Name","value":"appliedTenant"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterInRegistrationMutation, RegisterInRegistrationMutationVariables>;
 export const VerifyEmailInRegistrationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"VerifyEmailInRegistration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verifyEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"accountId"}},{"kind":"Field","name":{"kind":"Name","value":"tenantStatus"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasTenants"}},{"kind":"Field","name":{"kind":"Name","value":"requiresTenantSelection"}},{"kind":"Field","name":{"kind":"Name","value":"pendingApproval"}},{"kind":"Field","name":{"kind":"Name","value":"activeTenants"}}]}}]}}]}}]}}]} as unknown as DocumentNode<VerifyEmailInRegistrationMutation, VerifyEmailInRegistrationMutationVariables>;
+export const ResendVerificationEmailInRegistrationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ResendVerificationEmailInRegistration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resendVerificationEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<ResendVerificationEmailInRegistrationMutation, ResendVerificationEmailInRegistrationMutationVariables>;

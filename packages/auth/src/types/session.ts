@@ -25,6 +25,10 @@ export interface SessionData {
   availableTenants?: Tenant[];
   /** Whether user needs to select a tenant */
   pendingTenantSelection?: boolean;
+  /** Whether user is authenticated but has no tenant (needs to join/create one) */
+  requiresTenantOnboarding?: boolean;
+  /** Pending subject ID (used during tenant selection/onboarding flow) */
+  _pendingSubject?: string;
 }
 
 /**
@@ -44,4 +48,6 @@ export interface Session {
   identity: IdentityContext | null;
   /** Current tenant */
   tenant: Tenant | null;
+  /** Whether user needs to join/create a tenant (authenticated but no tenant) */
+  requiresTenantOnboarding?: boolean;
 }

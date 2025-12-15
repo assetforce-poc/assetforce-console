@@ -1,10 +1,10 @@
 'use client';
 
-import { Box, Button, CircularProgress, Icons, Paper, Stack, Typography } from '@assetforce/material';
+import { Alert, Box, Button, CircularProgress, Icons, Paper, Stack, TextField, Typography } from '@assetforce/material';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useVerifyEmail } from '../hooks';
+import { useResendVerificationEmail, useVerifyEmail } from '../hooks';
 import type { EmailVerificationResult } from '../types';
 import { VerificationErrorCodes } from '../types';
 
@@ -156,6 +156,61 @@ function SuccessState({ result }: { result: EmailVerificationResult }) {
 function ErrorState({ message, code }: { message: string; code?: string }) {
   const isExpired = code === VerificationErrorCodes.TOKEN_EXPIRED;
   const isNotFound = code === VerificationErrorCodes.TOKEN_NOT_FOUND;
+  const { resend, loading: resendLoading } = useResendVerificationEmail();
+
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [resendMessage, setResendMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [cooldownRemaining, setCooldownRemaining] = useState(0);
+
+  // Email validation
+  const validateEmail = useCallback((value: string) => {
+    if (!value) {
+      setEmailError('Email is required');
+      return false;
+    }
+    const emailRegex = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (!emailRegex.test(value)) {
+      setEmailError('Invalid email format');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  }, []);
+
+  // Handle resend
+  const handleResend = useCallback(async () => {
+    if (!validateEmail(email)) {
+      return;
+    }
+
+    setResendMessage(null);
+    const result = await resend(email);
+
+    if (result.success) {
+      setResendMessage({ type: 'success', text: 'Verification email has been resent. Please check your inbox.' });
+      // Start 60-second cooldown
+      setCooldownRemaining(60);
+    } else {
+      const errorText =
+        result.message === 'EMAIL_ALREADY_VERIFIED'
+          ? 'This email is already verified. Please sign in.'
+          : result.message === 'INVALID_EMAIL'
+            ? 'Invalid email address.'
+            : 'Failed to resend verification email. Please try again.';
+      setResendMessage({ type: 'error', text: errorText });
+    }
+  }, [email, resend, validateEmail]);
+
+  // Cooldown timer
+  useEffect(() => {
+    if (cooldownRemaining > 0) {
+      const timer = setTimeout(() => {
+        setCooldownRemaining((prev) => prev - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldownRemaining]);
 
   return (
     <Stack spacing={3} alignItems="center">
@@ -182,11 +237,72 @@ function ErrorState({ message, code }: { message: string; code?: string }) {
       {/* Description */}
       <Typography variant="body1" color="text.secondary">
         {isExpired
-          ? 'This verification link has expired. Please request a new one.'
+          ? 'This verification link has expired. Please request a new one below.'
           : isNotFound
-            ? 'This verification link is invalid. Please check your email for the correct link.'
+            ? 'This verification link is invalid. Please enter your email to receive a new verification link.'
             : message}
       </Typography>
+
+      {/* Resend Email Section */}
+      {(isExpired || isNotFound) && (
+        <Box sx={{ width: '100%' }}>
+          <Stack spacing={2}>
+            <Typography variant="body2" fontWeight="medium">
+              Resend Verification Email
+            </Typography>
+            <TextField
+              fullWidth
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailError('');
+                setResendMessage(null);
+              }}
+              onBlur={() => validateEmail(email)}
+              error={!!emailError}
+              helperText={emailError}
+              placeholder="you@example.com"
+              disabled={resendLoading || cooldownRemaining > 0}
+            />
+            <Button
+              variant="contained"
+              onClick={handleResend}
+              disabled={resendLoading || cooldownRemaining > 0 || !email}
+              fullWidth
+            >
+              {resendLoading
+                ? 'Sending...'
+                : cooldownRemaining > 0
+                  ? `Wait ${cooldownRemaining}s`
+                  : 'Resend Verification Email'}
+            </Button>
+            {resendMessage && (
+              <Alert severity={resendMessage.type} onClose={() => setResendMessage(null)}>
+                {resendMessage.text}
+              </Alert>
+            )}
+          </Stack>
+        </Box>
+      )}
+
+      {/* Info Box */}
+      <Box
+        sx={{
+          p: 2,
+          bgcolor: 'grey.100',
+          borderRadius: 1,
+          width: '100%',
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          <strong>Didn&apos;t receive the email?</strong>
+          <br />• Check your spam or junk folder
+          <br />• Make sure you entered the correct email address
+          <br />• Wait a few minutes for the email to arrive
+        </Typography>
+      </Box>
 
       {/* Actions */}
       <Stack direction="row" spacing={2} width="100%">

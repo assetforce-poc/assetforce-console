@@ -28,6 +28,8 @@ export interface AuthState {
   pendingTenantSelection: boolean;
   /** Available tenants for selection */
   availableTenants: Tenant[];
+  /** Whether user needs to join/create a tenant (authenticated but no tenant) */
+  requiresTenantOnboarding: boolean;
 }
 
 /**
@@ -86,6 +88,7 @@ export function AuthProvider({ children, basePath = '/api/auth' }: AuthProviderP
     tenant: null,
     pendingTenantSelection: false,
     availableTenants: [],
+    requiresTenantOnboarding: false,
   });
 
   /**
@@ -122,6 +125,7 @@ export function AuthProvider({ children, basePath = '/api/auth' }: AuthProviderP
         tenant: session.tenant,
         pendingTenantSelection: false,
         availableTenants: [],
+        requiresTenantOnboarding: session.requiresTenantOnboarding ?? false,
       });
     } else {
       setState({
@@ -133,6 +137,7 @@ export function AuthProvider({ children, basePath = '/api/auth' }: AuthProviderP
         tenant: null,
         pendingTenantSelection: false,
         availableTenants: [],
+        requiresTenantOnboarding: false,
       });
     }
   }, []);
@@ -169,17 +174,18 @@ export function AuthProvider({ children, basePath = '/api/auth' }: AuthProviderP
         }
 
         // Check if tenant selection is required
-        if (data.requiresTenantSelection) {
+        if (data.tenant?.available && data.tenant.available.length > 0) {
           setState((prev) => ({
             ...prev,
             isLoading: false,
             pendingTenantSelection: true,
-            availableTenants: data.availableTenants || [],
+            availableTenants: data.tenant.available || [],
           }));
           return {
             success: true,
-            requiresTenantSelection: true,
-            availableTenants: data.availableTenants,
+            tenant: {
+              available: data.tenant.available,
+            },
           };
         }
 
@@ -222,6 +228,7 @@ export function AuthProvider({ children, basePath = '/api/auth' }: AuthProviderP
       tenant: null,
       pendingTenantSelection: false,
       availableTenants: [],
+      requiresTenantOnboarding: false,
     });
   }, [basePath]);
 

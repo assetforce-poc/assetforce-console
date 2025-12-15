@@ -3,13 +3,6 @@ import type { IronSession } from 'iron-session';
 import type { Session, SessionData, Tenant } from '../types';
 
 /**
- * Session with pending subject (internal use for multi-tenant flow)
- */
-export type SessionWithPendingSubject = IronSession<SessionData> & {
-  _pendingSubject?: string;
-};
-
-/**
  * SignInCredentials
  */
 export interface SignInCredentials {
@@ -22,9 +15,10 @@ export interface SignInCredentials {
  */
 export interface SignInResult {
   success: boolean;
-  requiresTenantSelection?: boolean;
+  tenant?: {
+    available?: Tenant[];
+  };
   subject?: string;
-  availableTenants?: Tenant[];
   error?: string;
 }
 

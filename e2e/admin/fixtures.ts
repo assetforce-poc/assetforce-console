@@ -39,35 +39,30 @@ export const testAccounts = {
  * @param username Username or email
  * @param password Password
  */
-export async function loginAsTestUser(
-  page: Page,
-  username: string,
-  password: string
-): Promise<void> {
-  // Call AAC GraphQL login mutation directly to create session
+export async function loginAsTestUser(page: Page, username: string, password: string): Promise<void> {
+  // Call AAC GraphQL login mutation directly to create session (using new namespace API)
   const response = await page.request.post('/api/graphql/aac', {
     data: {
       query: `
-        mutation Login($input: LoginInput!) {
-          login(input: $input) {
-            success
-            error
+        mutation Login($username: String!, $password: String!) {
+          authenticate {
+            login(username: $username, password: $password) {
+              success
+            }
           }
         }
       `,
       variables: {
-        input: {
-          username,
-          password,
-        },
+        username,
+        password,
       },
     },
   });
 
   const data = await response.json();
 
-  if (!data?.data?.login?.success) {
-    const error = data?.data?.login?.error || data?.errors?.[0]?.message || 'Unknown error';
+  if (!data?.data?.authenticate?.login?.success) {
+    const error = data?.errors?.[0]?.message || 'Unknown error';
     throw new Error(`Login failed: ${error}`);
   }
 }
@@ -78,10 +73,7 @@ export async function loginAsTestUser(
  * @param username Username to search for
  * @returns Account ID
  */
-export async function getAccountIdByUsername(
-  page: Page,
-  username: string
-): Promise<string> {
+export async function getAccountIdByUsername(page: Page, username: string): Promise<string> {
   // Fetch all accounts and find by username (simple and reliable)
   const response = await page.request.post('/api/graphql/aac', {
     data: {
@@ -108,7 +100,10 @@ export async function getAccountIdByUsername(
 
   if (!exactMatch) {
     // Debug: print available usernames to help troubleshooting
-    console.log('Available usernames:', items.map((i: any) => i.username));
+    console.log(
+      'Available usernames:',
+      items.map((i: any) => i.username)
+    );
     throw new Error(`Account not found for username: ${username}`);
   }
 

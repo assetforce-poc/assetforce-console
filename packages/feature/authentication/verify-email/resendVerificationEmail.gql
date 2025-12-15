@@ -1,0 +1,8 @@
+mutation ResendVerificationEmailInRegistration($email: String!) {
+  registration {
+    resendVerificationEmail(email: $email) {
+      success
+      message
+    }
+  }
+}
