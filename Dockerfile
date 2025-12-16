@@ -21,6 +21,7 @@ COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
 COPY packages/graphql-config/package.json ./packages/graphql-config/
 COPY packages/auth/package.json ./packages/auth/
+COPY packages/auth-ui/package.json ./packages/auth-ui/
 COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 COPY packages/feature/common/package.json ./packages/feature/common/
@@ -141,6 +142,7 @@ COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
 COPY packages/graphql-config/package.json ./packages/graphql-config/
 COPY packages/auth/package.json ./packages/auth/
+COPY packages/auth-ui/package.json ./packages/auth-ui/
 COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 COPY packages/feature/common/package.json ./packages/feature/common/
@@ -172,6 +174,7 @@ COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
 COPY packages/graphql-config/package.json ./packages/graphql-config/
 COPY packages/auth/package.json ./packages/auth/
+COPY packages/auth-ui/package.json ./packages/auth-ui/
 COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 COPY packages/feature/common/package.json ./packages/feature/common/
@@ -202,6 +205,7 @@ COPY packages/material/package.json ./packages/material/
 COPY packages/graphql/package.json ./packages/graphql/
 COPY packages/graphql-config/package.json ./packages/graphql-config/
 COPY packages/auth/package.json ./packages/auth/
+COPY packages/auth-ui/package.json ./packages/auth-ui/
 COPY packages/form/package.json ./packages/form/
 COPY packages/feature/authentication/package.json ./packages/feature/authentication/
 COPY packages/feature/common/package.json ./packages/feature/common/
