@@ -12,3 +12,17 @@ export type { PasswordInputProps } from './PasswordInput';
 export { PasswordInput } from './PasswordInput';
 export type { SubmitButtonProps } from './SubmitButton';
 export { SubmitButton } from './SubmitButton';
+
+// Tenant components
+export type {
+  TenantApplicationListProps,
+  TenantCardProps,
+  TenantMembershipListProps,
+  TenantSearchFormProps,
+} from './tenant';
+export {
+  TenantApplicationList,
+  TenantCard,
+  TenantMembershipList,
+  TenantSearchForm,
+} from './tenant';

@@ -19,3 +19,22 @@ jest.mock('next/link', () => {
     return children;
   };
 });
+
+// Mock @assetforce/graphql - re-export Apollo Client essentials
+jest.mock('@assetforce/graphql', () => {
+  const apolloClient = jest.requireActual('@apollo/client');
+  const apolloReact = jest.requireActual('@apollo/client/react');
+  return {
+    ApolloClient: apolloClient.ApolloClient,
+    gql: apolloClient.gql,
+    InMemoryCache: apolloClient.InMemoryCache,
+    ApolloProvider: apolloReact.ApolloProvider,
+    useLazyQuery: apolloReact.useLazyQuery,
+    useMutation: apolloReact.useMutation,
+    useQuery: apolloReact.useQuery,
+    // Mock the proxy utilities that require Next.js server
+    createGraphQLProxy: jest.fn(),
+    createApolloClient: jest.fn(),
+    ApolloClientProvider: jest.fn(),
+  };
+});

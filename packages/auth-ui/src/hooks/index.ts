@@ -12,3 +12,17 @@ export type { UseResetPasswordOptions, UseResetPasswordReturn } from './useReset
 export { useResetPassword } from './useResetPassword';
 export type { UseVerifyEmailOptions, UseVerifyEmailReturn } from './useVerifyEmail';
 export { useVerifyEmail } from './useVerifyEmail';
+
+// Tenant hooks
+export type {
+  ApplyResult,
+  ApplicationStatus,
+  CooldownStatus,
+  MutationResult,
+  Tenant,
+  TenantApplication,
+  TenantConnection,
+  UseTenantMembershipOptions,
+  UseTenantMembershipReturn,
+} from './tenant';
+export { useTenantMembership } from './tenant';

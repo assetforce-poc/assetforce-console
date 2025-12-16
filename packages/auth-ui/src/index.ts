@@ -17,6 +17,14 @@ export { FormError } from './components/FormError';
 export { PasswordInput } from './components/PasswordInput';
 export { SubmitButton } from './components/SubmitButton';
 
+// Tenant Components
+export {
+  TenantApplicationList,
+  TenantCard,
+  TenantMembershipList,
+  TenantSearchForm,
+} from './components/tenant';
+
 // Forms
 export type {
   ChangePasswordFormProps,
@@ -64,6 +72,20 @@ export {
   useVerifyEmail,
 } from './hooks';
 
+// Tenant Hooks
+export type {
+  ApplyResult,
+  ApplicationStatus,
+  CooldownStatus,
+  MutationResult,
+  Tenant,
+  TenantApplication,
+  TenantConnection,
+  UseTenantMembershipOptions,
+  UseTenantMembershipReturn,
+} from './hooks';
+export { useTenantMembership } from './hooks';
+
 // Adapter
 export type {
   AuthAdapter,
@@ -96,3 +118,11 @@ export type { SubmitButtonProps } from './components/SubmitButton';
 export type { AuthCardProps } from './layouts/AuthCard';
 export type { AuthLayoutProps } from './layouts/AuthLayout';
 export type { BrandConfig } from './themes/types';
+
+// Tenant Component Types
+export type {
+  TenantApplicationListProps,
+  TenantCardProps,
+  TenantMembershipListProps,
+  TenantSearchFormProps,
+} from './components/tenant';

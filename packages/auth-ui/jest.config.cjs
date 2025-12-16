@@ -12,6 +12,7 @@ module.exports = {
     // Handle internal package imports
     '^@assetforce/material$': '<rootDir>/../material/src/index.ts',
     '^@assetforce/auth$': '<rootDir>/../auth/src/index.ts',
+    '^@assetforce/graphql$': '<rootDir>/../graphql/src/index.ts',
     '^@assetforce/(.*)$': '<rootDir>/../../$1',
   },
   collectCoverageFrom: [
