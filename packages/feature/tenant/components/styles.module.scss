@@ -1,0 +1,200 @@
+/**
+ * Tenant Invite Components Styles
+ * Task 051: Tenant Invitation - Invite Acceptance Flow
+ */
+
+/* ===== Base Card ===== */
+.card {
+  max-width: 480px;
+  width: 100%;
+  margin: 64px auto 0;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.icon {
+  font-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconPrimary {
+  color: #1976d2;
+}
+
+.iconSuccess {
+  color: #2e7d32;
+}
+
+.iconWarning {
+  color: #ed6c02;
+}
+
+.iconError {
+  color: #d32f2f;
+}
+
+.title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin: 0;
+}
+
+/* ===== Info Box ===== */
+.infoBox {
+  width: 100%;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.infoBoxSuccess {
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+}
+
+.infoBoxHighlight {
+  background: #e3f2fd;
+  border-left: 3px solid #1976d2;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.infoRowSpaced {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.infoLabel {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.infoValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ===== Chip/Badge ===== */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.chipSuccess {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+/* ===== Alert ===== */
+.alert {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alertWarning {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+}
+
+/* ===== Button Container ===== */
+.buttonContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* ===== Loading ===== */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 24px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== Page Container ===== */
+.pageContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+/* ===== Text Utilities ===== */
+.textCenter {
+  text-align: center;
+}
+
+.textSecondary {
+  color: #666;
+}
+
+.textSmall {
+  font-size: 0.875rem;
+}
+
+.fontMedium {
+  font-weight: 500;
+}

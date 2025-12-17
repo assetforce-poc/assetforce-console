@@ -1,0 +1,36 @@
+{
+  "name": "@assetforce/tenant",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --config jest.config.cjs --watch",
+    "test:coverage": "jest --config jest.config.cjs --coverage",
+    "codegen": "graphql-codegen --config codegen.ts"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.0.0",
+    "@assetforce/feature-common": "*",
+    "@assetforce/graphql": "*",
+    "@assetforce/material": "*",
+    "clsx": "^2.0.0",
+    "next": "15.0.0",
+    "react": "19.2.1"
+  },
+  "devDependencies": {
+    "@assetforce/eslint-config": "*",
+    "@assetforce/jest-config": "*",
+    "@assetforce/test-utils": "*",
+    "@assetforce/typescript-config": "*",
+    "@types/react": "~19.2.7",
+    "typescript": "~5.9.3"
+  }
+}

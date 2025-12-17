@@ -20,6 +20,7 @@
     "@assetforce/playwright-config": "^0.2.0",
     "@dotenvx/dotenvx": "~1.51.1",
     "prettier": "~3.7.4",
+    "sass": "^1.97.0",
     "turbo": "^2.6.3",
     "typescript": "~5.9.3"
   },
