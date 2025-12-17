@@ -27,6 +27,7 @@ COPY packages/feature/authentication/package.json ./packages/feature/authenticat
 COPY packages/feature/common/package.json ./packages/feature/common/
 COPY packages/feature/user/package.json ./packages/feature/user/
 COPY packages/feature/account/package.json ./packages/feature/account/
+COPY packages/feature/service/package.json ./packages/feature/service/
 
 # Install dependencies
 # GITHUB_PACKAGES_TOKEN is required for @assetforce/* packages
@@ -148,6 +149,7 @@ COPY packages/feature/authentication/package.json ./packages/feature/authenticat
 COPY packages/feature/common/package.json ./packages/feature/common/
 COPY packages/feature/user/package.json ./packages/feature/user/
 COPY packages/feature/account/package.json ./packages/feature/account/
+COPY packages/feature/service/package.json ./packages/feature/service/
 
 ARG GITHUB_PACKAGES_TOKEN
 RUN node -e "require('fs').appendFileSync('.npmrc','//npm.pkg.github.com/:_authToken='+process.env.GITHUB_PACKAGES_TOKEN+'\\n')" && \
@@ -180,6 +182,7 @@ COPY packages/feature/authentication/package.json ./packages/feature/authenticat
 COPY packages/feature/common/package.json ./packages/feature/common/
 COPY packages/feature/user/package.json ./packages/feature/user/
 COPY packages/feature/account/package.json ./packages/feature/account/
+COPY packages/feature/service/package.json ./packages/feature/service/
 
 ARG GITHUB_PACKAGES_TOKEN
 RUN node -e "require('fs').appendFileSync('.npmrc','//npm.pkg.github.com/:_authToken='+process.env.GITHUB_PACKAGES_TOKEN+'\\n')" && \
@@ -211,6 +214,7 @@ COPY packages/feature/authentication/package.json ./packages/feature/authenticat
 COPY packages/feature/common/package.json ./packages/feature/common/
 COPY packages/feature/user/package.json ./packages/feature/user/
 COPY packages/feature/account/package.json ./packages/feature/account/
+COPY packages/feature/service/package.json ./packages/feature/service/
 
 ARG GITHUB_PACKAGES_TOKEN
 RUN node -e "require('fs').appendFileSync('.npmrc','//npm.pkg.github.com/:_authToken='+process.env.GITHUB_PACKAGES_TOKEN+'\\n')" && \

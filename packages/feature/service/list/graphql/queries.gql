@@ -1,0 +1,25 @@
+#import "@assetforce/graphql"
+
+query ListServices($input: ServiceListInput!) {
+  service {
+    list(input: $input) {
+      items {
+        id
+        slug
+        displayName
+        type
+        lifecycle
+        health {
+          status
+          lastCheckedAt
+        }
+        tags
+        createdAt
+        updatedAt
+      }
+      total
+      limit
+      offset
+    }
+  }
+}

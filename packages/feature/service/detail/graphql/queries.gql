@@ -1,0 +1,46 @@
+#import "@assetforce/graphql"
+
+query GetServiceDetail($input: ServiceOneInput!) {
+  service {
+    one(input: $input) {
+      id
+      slug
+      displayName
+      type
+      lifecycle
+      repoUrl
+      docsUrl
+      tags
+      health {
+        status
+        lastCheckedAt
+        lastSuccessAt
+        lastFailureAt
+      }
+      createdAt
+      updatedAt
+
+      dependencies {
+        target {
+          id
+          slug
+          displayName
+        }
+        critical
+      }
+
+      instances {
+        id
+        key
+        environment
+        baseUrl
+        healthPath
+        enabled
+        probeApprovalStatus
+        lastStatus
+        lastCheckedAt
+        lastFailureReason
+      }
+    }
+  }
+}
