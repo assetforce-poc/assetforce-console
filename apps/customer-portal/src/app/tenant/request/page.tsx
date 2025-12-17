@@ -54,12 +54,7 @@ function TenantRequestPageContent() {
           </Alert>
         )}
 
-        <TenantMembershipList
-          tenants={myTenants}
-          loading={isLoadingMine}
-          onLeave={leave}
-          leaveDisabled={isLeaving}
-        />
+        <TenantMembershipList tenants={myTenants} loading={isLoadingMine} onLeave={leave} leaveDisabled={isLeaving} />
 
         <TenantApplicationList
           applications={pendingApplications}

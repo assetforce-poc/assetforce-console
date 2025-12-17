@@ -8,8 +8,8 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 
-import { useTenantMembership } from '../src/hooks/tenant/useTenantMembership';
 import type { CooldownStatus, Tenant, TenantApplication } from '../src/hooks/tenant/types';
+import { useTenantMembership } from '../src/hooks/tenant/useTenantMembership';
 
 // ============ GraphQL Queries (must match hook definitions) ============
 
@@ -165,9 +165,7 @@ function createMineMock(tenants: TenantWithTypename[] = mockTenants): MockedResp
   };
 }
 
-function createApplicationsMock(
-  applications: TenantApplicationWithTypename[] = mockApplications
-): MockedResponse {
+function createApplicationsMock(applications: TenantApplicationWithTypename[] = mockApplications): MockedResponse {
   return {
     request: { query: TENANT_APPLICATIONS },
     maxUsageCount: Number.MAX_SAFE_INTEGER,
@@ -197,11 +195,7 @@ function createCooldownMock(cooldown: CooldownWithTypename = mockCooldown): Mock
   };
 }
 
-function createApplyMock(
-  tenantId: string,
-  message: string | null,
-  success: boolean = true
-): MockedResponse {
+function createApplyMock(tenantId: string, message: string | null, success: boolean = true): MockedResponse {
   return {
     request: {
       query: TENANT_APPLY,
@@ -349,11 +343,7 @@ describe('useTenantMembership', () => {
       ];
 
       const { result } = renderHook(() => useTenantMembership(), {
-        wrapper: createWrapper([
-          createMineMock(),
-          createApplicationsMock(mixedApplications),
-          createCooldownMock(),
-        ]),
+        wrapper: createWrapper([createMineMock(), createApplicationsMock(mixedApplications), createCooldownMock()]),
       });
 
       await waitFor(() => {

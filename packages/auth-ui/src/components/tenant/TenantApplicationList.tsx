@@ -7,9 +7,9 @@ import {
   CircularProgress,
   Divider,
   Paper,
+  type PaperProps,
   Stack,
   Typography,
-  type PaperProps,
 } from '@assetforce/material';
 
 import type { TenantApplication } from '../../hooks/tenant/types';

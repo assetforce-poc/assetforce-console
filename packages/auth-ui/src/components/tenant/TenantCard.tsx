@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Paper, Stack, Typography, type PaperProps } from '@assetforce/material';
+import { Box, Button, Paper, type PaperProps, Stack, Typography } from '@assetforce/material';
 import type { ReactNode } from 'react';
 
 import type { Tenant } from '../../hooks/tenant/types';

@@ -1,12 +1,8 @@
 import '@testing-library/jest-dom';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import {
-  TenantApplicationList,
-  TenantCard,
-  TenantMembershipList,
-  TenantSearchForm,
-} from '../src/components/tenant';
+import { TenantApplicationList, TenantCard, TenantMembershipList, TenantSearchForm } from '../src/components/tenant';
 import type { Tenant, TenantApplication } from '../src/hooks/tenant/types';
 
 const mockTenant: Tenant = {
@@ -47,13 +43,7 @@ describe('TenantCard', () => {
   it('should render action button when actionLabel and onAction provided', () => {
     const handleAction = jest.fn();
 
-    render(
-      <TenantCard
-        tenant={mockTenant}
-        actionLabel="Leave"
-        onAction={handleAction}
-      />
-    );
+    render(<TenantCard tenant={mockTenant} actionLabel="Leave" onAction={handleAction} />);
 
     const button = screen.getByRole('button', { name: /leave/i });
     expect(button).toBeInTheDocument();
@@ -69,25 +59,13 @@ describe('TenantCard', () => {
   });
 
   it('should disable action button when actionDisabled is true', () => {
-    render(
-      <TenantCard
-        tenant={mockTenant}
-        actionLabel="Leave"
-        onAction={() => {}}
-        actionDisabled
-      />
-    );
+    render(<TenantCard tenant={mockTenant} actionLabel="Leave" onAction={() => {}} actionDisabled />);
 
     expect(screen.getByRole('button')).toBeDisabled();
   });
 
   it('should render subtitle when provided', () => {
-    render(
-      <TenantCard
-        tenant={mockTenant}
-        subtitle={<span data-testid="subtitle">Custom subtitle</span>}
-      />
-    );
+    render(<TenantCard tenant={mockTenant} subtitle={<span data-testid="subtitle">Custom subtitle</span>} />);
 
     expect(screen.getByTestId('subtitle')).toBeInTheDocument();
   });
@@ -134,12 +112,7 @@ describe('TenantMembershipList', () => {
   it('should call onLeave when leave button clicked', () => {
     const handleLeave = jest.fn();
 
-    render(
-      <TenantMembershipList
-        tenants={[mockTenant]}
-        onLeave={handleLeave}
-      />
-    );
+    render(<TenantMembershipList tenants={[mockTenant]} onLeave={handleLeave} />);
 
     fireEvent.click(screen.getByRole('button', { name: /leave/i }));
     expect(handleLeave).toHaveBeenCalledWith('tenant-1');
@@ -169,24 +142,14 @@ describe('TenantApplicationList', () => {
   it('should call onCancel when cancel button clicked', () => {
     const handleCancel = jest.fn();
 
-    render(
-      <TenantApplicationList
-        applications={[mockApplication]}
-        onCancel={handleCancel}
-      />
-    );
+    render(<TenantApplicationList applications={[mockApplication]} onCancel={handleCancel} />);
 
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
     expect(handleCancel).toHaveBeenCalledWith('app-1');
   });
 
   it('should use custom date formatter', () => {
-    render(
-      <TenantApplicationList
-        applications={[mockApplication]}
-        formatDate={(date) => `Formatted: ${date}`}
-      />
-    );
+    render(<TenantApplicationList applications={[mockApplication]} formatDate={(date) => `Formatted: ${date}`} />);
 
     expect(screen.getByText(/formatted: 2025-12-16/i)).toBeInTheDocument();
   });
@@ -237,26 +200,14 @@ describe('TenantSearchForm', () => {
   });
 
   it('should render tenant list with apply buttons', () => {
-    render(
-      <TenantSearchForm
-        {...defaultProps}
-        search="test"
-        tenants={[mockTenant]}
-      />
-    );
+    render(<TenantSearchForm {...defaultProps} search="test" tenants={[mockTenant]} />);
 
     expect(screen.getByText('Test Organization')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /apply/i })).toBeInTheDocument();
   });
 
   it('should open dialog when apply button clicked', () => {
-    render(
-      <TenantSearchForm
-        {...defaultProps}
-        search="test"
-        tenants={[mockTenant]}
-      />
-    );
+    render(<TenantSearchForm {...defaultProps} search="test" tenants={[mockTenant]} />);
 
     fireEvent.click(screen.getByRole('button', { name: /apply/i }));
 
@@ -266,14 +217,7 @@ describe('TenantSearchForm', () => {
 
   it('should call onApply with message when submitting', () => {
     const handleApply = jest.fn();
-    render(
-      <TenantSearchForm
-        {...defaultProps}
-        search="test"
-        tenants={[mockTenant]}
-        onApply={handleApply}
-      />
-    );
+    render(<TenantSearchForm {...defaultProps} search="test" tenants={[mockTenant]} onApply={handleApply} />);
 
     // Open dialog
     fireEvent.click(screen.getByRole('button', { name: /apply/i }));
@@ -290,13 +234,7 @@ describe('TenantSearchForm', () => {
   });
 
   it('should close dialog when cancel clicked', async () => {
-    render(
-      <TenantSearchForm
-        {...defaultProps}
-        search="test"
-        tenants={[mockTenant]}
-      />
-    );
+    render(<TenantSearchForm {...defaultProps} search="test" tenants={[mockTenant]} />);
 
     // Open dialog
     fireEvent.click(screen.getByRole('button', { name: /apply/i }));
@@ -313,13 +251,7 @@ describe('TenantSearchForm', () => {
   it('should show load more button when hasMore is true', () => {
     const handleLoadMore = jest.fn();
     render(
-      <TenantSearchForm
-        {...defaultProps}
-        search="test"
-        tenants={[mockTenant]}
-        hasMore
-        onLoadMore={handleLoadMore}
-      />
+      <TenantSearchForm {...defaultProps} search="test" tenants={[mockTenant]} hasMore onLoadMore={handleLoadMore} />
     );
 
     const loadMoreButton = screen.getByRole('button', { name: /load more/i });

@@ -20,9 +20,4 @@ export type {
   TenantMembershipListProps,
   TenantSearchFormProps,
 } from './tenant';
-export {
-  TenantApplicationList,
-  TenantCard,
-  TenantMembershipList,
-  TenantSearchForm,
-} from './tenant';
+export { TenantApplicationList, TenantCard, TenantMembershipList, TenantSearchForm } from './tenant';

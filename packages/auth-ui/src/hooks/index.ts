@@ -15,8 +15,8 @@ export { useVerifyEmail } from './useVerifyEmail';
 
 // Tenant hooks
 export type {
-  ApplyResult,
   ApplicationStatus,
+  ApplyResult,
   CooldownStatus,
   MutationResult,
   Tenant,

@@ -2,11 +2,11 @@
 
 ## Component Categories
 
-| Category | Components | Purpose |
-|----------|------------|---------|
-| Layouts | AuthLayout, AuthCard | Page structure and containers |
-| Components | AuthHeader, AuthFooter, AuthTabBar, EmailInput, PasswordInput, FormError, SubmitButton | Reusable UI elements |
-| Forms | LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, ChangePasswordForm, ResendVerificationForm, VerifyEmailPage | Complete authentication flows |
+| Category   | Components                                                                                                                  | Purpose                       |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| Layouts    | AuthLayout, AuthCard                                                                                                        | Page structure and containers |
+| Components | AuthHeader, AuthFooter, AuthTabBar, EmailInput, PasswordInput, FormError, SubmitButton                                      | Reusable UI elements          |
+| Forms      | LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, ChangePasswordForm, ResendVerificationForm, VerifyEmailPage | Complete authentication flows |
 
 ---
 
@@ -18,20 +18,17 @@ Main page wrapper providing consistent structure.
 
 **Props**:
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | required | Page content |
-| `brand` | `BrandConfig` | default | Brand customization |
-| `showLogo` | `boolean` | `true` | Show header logo |
-| `maxWidth` | `'xs' \| 'sm' \| 'md'` | `'sm'` | Container width |
+| Prop       | Type                   | Default  | Description         |
+| ---------- | ---------------------- | -------- | ------------------- |
+| `children` | `ReactNode`            | required | Page content        |
+| `brand`    | `BrandConfig`          | default  | Brand customization |
+| `showLogo` | `boolean`              | `true`   | Show header logo    |
+| `maxWidth` | `'xs' \| 'sm' \| 'md'` | `'sm'`   | Container width     |
 
 **Example**:
 
 ```tsx
-<AuthLayout
-  brand={{ name: 'My App', logo: '🔐' }}
-  maxWidth="sm"
->
+<AuthLayout brand={{ name: 'My App', logo: '🔐' }} maxWidth="sm">
   <AuthCard>{/* form */}</AuthCard>
 </AuthLayout>
 ```
@@ -44,14 +41,14 @@ Card container with optional tabs and divider.
 
 **Props**:
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | required | Card content |
-| `title` | `string` | - | Card title |
-| `subtitle` | `string` | - | Card subtitle |
-| `tabs` | `AuthTab[]` | - | Tab navigation |
-| `showDivider` | `boolean` | `false` | Show "or" divider |
-| `elevation` | `number` | `3` | Paper elevation |
+| Prop          | Type        | Default  | Description       |
+| ------------- | ----------- | -------- | ----------------- |
+| `children`    | `ReactNode` | required | Card content      |
+| `title`       | `string`    | -        | Card title        |
+| `subtitle`    | `string`    | -        | Card subtitle     |
+| `tabs`        | `AuthTab[]` | -        | Tab navigation    |
+| `showDivider` | `boolean`   | `false`  | Show "or" divider |
+| `elevation`   | `number`    | `3`      | Paper elevation   |
 
 **Example**:
 
@@ -77,8 +74,8 @@ Displays brand logo and name.
 
 **Props**:
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| Prop    | Type          | Default | Description         |
+| ------- | ------------- | ------- | ------------------- |
 | `brand` | `BrandConfig` | default | Brand configuration |
 
 ---
@@ -89,8 +86,8 @@ Displays "Powered by" text/link.
 
 **Props**:
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| Prop    | Type          | Default | Description         |
+| ------- | ------------- | ------- | ------------------- |
 | `brand` | `BrandConfig` | default | Brand configuration |
 
 ---
@@ -101,10 +98,10 @@ Navigation tabs for switching between pages.
 
 **Props**:
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `tabs` | `AuthTab[]` | required | Array of tabs |
-| `activeTab` | `string` | auto | Currently active tab |
+| Prop        | Type        | Default  | Description          |
+| ----------- | ----------- | -------- | -------------------- |
+| `tabs`      | `AuthTab[]` | required | Array of tabs        |
+| `activeTab` | `string`    | auto     | Currently active tab |
 
 **AuthTab Type**:
 
@@ -123,13 +120,13 @@ Email input field with validation styling.
 
 **Props**:
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | - | Input value |
-| `onChange` | `(value: string) => void` | - | Change handler |
-| `error` | `string` | - | Error message |
-| `label` | `string` | `'Email'` | Field label |
-| `disabled` | `boolean` | `false` | Disabled state |
+| Prop       | Type                      | Default   | Description    |
+| ---------- | ------------------------- | --------- | -------------- |
+| `value`    | `string`                  | -         | Input value    |
+| `onChange` | `(value: string) => void` | -         | Change handler |
+| `error`    | `string`                  | -         | Error message  |
+| `label`    | `string`                  | `'Email'` | Field label    |
+| `disabled` | `boolean`                 | `false`   | Disabled state |
 
 ---
 
@@ -139,13 +136,13 @@ Password input with visibility toggle.
 
 **Props**:
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | - | Input value |
-| `onChange` | `(value: string) => void` | - | Change handler |
-| `error` | `string` | - | Error message |
-| `label` | `string` | `'Password'` | Field label |
-| `showStrength` | `boolean` | `false` | Show strength indicator |
+| Prop           | Type                      | Default      | Description             |
+| -------------- | ------------------------- | ------------ | ----------------------- |
+| `value`        | `string`                  | -            | Input value             |
+| `onChange`     | `(value: string) => void` | -            | Change handler          |
+| `error`        | `string`                  | -            | Error message           |
+| `label`        | `string`                  | `'Password'` | Field label             |
+| `showStrength` | `boolean`                 | `false`      | Show strength indicator |
 
 ---
 
@@ -155,10 +152,10 @@ Displays form-level error messages.
 
 **Props**:
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `message` | `string` | - | Error message |
-| `action` | `ReactNode` | - | Optional action link |
+| Prop      | Type        | Default | Description          |
+| --------- | ----------- | ------- | -------------------- |
+| `message` | `string`    | -       | Error message        |
+| `action`  | `ReactNode` | -       | Optional action link |
 
 ---
 
@@ -168,11 +165,11 @@ Form submit button with loading state.
 
 **Props**:
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | required | Button text |
-| `loading` | `boolean` | `false` | Loading state |
-| `disabled` | `boolean` | `false` | Disabled state |
+| Prop       | Type        | Default  | Description    |
+| ---------- | ----------- | -------- | -------------- |
+| `children` | `ReactNode` | required | Button text    |
+| `loading`  | `boolean`   | `false`  | Loading state  |
+| `disabled` | `boolean`   | `false`  | Disabled state |
 
 ---
 
@@ -184,11 +181,11 @@ Complete login form with validation.
 
 **Props**:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `onSuccess` | `(tokens: AuthTokens) => void` | Success callback |
-| `onError` | `(error: Error) => void` | Error callback |
-| `defaultEmail` | `string` | Pre-filled email |
+| Prop           | Type                           | Description      |
+| -------------- | ------------------------------ | ---------------- |
+| `onSuccess`    | `(tokens: AuthTokens) => void` | Success callback |
+| `onError`      | `(error: Error) => void`       | Error callback   |
+| `defaultEmail` | `string`                       | Pre-filled email |
 
 ---
 
@@ -198,10 +195,10 @@ User registration form.
 
 **Props**:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `onSuccess` | `() => void` | Success callback |
-| `onError` | `(error: Error) => void` | Error callback |
+| Prop        | Type                     | Description      |
+| ----------- | ------------------------ | ---------------- |
+| `onSuccess` | `() => void`             | Success callback |
+| `onError`   | `(error: Error) => void` | Error callback   |
 
 ---
 
@@ -211,10 +208,10 @@ Password reset request form.
 
 **Props**:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `onSuccess` | `() => void` | Success callback |
-| `onError` | `(error: Error) => void` | Error callback |
+| Prop        | Type                     | Description      |
+| ----------- | ------------------------ | ---------------- |
+| `onSuccess` | `() => void`             | Success callback |
+| `onError`   | `(error: Error) => void` | Error callback   |
 
 ---
 
@@ -224,11 +221,11 @@ Set new password form.
 
 **Props**:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `token` | `string` | Reset token from URL |
-| `onSuccess` | `() => void` | Success callback |
-| `onError` | `(error: Error) => void` | Error callback |
+| Prop        | Type                     | Description          |
+| ----------- | ------------------------ | -------------------- |
+| `token`     | `string`                 | Reset token from URL |
+| `onSuccess` | `() => void`             | Success callback     |
+| `onError`   | `(error: Error) => void` | Error callback       |
 
 ---
 
@@ -238,10 +235,10 @@ Change current password (authenticated users).
 
 **Props**:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `onSuccess` | `() => void` | Success callback |
-| `onError` | `(error: Error) => void` | Error callback |
+| Prop        | Type                     | Description      |
+| ----------- | ------------------------ | ---------------- |
+| `onSuccess` | `() => void`             | Success callback |
+| `onError`   | `(error: Error) => void` | Error callback   |
 
 ---
 
@@ -251,11 +248,11 @@ Resend email verification.
 
 **Props**:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `defaultEmail` | `string` | Pre-filled email |
-| `cooldownSeconds` | `number` | Cooldown period (default: 60) |
-| `onSuccess` | `() => void` | Success callback |
+| Prop              | Type         | Description                   |
+| ----------------- | ------------ | ----------------------------- |
+| `defaultEmail`    | `string`     | Pre-filled email              |
+| `cooldownSeconds` | `number`     | Cooldown period (default: 60) |
+| `onSuccess`       | `() => void` | Success callback              |
 
 ---
 
@@ -265,9 +262,9 @@ Email verification status display.
 
 **Props**:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `token` | `string` | Verification token from URL |
+| Prop         | Type         | Description                   |
+| ------------ | ------------ | ----------------------------- |
+| `token`      | `string`     | Verification token from URL   |
 | `onVerified` | `() => void` | Verification success callback |
 
 ---
@@ -278,8 +275,8 @@ Email verification status display.
 
 ```typescript
 interface BrandConfig {
-  name: string;              // Brand name
-  logo: string | ReactNode;  // Logo URL or component
+  name: string; // Brand name
+  logo: string | ReactNode; // Logo URL or component
   logoSize: 'sm' | 'md' | 'lg';
   primaryColor: string;
   showPoweredBy: boolean;

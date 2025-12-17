@@ -3,14 +3,7 @@
 import { gql, useLazyQuery, useMutation, useQuery } from '@assetforce/graphql';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type {
-  ApplyResult,
-  CooldownStatus,
-  MutationResult,
-  Tenant,
-  TenantApplication,
-  TenantConnection,
-} from './types';
+import type { ApplyResult, CooldownStatus, MutationResult, Tenant, TenantApplication, TenantConnection } from './types';
 
 // GraphQL Queries
 const TENANT_MINE = gql`
@@ -179,17 +172,8 @@ export interface UseTenantMembershipReturn {
  * - Apply/Cancel/Leave mutations
  * - Cooldown status (global and per-tenant)
  */
-export function useTenantMembership(
-  options: UseTenantMembershipOptions = {}
-): UseTenantMembershipReturn {
-  const {
-    debounceMs = 300,
-    pageSize = 20,
-    onApplySuccess,
-    onCancelSuccess,
-    onLeaveSuccess,
-    onError,
-  } = options;
+export function useTenantMembership(options: UseTenantMembershipOptions = {}): UseTenantMembershipReturn {
+  const { debounceMs = 300, pageSize = 20, onApplySuccess, onCancelSuccess, onLeaveSuccess, onError } = options;
 
   // Local state
   const [search, setSearch] = useState('');
@@ -232,10 +216,9 @@ export function useTenantMembership(
   });
 
   // Lazy query for per-tenant cooldown
-  const [fetchTenantCooldown] = useLazyQuery<
-    { tenant: { cooldown: CooldownStatus } },
-    { input: { tenantId: string } }
-  >(TENANT_COOLDOWN);
+  const [fetchTenantCooldown] = useLazyQuery<{ tenant: { cooldown: CooldownStatus } }, { input: { tenantId: string } }>(
+    TENANT_COOLDOWN
+  );
 
   // Fetch cooldown for available tenants
   const availableItems = availableQuery.data?.tenant.available.items ?? [];
@@ -275,9 +258,7 @@ export function useTenantMembership(
   >(TENANT_LEAVE);
 
   // Computed data
-  const pendingApplications = (appsQuery.data?.tenant.applications ?? []).filter(
-    (a) => a.status === 'PENDING'
-  );
+  const pendingApplications = (appsQuery.data?.tenant.applications ?? []).filter((a) => a.status === 'PENDING');
 
   // Actions
   const clearError = useCallback(() => setError(null), []);

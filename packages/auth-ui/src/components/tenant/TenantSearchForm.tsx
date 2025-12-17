@@ -11,10 +11,10 @@ import {
   DialogTitle,
   Divider,
   Paper,
+  type PaperProps,
   Stack,
   TextField,
   Typography,
-  type PaperProps,
 } from '@assetforce/material';
 import { useState } from 'react';
 
@@ -183,11 +183,7 @@ export function TenantSearchForm({
                   actionDisabled={isDisabled}
                   subtitle={
                     tenantCooldown && !tenantCooldown.canApply ? (
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ display: 'block' }}
-                      >
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
                         {tenantCooldown.reason}
                         {tenantCooldown.until ? ` (until ${tenantCooldown.until})` : null}
                       </Typography>

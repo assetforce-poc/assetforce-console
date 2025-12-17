@@ -2,42 +2,42 @@
  * Tenant Membership Types
  */
 
-export type Tenant = {
+export interface Tenant {
   id: string;
   name: string;
   displayName?: string | null;
-};
+}
 
 export type ApplicationStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
 
-export type TenantApplication = {
+export interface TenantApplication {
   id: string;
   tenant: Tenant;
   status: ApplicationStatus;
   message?: string | null;
   createdAt: string;
   updatedAt: string;
-};
+}
 
-export type TenantConnection = {
+export interface TenantConnection {
   items: Tenant[];
   total: number;
   hasMore: boolean;
-};
+}
 
-export type CooldownStatus = {
+export interface CooldownStatus {
   canApply: boolean;
   until?: string | null;
   reason?: string | null;
-};
+}
 
-export type ApplyResult = {
+export interface ApplyResult {
   success: boolean;
   message?: string | null;
   application?: TenantApplication | null;
-};
+}
 
-export type MutationResult = {
+export interface MutationResult {
   success: boolean;
   message?: string | null;
-};
+}

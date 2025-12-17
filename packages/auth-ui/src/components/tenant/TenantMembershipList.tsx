@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  Alert,
-  CircularProgress,
-  Divider,
-  Paper,
-  Stack,
-  Typography,
-  type PaperProps,
-} from '@assetforce/material';
+import { Alert, CircularProgress, Divider, Paper, type PaperProps, Stack, Typography } from '@assetforce/material';
 
 import type { Tenant } from '../../hooks/tenant/types';
 import { TenantCard } from './TenantCard';

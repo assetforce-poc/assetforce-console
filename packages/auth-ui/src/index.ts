@@ -18,12 +18,7 @@ export { PasswordInput } from './components/PasswordInput';
 export { SubmitButton } from './components/SubmitButton';
 
 // Tenant Components
-export {
-  TenantApplicationList,
-  TenantCard,
-  TenantMembershipList,
-  TenantSearchForm,
-} from './components/tenant';
+export { TenantApplicationList, TenantCard, TenantMembershipList, TenantSearchForm } from './components/tenant';
 
 // Forms
 export type {
@@ -74,8 +69,8 @@ export {
 
 // Tenant Hooks
 export type {
-  ApplyResult,
   ApplicationStatus,
+  ApplyResult,
   CooldownStatus,
   MutationResult,
   Tenant,

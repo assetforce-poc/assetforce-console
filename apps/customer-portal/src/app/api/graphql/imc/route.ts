@@ -54,4 +54,3 @@ const handler = async (request: NextRequest): Promise<NextResponse> => {
 
 export const GET = handler;
 export const POST = handler;
-

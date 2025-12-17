@@ -67,9 +67,7 @@ const customerBrand = {
   poweredByText: 'Powered by AssetForce',
 };
 
-<AuthLayout brand={customerBrand}>
-  {/* ... */}
-</AuthLayout>
+<AuthLayout brand={customerBrand}>{/* ... */}</AuthLayout>;
 ```
 
 ### Admin Console
@@ -83,9 +81,7 @@ const adminBrand = {
   showPoweredBy: false,
 };
 
-<AuthLayout brand={adminBrand}>
-  {/* ... */}
-</AuthLayout>
+<AuthLayout brand={adminBrand}>{/* ... */}</AuthLayout>;
 ```
 
 ---
@@ -141,12 +137,7 @@ const adminBrand = {
 ### Using Base Components
 
 ```tsx
-import {
-  EmailInput,
-  PasswordInput,
-  SubmitButton,
-  FormError,
-} from '@assetforce/auth-ui';
+import { EmailInput, PasswordInput, SubmitButton, FormError } from '@assetforce/auth-ui';
 
 function CustomLoginForm() {
   const [email, setEmail] = useState('');
@@ -162,20 +153,10 @@ function CustomLoginForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <EmailInput
-        value={email}
-        onChange={setEmail}
-        error={/* field error */}
-      />
-      <PasswordInput
-        value={password}
-        onChange={setPassword}
-        error={/* field error */}
-      />
+      <EmailInput value={email} onChange={setEmail} error={/* field error */} />
+      <PasswordInput value={password} onChange={setPassword} error={/* field error */} />
       {error && <FormError message={error} />}
-      <SubmitButton loading={loading}>
-        Sign In
-      </SubmitButton>
+      <SubmitButton loading={loading}>Sign In</SubmitButton>
     </form>
   );
 }

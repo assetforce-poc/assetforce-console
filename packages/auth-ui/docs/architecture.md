@@ -331,11 +331,11 @@ BrandConfig = {                 BrandConfig = {
 
 ## Responsive Breakpoints
 
-| Breakpoint | Width | Layout |
-|------------|-------|--------|
-| xs | 0-599px | Full width, padding 16px |
-| sm | 600-899px | Max-width 400px, centered |
-| md+ | 900px+ | Max-width 450px, centered |
+| Breakpoint | Width     | Layout                    |
+| ---------- | --------- | ------------------------- |
+| xs         | 0-599px   | Full width, padding 16px  |
+| sm         | 600-899px | Max-width 400px, centered |
+| md+        | 900px+    | Max-width 450px, centered |
 
 ---
 

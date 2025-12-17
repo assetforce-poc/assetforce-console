@@ -26,10 +26,10 @@ packages/auth-ui/src/
 
 ## Target Applications
 
-| Application | Brand | Primary Color |
-|-------------|-------|---------------|
-| Customer Portal | 🔐 AssetForce Portal | `#1976d2` |
-| Admin Console | ⚙️ AssetForce Admin | `#9c27b0` |
+| Application     | Brand                | Primary Color |
+| --------------- | -------------------- | ------------- |
+| Customer Portal | 🔐 AssetForce Portal | `#1976d2`     |
+| Admin Console   | ⚙️ AssetForce Admin  | `#9c27b0`     |
 
 ---
 
