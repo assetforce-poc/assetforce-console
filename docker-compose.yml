@@ -34,6 +34,7 @@ services:
       # Override for Docker: use host.docker.internal to access host services
       - AAC_GRAPHQL_URL=http://host.docker.internal:8081/graphql
       - IMC_GRAPHQL_URL=http://host.docker.internal:8082/graphql
+      - SGC_GRAPHQL_URL=http://host.docker.internal:8083/graphql
       # Auth configuration
       - AUTH_ENDPOINT=http://host.docker.internal:8081/graphql
       - AUTH_SECRET=this-is-a-dev-secret-min-32-chars!
@@ -90,6 +91,7 @@ services:
       - GITHUB_PACKAGES_TOKEN=${GITHUB_PACKAGES_TOKEN}
       - AAC_GRAPHQL_URL=http://host.docker.internal:8081/graphql
       - IMC_GRAPHQL_URL=http://host.docker.internal:8082/graphql
+      - SGC_GRAPHQL_URL=http://host.docker.internal:8083/graphql
     networks:
       - assetforce-network
 
@@ -156,9 +158,10 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=production
-      # Use host.docker.internal to connect to host services (AAC/IMC)
+      # Use host.docker.internal to connect to host services (AAC/IMC/SGC)
       - AAC_GRAPHQL_URL=http://host.docker.internal:8081/graphql
       - IMC_GRAPHQL_URL=http://host.docker.internal:8082/graphql
+      - SGC_GRAPHQL_URL=http://host.docker.internal:8083/graphql
     networks:
       - assetforce-network
 
@@ -181,6 +184,7 @@ services:
       - NODE_ENV=production
       - AAC_GRAPHQL_URL=http://aac:8081/graphql
       - IMC_GRAPHQL_URL=http://imc:8082/graphql
+      - SGC_GRAPHQL_URL=http://sgc:8083/graphql
     networks:
       - assetforce-network
     depends_on:
