@@ -166,6 +166,49 @@ export type AuthResult = {
   tokenType?: Maybe<Scalars['String']['output']>;
 };
 
+/** Authentication-related mutations */
+export type AuthenticateMutations = {
+  __typename?: 'AuthenticateMutations';
+  /**
+   * Enter a tenant after credential verification.
+   * Used when user has multiple tenants and selected one.
+   */
+  enter: AuthResult;
+  /**
+   * Universal login operation.
+   * - With tenant: Direct login to specific tenant
+   * - Without tenant: Returns available tenants for selection
+   * - Single tenant: Auto-enters and returns full auth result
+   * - No tenants: Returns empty list (user needs onboarding)
+   */
+  login: LoginResult;
+  /** Logout current session */
+  logout: Scalars['Boolean']['output'];
+  /** Refresh access token */
+  refreshToken: AuthResult;
+};
+
+
+/** Authentication-related mutations */
+export type AuthenticateMutationsEnterArgs = {
+  subject: Scalars['String']['input'];
+  tenantId: Scalars['String']['input'];
+};
+
+
+/** Authentication-related mutations */
+export type AuthenticateMutationsLoginArgs = {
+  password: Scalars['String']['input'];
+  tenant?: InputMaybe<Scalars['String']['input']>;
+  username: Scalars['String']['input'];
+};
+
+
+/** Authentication-related mutations */
+export type AuthenticateMutationsRefreshTokenArgs = {
+  refreshToken: Scalars['String']['input'];
+};
+
 /** Email availability status (replaces EmailAvailability) */
 export type EmailStatus = {
   __typename?: 'EmailStatus';
@@ -433,12 +476,13 @@ export type ErrorType =
    */
   | 'UNKNOWN';
 
-/** 4D Identity Context - Zone/Realm/Subject/Groups */
+/** 4D Identity Context - Zone/Tenant/Subject/Groups */
 export type IdentityContext = {
   __typename?: 'IdentityContext';
   groups: Array<Scalars['String']['output']>;
-  realm: Scalars['String']['output'];
   subject: Subject;
+  /** Tenant ID (Keycloak realm name) */
+  tenant: Scalars['String']['output'];
   zone?: Maybe<Scalars['String']['output']>;
 };
 
@@ -452,53 +496,40 @@ export type ListQueriesInput = {
   sort?: InputMaybe<SortInput>;
 };
 
-/**  Input Types */
-export type LoginInput = {
-  password: Scalars['String']['input'];
-  realm?: InputMaybe<Scalars['String']['input']>;
-  username: Scalars['String']['input'];
+/** Login result - unified response for all login scenarios. */
+export type LoginResult = {
+  __typename?: 'LoginResult';
+  /** Token fields - only present when single tenant (auto-entered) */
+  accessToken?: Maybe<Scalars['String']['output']>;
+  /** Error message if authentication failed */
+  error?: Maybe<Scalars['String']['output']>;
+  expiresIn?: Maybe<Scalars['Int']['output']>;
+  identityContext?: Maybe<IdentityContext>;
+  refreshToken?: Maybe<Scalars['String']['output']>;
+  /** User subject (for tenant selection if needed) */
+  subject?: Maybe<Scalars['String']['output']>;
+  /** Whether authentication was successful */
+  success: Scalars['Boolean']['output'];
+  /**
+   * Available tenants:
+   * - Empty: User has no tenants (needs onboarding)
+   * - Single: Auto-entered (includes token fields)
+   * - Multiple: User must call enter() to select
+   */
+  tenants?: Maybe<Array<Tenant>>;
+  tokenType?: Maybe<Scalars['String']['output']>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   /** Account-related mutations (namespace API) */
   account: AccountMutations;
-  /** Step 1: Initial authentication - verify credentials, return subject for tenant selection */
-  authenticate: PreAuthResult;
-  /** Login with username and password (single tenant mode) */
-  login: AuthResult;
-  /** Logout current session */
-  logout: Scalars['Boolean']['output'];
-  /** Refresh access token */
-  refreshToken: AuthResult;
+  /** Authentication-related mutations (new namespace) */
+  authenticate: AuthenticateMutations;
   /** Registration-related mutations (new namespace) */
   registration: RegistrationMutations;
-  /** Step 4: Select tenant and get final token with IdentityContext */
-  selectTenant: AuthResult;
   /** Verify account email by admin (bypasses email verification flow) */
   verifyEmailByAdmin: EmailVerificationResult;
-};
-
-
-export type MutationAuthenticateArgs = {
-  password: Scalars['String']['input'];
-  username: Scalars['String']['input'];
-};
-
-
-export type MutationLoginArgs = {
-  input: LoginInput;
-};
-
-
-export type MutationRefreshTokenArgs = {
-  refreshToken: Scalars['String']['input'];
-};
-
-
-export type MutationSelectTenantArgs = {
-  realmId: Scalars['String']['input'];
-  subject: Scalars['String']['input'];
 };
 
 
@@ -558,26 +589,6 @@ export type PaginationInput = {
   size?: InputMaybe<Scalars['Int']['input']>;
 };
 
-/**
- *  Pre-authentication result
- *  - Single realm: returns token directly (no selection needed)
- *  - Multiple realms: returns availableRealms list (user must call selectTenant)
- */
-export type PreAuthResult = {
-  __typename?: 'PreAuthResult';
-  /** Token fields - only present when single realm (auto-selected) */
-  accessToken?: Maybe<Scalars['String']['output']>;
-  /** Available realms/tenants - only present when multiple realms exist */
-  availableRealms?: Maybe<Array<Realm>>;
-  error?: Maybe<Scalars['String']['output']>;
-  expiresIn?: Maybe<Scalars['Int']['output']>;
-  identityContext?: Maybe<IdentityContext>;
-  refreshToken?: Maybe<Scalars['String']['output']>;
-  subject?: Maybe<Scalars['String']['output']>;
-  success: Scalars['Boolean']['output'];
-  tokenType?: Maybe<Scalars['String']['output']>;
-};
-
 export type Query = {
   __typename?: 'Query';
   _service: _Service;
@@ -596,28 +607,16 @@ export type QueryValidateTokenArgs = {
   token: Scalars['String']['input'];
 };
 
-/** Realm/Tenant information (from IMC) */
-export type Realm = {
-  __typename?: 'Realm';
-  description?: Maybe<Scalars['String']['output']>;
-  displayName?: Maybe<Scalars['String']['output']>;
-  isActive: Scalars['Boolean']['output'];
-  realmId: Scalars['String']['output'];
-  realmName: Scalars['String']['output'];
-  realmType: Scalars['String']['output'];
-  zoneId: Scalars['String']['output'];
-};
-
 /** Input for user registration */
 export type RegisterInput = {
   /** Required: Must accept terms of service */
   acceptTerms: Scalars['Boolean']['input'];
   /** Required: User's email address */
   email: Scalars['String']['input'];
-  /** Required: First name */
-  firstName: Scalars['String']['input'];
-  /** Required: Last name */
-  lastName: Scalars['String']['input'];
+  /** Optional: First name */
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  /** Optional: Last name */
+  lastName?: InputMaybe<Scalars['String']['input']>;
   /** Optional: Preferred locale (e.g., 'en-US', 'ja-JP') */
   locale?: InputMaybe<Scalars['String']['input']>;
   /** Required: Password */
@@ -650,6 +649,8 @@ export type RegistrationMutations = {
   __typename?: 'RegistrationMutations';
   /** Register a new user account */
   register: RegisterResult;
+  /** Resend verification email to an unverified account */
+  resendVerificationEmail: ResendVerificationResult;
   /** Verify email using verification token */
   verifyEmail: VerificationResult;
 };
@@ -658,6 +659,12 @@ export type RegistrationMutations = {
 /** Registration-related mutations */
 export type RegistrationMutationsRegisterArgs = {
   input: RegisterInput;
+};
+
+
+/** Registration-related mutations */
+export type RegistrationMutationsResendVerificationEmailArgs = {
+  email: Scalars['String']['input'];
 };
 
 
@@ -679,6 +686,15 @@ export type RegistrationQueriesEmailArgs = {
   address: Scalars['String']['input'];
 };
 
+/** Resend verification email result */
+export type ResendVerificationResult = {
+  __typename?: 'ResendVerificationResult';
+  /** Success message or error code */
+  message: Scalars['String']['output'];
+  /** Whether the resend operation was successful */
+  success: Scalars['Boolean']['output'];
+};
+
 /** Search input parameters */
 export type SearchInput = {
   /** Fields to search in */
@@ -695,8 +711,8 @@ export type Session = {
   expiresAt?: Maybe<Scalars['String']['output']>;
   identityContext?: Maybe<IdentityContext>;
   isActive: Scalars['Boolean']['output'];
-  realm: Scalars['String']['output'];
   sessionId: Scalars['String']['output'];
+  tenant: Scalars['String']['output'];
   username: Scalars['String']['output'];
 };
 
@@ -732,6 +748,25 @@ export type Subject = {
   username: Scalars['String']['output'];
 };
 
+/** Tenant information (business abstraction over Keycloak Realm) */
+export type Tenant = {
+  __typename?: 'Tenant';
+  /** Description */
+  description?: Maybe<Scalars['String']['output']>;
+  /** Display name for UI */
+  displayName?: Maybe<Scalars['String']['output']>;
+  /** Tenant ID (Keycloak realm name) */
+  id: Scalars['String']['output'];
+  /** Whether tenant is active */
+  isActive: Scalars['Boolean']['output'];
+  /** Tenant name */
+  name: Scalars['String']['output'];
+  /** Tenant type (e.g., ENTERPRISE, TRIAL) */
+  type: Scalars['String']['output'];
+  /** Zone ID (foreign key reference) */
+  zoneId: Scalars['String']['output'];
+};
+
 /** User's tenant membership status */
 export type TenantStatus = {
   __typename?: 'TenantStatus';
@@ -750,7 +785,7 @@ export type TokenValidation = {
   accountId?: Maybe<Scalars['String']['output']>;
   error?: Maybe<Scalars['String']['output']>;
   expiresAt?: Maybe<Scalars['String']['output']>;
-  realm?: Maybe<Scalars['String']['output']>;
+  tenant?: Maybe<Scalars['String']['output']>;
   username?: Maybe<Scalars['String']['output']>;
   valid: Scalars['Boolean']['output'];
 };

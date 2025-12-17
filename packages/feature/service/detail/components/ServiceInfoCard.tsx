@@ -58,11 +58,7 @@ export function ServiceInfoCard({ service }: ServiceInfoCardProps) {
             </Typography>
             <Box mt={0.5}>
               {service.lifecycle && (
-                <Chip
-                  label={service.lifecycle}
-                  size="small"
-                  color={LIFECYCLE_COLORS[service.lifecycle] ?? 'default'}
-                />
+                <Chip label={service.lifecycle} size="small" color={LIFECYCLE_COLORS[service.lifecycle] ?? 'default'} />
               )}
             </Box>
           </Box>

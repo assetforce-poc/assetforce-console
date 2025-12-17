@@ -3,8 +3,11 @@
 import { useQuery } from '@assetforce/graphql';
 import { useMemo } from 'react';
 
-import { ListServicesDocument } from '../../generated/graphql';
+import { ListServicesDocument, type ListServicesQuery } from '../../generated/graphql';
 import type { ServiceLifecycle, ServiceType } from '../types';
+
+/** Service list item type from GraphQL query */
+type ServiceListItem = ListServicesQuery['service']['list']['items'][number];
 
 export interface UseServicesOptions {
   /** Filter by service type */
@@ -32,11 +35,7 @@ export interface PaginationInfo {
 
 export interface UseServicesReturn {
   /** Service items */
-  services: ReturnType<typeof useQuery>['data'] extends infer D
-    ? D extends { service: { list: { items: infer I } } }
-      ? I
-      : never[]
-    : never[];
+  services: ServiceListItem[];
   /** Pagination info computed from limit/offset */
   pagination: PaginationInfo | null;
   /** Total count */

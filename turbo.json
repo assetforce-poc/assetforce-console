@@ -4,7 +4,8 @@
   "globalEnv": [
     "GITHUB_PACKAGES_TOKEN",
     "AAC_GRAPHQL_URL",
-    "IMC_GRAPHQL_URL"
+    "IMC_GRAPHQL_URL",
+    "SGC_GRAPHQL_URL"
   ],
   "tasks": {
     "build": {

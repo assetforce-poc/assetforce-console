@@ -1,3 +1,4 @@
+import { AuthProvider } from '@assetforce/auth/react';
 import { ApolloClientProvider } from '@assetforce/graphql/provider';
 import { CssBaseline, ThemeProvider } from '@assetforce/material';
 import { AppRouterCacheProvider } from '@assetforce/material/nextjs';
@@ -18,12 +19,14 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <ApolloClientProvider endpoint="/api/graphql/imc">
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              {children}
-            </ThemeProvider>
-          </ApolloClientProvider>
+          <AuthProvider>
+            <ApolloClientProvider endpoint="/api/graphql/imc">
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
+                {children}
+              </ThemeProvider>
+            </ApolloClientProvider>
+          </AuthProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

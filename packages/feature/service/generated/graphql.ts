@@ -15,7 +15,55 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   DateTime: { input: any; output: any; }
+  _FieldSet: { input: any; output: any; }
 };
+
+export type ContractDeprecateInput = {
+  /** Suggested alternative */
+  alternative?: InputMaybe<Scalars['String']['input']>;
+  /** Contract ID to deprecate */
+  id: Scalars['ID']['input'];
+  /** Reason for deprecation */
+  reason: Scalars['String']['input'];
+  /** Planned removal version */
+  removal?: InputMaybe<Scalars['String']['input']>;
+  /** Version when deprecation started */
+  since?: InputMaybe<Scalars['String']['input']>;
+};
+
+/**
+ *  ============================================================
+ *  Contract Input Types (Phase 2 - SXP)
+ *  ============================================================
+ */
+export type ContractListInput = {
+  /** Include all tenants. Platform-admin only. */
+  allTenants?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Pagination parameters */
+  page?: InputMaybe<PageInput>;
+  /** Filter by protocol */
+  protocol?: InputMaybe<Protocol>;
+  /** Filter by service ID */
+  serviceId?: InputMaybe<Scalars['ID']['input']>;
+  /** Target specific tenant. Platform-admin only. */
+  tenant?: InputMaybe<Scalars['String']['input']>;
+  /** Filter by contract type (PROVIDES/CONSUMES) */
+  type?: InputMaybe<ContractType>;
+};
+
+export type ContractLookupInput = {
+  /** GraphQL operation to look up (e.g., Query.users) */
+  operation: Scalars['String']['input'];
+  /** Target tenant (uses caller's tenant if not specified) */
+  tenant?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Contract type: whether a service provides or consumes an interface */
+export type ContractType =
+  /** Service consumes this interface from another service */
+  | 'CONSUMES'
+  /** Service provides this interface for others to call */
+  | 'PROVIDES';
 
 export type Dependency = {
   __typename?: 'Dependency';
@@ -38,10 +86,424 @@ export type DependencySetInput = {
   serviceId: Scalars['ID']['input'];
 };
 
+/** Deprecation information for a contract */
+export type DeprecationType = {
+  __typename?: 'DeprecationType';
+  /** Suggested alternative */
+  alternative?: Maybe<Scalars['String']['output']>;
+  /** Reason for deprecation */
+  reason: Scalars['String']['output'];
+  /** Planned removal version */
+  removal?: Maybe<Scalars['String']['output']>;
+  /** Version when deprecation started */
+  since?: Maybe<Scalars['String']['output']>;
+};
+
 export type Environment =
   | 'DEVELOPMENT'
   | 'PRODUCTION'
   | 'TESTING';
+
+export type ErrorDetail =
+  /**
+   * The deadline expired before the operation could complete.
+   *
+   * For operations that change the state of the system, this error
+   * may be returned even if the operation has completed successfully.
+   * For example, a successful response from a server could have been
+   * delayed long enough for the deadline to expire.
+   *
+   * HTTP Mapping: 504 Gateway Timeout
+   * Error Type: UNAVAILABLE
+   */
+  | 'DEADLINE_EXCEEDED'
+  /**
+   * The server detected that the client is exhibiting a behavior that
+   * might be generating excessive load.
+   *
+   * HTTP Mapping: 420 Enhance Your Calm
+   * Error Type: UNAVAILABLE
+   */
+  | 'ENHANCE_YOUR_CALM'
+  /**
+   * The requested field is not found in the schema.
+   *
+   * This differs from `NOT_FOUND` in that `NOT_FOUND` should be used when a
+   * query is valid, but is unable to return a result (if, for example, a
+   * specific video id doesn't exist). `FIELD_NOT_FOUND` is intended to be
+   * returned by the server to signify that the requested field is not known to exist.
+   * This may be returned in lieu of failing the entire query.
+   * See also `PERMISSION_DENIED` for cases where the
+   * requested field is invalid only for the given user or class of users.
+   *
+   * HTTP Mapping: 404 Not Found
+   * Error Type: BAD_REQUEST
+   */
+  | 'FIELD_NOT_FOUND'
+  /**
+   * The client specified an invalid argument.
+   *
+   * Note that this differs from `FAILED_PRECONDITION`.
+   * `INVALID_ARGUMENT` indicates arguments that are problematic
+   * regardless of the state of the system (e.g., a malformed file name).
+   *
+   * HTTP Mapping: 400 Bad Request
+   * Error Type: BAD_REQUEST
+   */
+  | 'INVALID_ARGUMENT'
+  /**
+   * The provided cursor is not valid.
+   *
+   * The most common usage for this error is when a client is paginating
+   * through a list that uses stateful cursors. In that case, the provided
+   * cursor may be expired.
+   *
+   * HTTP Mapping: 404 Not Found
+   * Error Type: NOT_FOUND
+   */
+  | 'INVALID_CURSOR'
+  /**
+   * Unable to perform operation because a required resource is missing.
+   *
+   * Example: Client is attempting to refresh a list, but the specified
+   * list is expired. This requires an action by the client to get a new list.
+   *
+   * If the user is simply trying GET a resource that is not found,
+   * use the NOT_FOUND error type. FAILED_PRECONDITION.MISSING_RESOURCE
+   * is to be used particularly when the user is performing an operation
+   * that requires a particular resource to exist.
+   *
+   * HTTP Mapping: 400 Bad Request or 500 Internal Server Error
+   * Error Type: FAILED_PRECONDITION
+   */
+  | 'MISSING_RESOURCE'
+  /**
+   * Service Error.
+   *
+   * There is a problem with an upstream service.
+   *
+   * This may be returned if a gateway receives an unknown error from a service
+   * or if a service is unreachable.
+   * If a request times out which waiting on a response from a service,
+   * `DEADLINE_EXCEEDED` may be returned instead.
+   * If a service returns a more specific error Type, the specific error Type may
+   * be returned instead.
+   *
+   * HTTP Mapping: 502 Bad Gateway
+   * Error Type: UNAVAILABLE
+   */
+  | 'SERVICE_ERROR'
+  /**
+   * Request failed due to network errors.
+   *
+   * HTTP Mapping: 503 Unavailable
+   * Error Type: UNAVAILABLE
+   */
+  | 'TCP_FAILURE'
+  /**
+   * Request throttled based on server concurrency limits.
+   *
+   * HTTP Mapping: 503 Unavailable
+   * Error Type: UNAVAILABLE
+   */
+  | 'THROTTLED_CONCURRENCY'
+  /**
+   * Request throttled based on server CPU limits
+   *
+   * HTTP Mapping: 503 Unavailable.
+   * Error Type: UNAVAILABLE
+   */
+  | 'THROTTLED_CPU'
+  /**
+   * The server detected that the client is exhibiting a behavior that
+   * might be generating excessive load.
+   *
+   * HTTP Mapping: 429 Too Many Requests
+   * Error Type: UNAVAILABLE
+   */
+  | 'TOO_MANY_REQUESTS'
+  /**
+   * The operation is not implemented or is not currently supported/enabled.
+   *
+   * HTTP Mapping: 501 Not Implemented
+   * Error Type: BAD_REQUEST
+   */
+  | 'UNIMPLEMENTED'
+  /**
+   * Unknown error.
+   *
+   * This error should only be returned when no other error detail applies.
+   * If a client sees an unknown errorDetail, it will be interpreted as UNKNOWN.
+   *
+   * HTTP Mapping: 500 Internal Server Error
+   */
+  | 'UNKNOWN';
+
+export type ErrorType =
+  /**
+   * Bad Request.
+   *
+   * There is a problem with the request.
+   * Retrying the same request is not likely to succeed.
+   * An example would be a query or argument that cannot be deserialized.
+   *
+   * HTTP Mapping: 400 Bad Request
+   */
+  | 'BAD_REQUEST'
+  /**
+   * The operation was rejected because the system is not in a state
+   * required for the operation's execution.  For example, the directory
+   * to be deleted is non-empty, an rmdir operation is applied to
+   * a non-directory, etc.
+   *
+   * Service implementers can use the following guidelines to decide
+   * between `FAILED_PRECONDITION` and `UNAVAILABLE`:
+   *
+   * - Use `UNAVAILABLE` if the client can retry just the failing call.
+   * - Use `FAILED_PRECONDITION` if the client should not retry until
+   * the system state has been explicitly fixed.  E.g., if an "rmdir"
+   *      fails because the directory is non-empty, `FAILED_PRECONDITION`
+   * should be returned since the client should not retry unless
+   * the files are deleted from the directory.
+   *
+   * HTTP Mapping: 400 Bad Request or 500 Internal Server Error
+   */
+  | 'FAILED_PRECONDITION'
+  /**
+   * Internal error.
+   *
+   * An unexpected internal error was encountered. This means that some
+   * invariants expected by the underlying system have been broken.
+   * This error code is reserved for serious errors.
+   *
+   * HTTP Mapping: 500 Internal Server Error
+   */
+  | 'INTERNAL'
+  /**
+   * The requested entity was not found.
+   *
+   * This could apply to a resource that has never existed (e.g. bad resource id),
+   * or a resource that no longer exists (e.g. cache expired.)
+   *
+   * Note to server developers: if a request is denied for an entire class
+   * of users, such as gradual feature rollout or undocumented allowlist,
+   * `NOT_FOUND` may be used. If a request is denied for some users within
+   * a class of users, such as user-based access control, `PERMISSION_DENIED`
+   * must be used.
+   *
+   * HTTP Mapping: 404 Not Found
+   */
+  | 'NOT_FOUND'
+  /**
+   * The caller does not have permission to execute the specified
+   * operation.
+   *
+   * `PERMISSION_DENIED` must not be used for rejections
+   * caused by exhausting some resource or quota.
+   * `PERMISSION_DENIED` must not be used if the caller
+   * cannot be identified (use `UNAUTHENTICATED`
+   * instead for those errors).
+   *
+   * This error Type does not imply the
+   * request is valid or the requested entity exists or satisfies
+   * other pre-conditions.
+   *
+   * HTTP Mapping: 403 Forbidden
+   */
+  | 'PERMISSION_DENIED'
+  /**
+   * The request does not have valid authentication credentials.
+   *
+   * This is intended to be returned only for routes that require
+   * authentication.
+   *
+   * HTTP Mapping: 401 Unauthorized
+   */
+  | 'UNAUTHENTICATED'
+  /**
+   * Currently Unavailable.
+   *
+   * The service is currently unavailable.  This is most likely a
+   * transient condition, which can be corrected by retrying with
+   * a backoff.
+   *
+   * HTTP Mapping: 503 Unavailable
+   */
+  | 'UNAVAILABLE'
+  /**
+   * Unknown error.
+   *
+   * For example, this error may be returned when
+   * an error code received from another address space belongs to
+   * an error space that is not known in this address space.  Also
+   * errors raised by APIs that do not return enough error information
+   * may be converted to this error.
+   *
+   * If a client sees an unknown errorType, it will be interpreted as UNKNOWN.
+   * Unknown errors MUST NOT trigger any special behavior. These MAY be treated
+   * by an implementation as being equivalent to INTERNAL.
+   *
+   * When possible, a more specific error should be provided.
+   *
+   * HTTP Mapping: 520 Unknown Error
+   */
+  | 'UNKNOWN';
+
+/** Event-specific contract configuration (future) */
+export type EventContractType = {
+  __typename?: 'EventContractType';
+  /** Schema reference (Avro/JSON Schema) */
+  schema?: Maybe<SchemaReferenceType>;
+  /** Event topic: user.created */
+  topic: Scalars['String']['output'];
+};
+
+export type ExchangeHealthStatus = {
+  __typename?: 'ExchangeHealthStatus';
+  /** Number of active subgraphs */
+  activeSubgraphs: Scalars['Int']['output'];
+  /** Overall gateway status */
+  status: Scalars['String']['output'];
+  /** Total registered subgraphs */
+  totalSubgraphs: Scalars['Int']['output'];
+  /** List of unhealthy subgraphs */
+  unhealthySubgraphs: Array<Scalars['String']['output']>;
+};
+
+/**
+ *  ============================================================
+ *  Exchange Mutation Namespace
+ *  ============================================================
+ */
+export type ExchangeMutations = {
+  __typename?: 'ExchangeMutations';
+  /** Subgraph-related mutations */
+  subgraph: ExchangeSubgraphMutations;
+};
+
+/**
+ *  ============================================================
+ *  Exchange Query Namespace
+ *  ============================================================
+ */
+export type ExchangeQueries = {
+  __typename?: 'ExchangeQueries';
+  /** Get gateway health status */
+  health: ExchangeHealthStatus;
+  /** Subgraph-related queries */
+  subgraph: ExchangeSubgraphQueries;
+};
+
+export type ExchangeSubgraphMutations = {
+  __typename?: 'ExchangeSubgraphMutations';
+  /** Activate a subgraph (start routing traffic) */
+  activate: Subgraph;
+  /** Deactivate a subgraph (stop routing traffic) */
+  deactivate: Subgraph;
+  /** Register a new subgraph */
+  register: Subgraph;
+  /** Remove a subgraph from the registry */
+  remove: Scalars['Boolean']['output'];
+  /** Schema-related operations */
+  schema: ExchangeSubgraphSchemaMutations;
+  /** Update a subgraph's configuration */
+  update: Subgraph;
+};
+
+
+export type ExchangeSubgraphMutationsActivateArgs = {
+  name: Scalars['String']['input'];
+};
+
+
+export type ExchangeSubgraphMutationsDeactivateArgs = {
+  name: Scalars['String']['input'];
+};
+
+
+export type ExchangeSubgraphMutationsRegisterArgs = {
+  input: SubgraphRegisterInput;
+};
+
+
+export type ExchangeSubgraphMutationsRemoveArgs = {
+  name: Scalars['String']['input'];
+};
+
+
+export type ExchangeSubgraphMutationsUpdateArgs = {
+  input: SubgraphUpdateInput;
+};
+
+export type ExchangeSubgraphQueries = {
+  __typename?: 'ExchangeSubgraphQueries';
+  /** List all registered subgraphs */
+  list: SubgraphConnection;
+  /** Get a subgraph by name */
+  one?: Maybe<Subgraph>;
+};
+
+
+export type ExchangeSubgraphQueriesListArgs = {
+  status?: InputMaybe<SubgraphStatus>;
+};
+
+
+export type ExchangeSubgraphQueriesOneArgs = {
+  name: Scalars['String']['input'];
+};
+
+/** Schema operations for a subgraph */
+export type ExchangeSubgraphSchemaMutations = {
+  __typename?: 'ExchangeSubgraphSchemaMutations';
+  /** Trigger schema refresh (introspection) for a subgraph */
+  refresh?: Maybe<SubgraphSchema>;
+};
+
+
+/** Schema operations for a subgraph */
+export type ExchangeSubgraphSchemaMutationsRefreshArgs = {
+  name: Scalars['String']['input'];
+};
+
+/** GraphQL-specific contract configuration */
+export type GraphQlContractType = {
+  __typename?: 'GraphQLContractType';
+  /** GraphQL operation path: Query.users, Mutation.createUser */
+  operation: Scalars['String']['output'];
+  /** Schema reference */
+  schema?: Maybe<SchemaReferenceType>;
+};
+
+export type GraphQlContractUpsertInput = {
+  /** GraphQL operation: Query.users, Mutation.createUser */
+  operation: Scalars['String']['input'];
+  /** Schema content hash for change detection */
+  schemaHash?: InputMaybe<Scalars['String']['input']>;
+  /** Schema reference URL (Git path) */
+  schemaUrl?: InputMaybe<Scalars['String']['input']>;
+  /** Schema semantic version */
+  schemaVersion?: InputMaybe<Scalars['String']['input']>;
+  /** Service that owns this contract */
+  serviceId: Scalars['ID']['input'];
+  /** Target tenant. Platform-admin only. */
+  tenant?: InputMaybe<Scalars['String']['input']>;
+  /** Contract type: PROVIDES or CONSUMES */
+  type: ContractType;
+  /** API version */
+  version?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** gRPC-specific contract configuration (future) */
+export type GrpcContractType = {
+  __typename?: 'GrpcContractType';
+  /** gRPC method name: GetUser */
+  method: Scalars['String']['output'];
+  /** Schema reference (.proto) */
+  schema?: Maybe<SchemaReferenceType>;
+  /** gRPC service name: UserService */
+  service: Scalars['String']['output'];
+};
 
 export type HealthStatus =
   | 'DOWN'
@@ -101,6 +563,8 @@ export type InstanceUpsertInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  /** Service Exchange Portal mutations (Phase 2) */
+  exchange: ExchangeMutations;
   service: ServiceMutations;
 };
 
@@ -132,13 +596,64 @@ export type ProbeInput = {
   reason?: InputMaybe<Scalars['String']['input']>;
 };
 
+/** Protocol type for service contracts */
+export type Protocol =
+  /** Event/messaging protocol - future extension */
+  | 'EVENT'
+  /** GraphQL protocol - primary focus for Phase 2.1 */
+  | 'GRAPHQL'
+  /** gRPC protocol - future extension */
+  | 'GRPC'
+  /** REST protocol - future extension */
+  | 'REST';
+
+/**
+ *  ============================================================
+ *  Root Types
+ *  ============================================================
+ */
 export type Query = {
   __typename?: 'Query';
+  _service: _Service;
+  /** Service Exchange Portal queries (Phase 2) */
+  exchange: ExchangeQueries;
   service: ServiceQueries;
 };
 
+/** REST-specific contract configuration (future) */
+export type RestContractType = {
+  __typename?: 'RestContractType';
+  /** HTTP method: GET, POST, PUT, DELETE */
+  method: Scalars['String']['output'];
+  /** Endpoint path: /api/v1/users */
+  path: Scalars['String']['output'];
+  /** Schema reference (OpenAPI) */
+  schema?: Maybe<SchemaReferenceType>;
+};
+
+/** Schema reference for tracking schema versions and changes */
+export type SchemaReferenceType = {
+  __typename?: 'SchemaReferenceType';
+  /** Content hash for change detection */
+  hash?: Maybe<Scalars['String']['output']>;
+  /** Git path to schema file */
+  url: Scalars['String']['output'];
+  /** Semantic version */
+  version?: Maybe<Scalars['String']['output']>;
+};
+
+/**
+ *  ============================================================
+ *  Domain Types
+ *  ============================================================
+ */
 export type Service = {
   __typename?: 'Service';
+  /**
+   * Contracts declared by this service (Phase 2 - SXP).
+   * Optionally filter by type (PROVIDES/CONSUMES).
+   */
+  contracts: Array<ServiceContract>;
   createdAt?: Maybe<Scalars['DateTime']['output']>;
   /**
    * Dependencies declared by this service.
@@ -164,16 +679,133 @@ export type Service = {
 };
 
 
+/**
+ *  ============================================================
+ *  Domain Types
+ *  ============================================================
+ */
+export type ServiceContractsArgs = {
+  type?: InputMaybe<ContractType>;
+};
+
+
+/**
+ *  ============================================================
+ *  Domain Types
+ *  ============================================================
+ */
 export type ServiceInstancesArgs = {
   environment?: InputMaybe<Environment>;
 };
 
+/**
+ *  ============================================================
+ *  Connection Types (Pagination)
+ *  ============================================================
+ */
 export type ServiceConnection = {
   __typename?: 'ServiceConnection';
   items: Array<Service>;
   limit: Scalars['Int']['output'];
   offset: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
+};
+
+/**
+ * ServiceContract - Declares what interfaces a service provides or consumes.
+ * Enables service dependency tracking and API governance.
+ */
+export type ServiceContract = {
+  __typename?: 'ServiceContract';
+  createdAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Whether this contract is deprecated */
+  deprecated: Scalars['Boolean']['output'];
+  /** Deprecation information. Present if contract is deprecated. */
+  deprecation?: Maybe<DeprecationType>;
+  /** Event-specific configuration. Present when protocol = EVENT */
+  event?: Maybe<EventContractType>;
+  /** GraphQL-specific configuration. Present when protocol = GRAPHQL */
+  graphql?: Maybe<GraphQlContractType>;
+  /** gRPC-specific configuration. Present when protocol = GRPC */
+  grpc?: Maybe<GrpcContractType>;
+  id: Scalars['ID']['output'];
+  protocol: Protocol;
+  /** REST-specific configuration. Present when protocol = REST */
+  rest?: Maybe<RestContractType>;
+  serviceId: Scalars['ID']['output'];
+  tenant: Scalars['String']['output'];
+  type: ContractType;
+  updatedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** API version (semantic version) */
+  version?: Maybe<Scalars['String']['output']>;
+};
+
+export type ServiceContractConnection = {
+  __typename?: 'ServiceContractConnection';
+  items: Array<ServiceContract>;
+  limit: Scalars['Int']['output'];
+  offset: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
+export type ServiceContractMutations = {
+  __typename?: 'ServiceContractMutations';
+  /** Delete a contract. */
+  delete: Scalars['Boolean']['output'];
+  /** Mark a contract as deprecated. */
+  deprecate: ServiceContract;
+  /**
+   * Create or update a GraphQL contract.
+   * Upsert by: serviceId + type + operation.
+   */
+  upsertGraphQL: ServiceContract;
+};
+
+
+export type ServiceContractMutationsDeleteArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type ServiceContractMutationsDeprecateArgs = {
+  input: ContractDeprecateInput;
+};
+
+
+export type ServiceContractMutationsUpsertGraphQlArgs = {
+  input: GraphQlContractUpsertInput;
+};
+
+export type ServiceContractQueries = {
+  __typename?: 'ServiceContractQueries';
+  /** Find services that consume a specific GraphQL operation. */
+  consumers: Array<ServiceContract>;
+  /** List contracts with optional filters. */
+  list: ServiceContractConnection;
+  /** Get a single contract by ID. */
+  one: ServiceContract;
+  /** Find services that provide a specific GraphQL operation. */
+  providers: Array<ServiceContract>;
+};
+
+
+export type ServiceContractQueriesConsumersArgs = {
+  input: ContractLookupInput;
+};
+
+
+export type ServiceContractQueriesListArgs = {
+  input: ContractListInput;
+};
+
+
+export type ServiceContractQueriesOneArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type ServiceContractQueriesProvidersArgs = {
+  input: ContractLookupInput;
 };
 
 /**
@@ -305,6 +937,11 @@ export type ServiceLifecycle =
   | 'PRODUCTION'
   | 'TESTING';
 
+/**
+ *  ============================================================
+ *  Query Input Types
+ *  ============================================================
+ */
 export type ServiceListInput = {
   /**
    * Include all tenants. Platform-admin only.
@@ -328,8 +965,15 @@ export type ServiceListInput = {
   type?: InputMaybe<ServiceType>;
 };
 
+/**
+ *  ============================================================
+ *  Mutation Namespaces
+ *  ============================================================
+ */
 export type ServiceMutations = {
   __typename?: 'ServiceMutations';
+  /** Contract-related mutations (Phase 2 - SXP). */
+  contract: ServiceContractMutations;
   /** Dependency-related mutations (nested namespace). */
   dependency: ServiceDependencyMutations;
   /** Instance-related mutations (nested namespace). */
@@ -342,6 +986,11 @@ export type ServiceMutations = {
 };
 
 
+/**
+ *  ============================================================
+ *  Mutation Namespaces
+ *  ============================================================
+ */
 export type ServiceMutationsUpsertArgs = {
   input: ServiceUpsertInput;
 };
@@ -355,8 +1004,15 @@ export type ServiceOneInput = {
   tenant?: InputMaybe<Scalars['String']['input']>;
 };
 
+/**
+ *  ============================================================
+ *  Query Namespaces
+ *  ============================================================
+ */
 export type ServiceQueries = {
   __typename?: 'ServiceQueries';
+  /** Contract-related queries (Phase 2 - SXP). */
+  contract: ServiceContractQueries;
   /** Instance-related queries (nested namespace). */
   instance: ServiceInstanceQueries;
   /**
@@ -373,20 +1029,40 @@ export type ServiceQueries = {
 };
 
 
+/**
+ *  ============================================================
+ *  Query Namespaces
+ *  ============================================================
+ */
 export type ServiceQueriesListArgs = {
   input: ServiceListInput;
 };
 
 
+/**
+ *  ============================================================
+ *  Query Namespaces
+ *  ============================================================
+ */
 export type ServiceQueriesOneArgs = {
   input: ServiceOneInput;
 };
 
+/**
+ *  ============================================================
+ *  Enums
+ *  ============================================================
+ */
 export type ServiceType =
   | 'CORE'
   | 'EXTENSION'
   | 'EXTERNAL';
 
+/**
+ *  ============================================================
+ *  Mutation Input Types
+ *  ============================================================
+ */
 export type ServiceUpsertInput = {
   /** Human-readable display name */
   displayName: Scalars['String']['input'];
@@ -407,6 +1083,97 @@ export type ServiceUpsertInput = {
   tenant?: InputMaybe<Scalars['String']['input']>;
   /** Service classification */
   type: ServiceType;
+};
+
+/**
+ * Subgraph - A GraphQL service registered with Service Exchange Portal.
+ * Each subgraph exposes a GraphQL schema that can be composed into the unified supergraph.
+ */
+export type Subgraph = {
+  __typename?: 'Subgraph';
+  createdAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Human-readable display name */
+  displayName?: Maybe<Scalars['String']['output']>;
+  /** Consecutive failure count */
+  failureCount: Scalars['Int']['output'];
+  /** GraphQL endpoint URL */
+  graphqlUrl: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  /** Last successful health check */
+  lastHealthyAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Unique name of the subgraph (e.g., sgc, aac, imc) */
+  name: Scalars['String']['output'];
+  /** Routing priority (lower = higher priority) */
+  priority: Scalars['Int']['output'];
+  /** SHA-256 hash of the current schema */
+  schemaHash?: Maybe<Scalars['String']['output']>;
+  /** Current status */
+  status: SubgraphStatus;
+  updatedAt?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type SubgraphConnection = {
+  __typename?: 'SubgraphConnection';
+  items: Array<Subgraph>;
+  total: Scalars['Int']['output'];
+};
+
+/**
+ *  ============================================================
+ *  Exchange Input Types
+ *  ============================================================
+ */
+export type SubgraphRegisterInput = {
+  /** Human-readable display name */
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  /** GraphQL endpoint URL */
+  graphqlUrl: Scalars['String']['input'];
+  /** Unique name for the subgraph (e.g., aac, imc) */
+  name: Scalars['String']['input'];
+  /** Routing priority (lower = higher priority, default: 100) */
+  priority?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** Schema information for a subgraph */
+export type SubgraphSchema = {
+  __typename?: 'SubgraphSchema';
+  /** Whether the schema changed from previous version */
+  changed: Scalars['Boolean']['output'];
+  /** SHA-256 hash of the current schema */
+  hash: Scalars['String']['output'];
+  /** Subgraph name */
+  name: Scalars['String']['output'];
+  /** When this refresh operation was performed */
+  refreshedAt: Scalars['DateTime']['output'];
+  /** Schema SDL (if available) */
+  sdl?: Maybe<Scalars['String']['output']>;
+};
+
+/** Status of a subgraph in the federation */
+export type SubgraphStatus =
+  /** Active and healthy, receiving traffic */
+  | 'ACTIVE'
+  /** Manually disabled or removed */
+  | 'INACTIVE'
+  /** Newly registered, not yet verified */
+  | 'PENDING'
+  /** Temporarily unhealthy, excluded from routing */
+  | 'UNHEALTHY';
+
+export type SubgraphUpdateInput = {
+  /** New display name */
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  /** New GraphQL endpoint URL */
+  graphqlUrl?: InputMaybe<Scalars['String']['input']>;
+  /** Subgraph name to update */
+  name: Scalars['String']['input'];
+  /** New routing priority */
+  priority?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type _Service = {
+  __typename?: '_Service';
+  sdl: Scalars['String']['output'];
 };
 
 export type GetServiceDetailQueryVariables = Exact<{

@@ -15,7 +15,7 @@ import {
 } from '@assetforce/material';
 
 import { ServiceStatusBadge } from '../../list/components/ServiceStatusBadge';
-import type { ServiceInstance } from '../types';
+import type { Environment, HealthStatus, ProbeApprovalStatus } from '../types';
 
 const ENV_COLORS: Record<string, 'success' | 'warning' | 'info' | 'default'> = {
   PRODUCTION: 'success',
@@ -23,8 +23,19 @@ const ENV_COLORS: Record<string, 'success' | 'warning' | 'info' | 'default'> = {
   DEVELOPMENT: 'info',
 };
 
+/** Instance summary for display (subset of ServiceInstance fields) */
+interface InstanceSummary {
+  id: string;
+  key: string;
+  environment: Environment;
+  baseUrl: string;
+  enabled: boolean;
+  probeApprovalStatus: ProbeApprovalStatus;
+  lastStatus: HealthStatus;
+}
+
 export interface ServiceInstancesTableProps {
-  instances: ServiceInstance[];
+  instances: InstanceSummary[];
 }
 
 /**

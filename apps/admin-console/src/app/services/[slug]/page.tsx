@@ -1,6 +1,6 @@
-import { ServiceDetailPage } from '@assetforce/service/detail';
 import { ApolloClientProvider } from '@assetforce/graphql/provider';
 import { Box, Breadcrumbs, Container, Typography } from '@assetforce/material';
+import { ServiceDetailPage } from '@assetforce/service/detail';
 import Link from 'next/link';
 
 type ServiceDetailPageProps = {

@@ -1,8 +1,8 @@
 'use client';
 
-import { ServiceList } from '@assetforce/service/list';
 import { ApolloClientProvider } from '@assetforce/graphql/provider';
 import { Box, Container, Typography } from '@assetforce/material';
+import { ServiceList } from '@assetforce/service/list';
 
 /**
  * Services Page - Admin Console

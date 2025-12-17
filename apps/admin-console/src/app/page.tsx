@@ -1,27 +1,56 @@
 'use client';
 
-import { Box, Button, Container, Grid, Icons, Paper, Typography } from '@assetforce/material';
+import { useAuth } from '@assetforce/auth/react';
+import { Box, Button, Chip, Container, Grid, Icons, Paper, Typography } from '@assetforce/material';
 import Link from 'next/link';
 
 export default function Home() {
+  const { isAuthenticated, isLoading, user, tenant, signOut } = useAuth();
+
   // TODO: Re-enable user stats after feature/user module is properly implemented
   const stats = [
     { title: 'Total Users', value: '-', icon: Icons.People, href: '/users' },
-    { title: 'Active', value: '-', icon: Icons.CheckCircle, href: '/users' },
-    { title: 'Pending Verification', value: '-', icon: Icons.HourglassEmpty, href: '/users' },
+    { title: 'Accounts', value: '-', icon: Icons.ManageAccounts, href: '/accounts' },
+    { title: 'Services', value: '-', icon: Icons.Hub, href: '/services' },
   ];
 
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          AssetForce Admin Console
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-          Manage users, roles, and tenants
-        </Typography>
+        {/* Auth Status Header */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+          <Box>
+            <Typography variant="h4" component="h1" gutterBottom>
+              AssetForce Admin Console
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Manage users, roles, and tenants
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {isLoading ? (
+              <Typography variant="body2" color="text.secondary">
+                Loading...
+              </Typography>
+            ) : isAuthenticated ? (
+              <>
+                <Box sx={{ textAlign: 'right' }}>
+                  <Typography variant="body2">{user?.name || user?.email || user?.id}</Typography>
+                  {tenant && <Chip label={tenant.name || tenant.id} size="small" sx={{ mt: 0.5 }} />}
+                </Box>
+                <Button variant="outlined" size="small" onClick={() => signOut()}>
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Button component={Link} href="/login" variant="contained" size="small">
+                Sign In
+              </Button>
+            )}
+          </Box>
+        </Box>
 
-        <Grid container spacing={3}>
+        <Grid container spacing={3} sx={{ mt: 2 }}>
           {stats.map((stat) => (
             <Grid size={{ xs: 12, sm: 4 }} key={stat.title}>
               <Paper
@@ -48,9 +77,15 @@ export default function Home() {
           ))}
         </Grid>
 
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{ mt: 4, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <Button component={Link} href="/users" variant="contained" startIcon={<Icons.People />}>
             Manage Users
+          </Button>
+          <Button component={Link} href="/accounts" variant="outlined" startIcon={<Icons.ManageAccounts />}>
+            Manage Accounts
+          </Button>
+          <Button component={Link} href="/services" variant="outlined" startIcon={<Icons.Hub />}>
+            View Services
           </Button>
         </Box>
       </Box>

@@ -496,13 +496,6 @@ export type ListQueriesInput = {
   sort?: InputMaybe<SortInput>;
 };
 
-/**  Input Types */
-export type LoginInput = {
-  password: Scalars['String']['input'];
-  realm?: InputMaybe<Scalars['String']['input']>;
-  username: Scalars['String']['input'];
-};
-
 /** Login result - unified response for all login scenarios. */
 export type LoginResult = {
   __typename?: 'LoginResult';
@@ -533,46 +526,10 @@ export type Mutation = {
   account: AccountMutations;
   /** Authentication-related mutations (new namespace) */
   authenticate: AuthenticateMutations;
-  /**
-   * Login with username and password (single tenant mode)
-   * @deprecated Use authenticate.login instead
-   */
-  login: AuthResult;
-  /**
-   * Logout current session
-   * @deprecated Use authenticate.logout instead
-   */
-  logout: Scalars['Boolean']['output'];
-  /**
-   * Refresh access token
-   * @deprecated Use authenticate.refreshToken instead
-   */
-  refreshToken: AuthResult;
   /** Registration-related mutations (new namespace) */
   registration: RegistrationMutations;
-  /**
-   * Step 4: Select tenant and get final token with IdentityContext
-   * @deprecated Use authenticate.enter instead
-   */
-  selectTenant: AuthResult;
   /** Verify account email by admin (bypasses email verification flow) */
   verifyEmailByAdmin: EmailVerificationResult;
-};
-
-
-export type MutationLoginArgs = {
-  input: LoginInput;
-};
-
-
-export type MutationRefreshTokenArgs = {
-  refreshToken: Scalars['String']['input'];
-};
-
-
-export type MutationSelectTenantArgs = {
-  realmId: Scalars['String']['input'];
-  subject: Scalars['String']['input'];
 };
 
 
@@ -632,32 +589,6 @@ export type PaginationInput = {
   size?: InputMaybe<Scalars['Int']['input']>;
 };
 
-/**
- *  Pre-authentication result (DEPRECATED - use LoginResult)
- *  - No realms: returns empty availableRealms (user needs tenant onboarding)
- *  - Single realm: returns token directly (no selection needed)
- *  - Multiple realms: returns availableRealms list (user must call selectTenant)
- */
-export type PreAuthResult = {
-  __typename?: 'PreAuthResult';
-  /** Token fields - only present when single realm (auto-selected) */
-  accessToken?: Maybe<Scalars['String']['output']>;
-  /**
-   * Available realms/tenants list:
-   * - Empty array: User has no tenants (needs onboarding)
-   * - Single item: Auto-selected (includes token fields)
-   * - Multiple items: Requires user selection
-   */
-  availableRealms?: Maybe<Array<Realm>>;
-  error?: Maybe<Scalars['String']['output']>;
-  expiresIn?: Maybe<Scalars['Int']['output']>;
-  identityContext?: Maybe<IdentityContext>;
-  refreshToken?: Maybe<Scalars['String']['output']>;
-  subject?: Maybe<Scalars['String']['output']>;
-  success: Scalars['Boolean']['output'];
-  tokenType?: Maybe<Scalars['String']['output']>;
-};
-
 export type Query = {
   __typename?: 'Query';
   _service: _Service;
@@ -674,18 +605,6 @@ export type Query = {
 
 export type QueryValidateTokenArgs = {
   token: Scalars['String']['input'];
-};
-
-/** Realm/Tenant information (DEPRECATED - use Tenant type) */
-export type Realm = {
-  __typename?: 'Realm';
-  description?: Maybe<Scalars['String']['output']>;
-  displayName?: Maybe<Scalars['String']['output']>;
-  isActive: Scalars['Boolean']['output'];
-  realmId: Scalars['String']['output'];
-  realmName: Scalars['String']['output'];
-  realmType: Scalars['String']['output'];
-  zoneId: Scalars['String']['output'];
 };
 
 /** Input for user registration */

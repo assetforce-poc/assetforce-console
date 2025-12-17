@@ -28,9 +28,15 @@
   "devDependencies": {
     "@assetforce/graphql-config": "*",
     "@assetforce/jest-config": "*",
-    "@assetforce/test-utils": "*",
     "@assetforce/typescript-config": "*",
+    "@testing-library/jest-dom": "~6.6.3",
+    "@testing-library/react": "~16.3.0",
+    "@types/jest": "~29.5.14",
     "@types/react": "~19.2.7",
+    "jest": "~29.7.0",
+    "jest-environment-jsdom": "~29.7.0",
+    "react-dom": "~19.2.1",
+    "ts-jest": "~29.4.0",
     "typescript": "~5.9.3"
   }
 }

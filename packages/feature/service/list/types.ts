@@ -3,12 +3,12 @@
  * Run `yarn codegen` to generate types from GraphQL schema.
  */
 export type {
-  ServiceType,
-  ServiceLifecycle,
   HealthStatus,
-  Service,
-  ServiceHealthSummary,
-  ServiceListInput,
-  ServiceConnection,
   PageInput,
+  Service,
+  ServiceConnection,
+  ServiceHealthSummary,
+  ServiceLifecycle,
+  ServiceListInput,
+  ServiceType,
 } from '../generated/graphql';
