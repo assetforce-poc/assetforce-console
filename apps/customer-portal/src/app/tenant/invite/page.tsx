@@ -1,22 +1,22 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { Container } from '@assetforce/material';
 import {
-  useValidateInvite,
+  InviteAcceptCard,
+  InviteEmailMismatch,
+  InviteErrorCode,
+  InviteExpiredCard,
+  InviteLoading,
+  InviteLoginRequired,
+  InvitePageState,
+  InviteSuccessCard,
+  Membership,
   useAcceptInvite,
   useInviteTokenRecovery,
-  InviteLoading,
-  InviteAcceptCard,
-  InviteExpiredCard,
-  InviteLoginRequired,
-  InviteEmailMismatch,
-  InviteSuccessCard,
-  InvitePageState,
-  Membership,
-  InviteErrorCode,
+  useValidateInvite,
 } from '@assetforce/tenant';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 
 /**
  * Tenant Invite Page
@@ -147,13 +147,7 @@ const InvitePage = () => {
       case 'loading':
       case 'accepting':
         return (
-          <InviteLoading
-            message={
-              pageState === 'accepting'
-                ? 'Joining organization...'
-                : 'Validating invitation...'
-            }
-          />
+          <InviteLoading message={pageState === 'accepting' ? 'Joining organization...' : 'Validating invitation...'} />
         );
 
       case 'invalid':
@@ -171,19 +165,17 @@ const InvitePage = () => {
       case 'error':
         return (
           <InviteExpiredCard
-            error={data?.error || error ? { code: InviteErrorCode.INVALID_TOKEN, message: error?.message || 'Unknown error' } : undefined}
+            error={
+              data?.error || error
+                ? { code: InviteErrorCode.INVALID_TOKEN, message: error?.message || 'Unknown error' }
+                : undefined
+            }
             onGoHome={handleGoHome}
           />
         );
 
       case 'login-required':
-        return (
-          <InviteLoginRequired
-            invite={data?.invite}
-            onLogin={handleLogin}
-            onRegister={handleRegister}
-          />
-        );
+        return <InviteLoginRequired invite={data?.invite} onLogin={handleLogin} onRegister={handleRegister} />;
 
       case 'email-mismatch':
         return data?.email ? (
@@ -197,19 +189,12 @@ const InvitePage = () => {
 
       case 'accept-ready':
         return data?.invite ? (
-          <InviteAcceptCard
-            invite={data.invite}
-            onAccept={handleAccept}
-            loading={accepting}
-          />
+          <InviteAcceptCard invite={data.invite} onAccept={handleAccept} loading={accepting} />
         ) : null;
 
       case 'success':
         return acceptedMembership ? (
-          <InviteSuccessCard
-            membership={acceptedMembership}
-            onContinue={handleContinue}
-          />
+          <InviteSuccessCard membership={acceptedMembership} onContinue={handleContinue} />
         ) : null;
 
       default:
@@ -235,7 +220,13 @@ const InvitePage = () => {
 // Wrap with Suspense to handle useSearchParams()
 export default function InvitePageWrapper() {
   return (
-    <Suspense fallback={<Container maxWidth="sm"><InviteLoading message="Loading..." /></Container>}>
+    <Suspense
+      fallback={
+        <Container maxWidth="sm">
+          <InviteLoading message="Loading..." />
+        </Container>
+      }
+    >
       <InvitePage />
     </Suspense>
   );

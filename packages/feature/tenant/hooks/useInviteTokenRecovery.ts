@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { PENDING_INVITE_TOKEN_KEY, INVITE_PAGE_PATH, LOGIN_PAGE_PATH } from '../constants';
+import { useCallback,useEffect } from 'react';
+
+import { INVITE_PAGE_PATH, LOGIN_PAGE_PATH,PENDING_INVITE_TOKEN_KEY } from '../constants';
 
 interface UseInviteTokenRecoveryOptions {
   /** Whether to skip automatic recovery (useful when token is already in URL) */
@@ -45,9 +46,7 @@ interface UseInviteTokenRecoveryResult {
  * };
  * ```
  */
-export function useInviteTokenRecovery(
-  options: UseInviteTokenRecoveryOptions = {}
-): UseInviteTokenRecoveryResult {
+export function useInviteTokenRecovery(options: UseInviteTokenRecoveryOptions = {}): UseInviteTokenRecoveryResult {
   const { skip = false } = options;
   const router = useRouter();
   const searchParams = useSearchParams();

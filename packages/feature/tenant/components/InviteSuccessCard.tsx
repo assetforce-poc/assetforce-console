@@ -1,8 +1,9 @@
 'use client';
 
-import { FC } from 'react';
 import { Button } from '@assetforce/material';
 import clsx from 'clsx';
+import type { FC } from 'react';
+
 import type { Membership } from '../types/invite';
 import { InviteCard } from './InviteCard';
 import styles from './styles.module.scss';
@@ -15,10 +16,7 @@ interface InviteSuccessCardProps {
 /**
  * Card displayed after successfully accepting an invitation.
  */
-export const InviteSuccessCard: FC<InviteSuccessCardProps> = ({
-  membership,
-  onContinue,
-}) => {
+export const InviteSuccessCard: FC<InviteSuccessCardProps> = ({ membership, onContinue }) => {
   return (
     <InviteCard
       title="Welcome!"
@@ -27,25 +25,16 @@ export const InviteSuccessCard: FC<InviteSuccessCardProps> = ({
       iconVariant="success"
     >
       <div className={clsx(styles.infoBox, styles.infoBoxSuccess)}>
-        <p className={clsx(styles.textCenter, styles.fontMedium)}>
-          {membership.tenant.name}
-        </p>
+        <p className={clsx(styles.textCenter, styles.fontMedium)}>{membership.tenant.name}</p>
         <p className={styles.textCenter}>
           <span className={styles.chipSuccess}>{membership.role}</span>
         </p>
       </div>
 
-      <p className={styles.textCenter}>
-        You now have access to this organization. Click below to continue.
-      </p>
+      <p className={styles.textCenter}>You now have access to this organization. Click below to continue.</p>
 
       <div className={styles.buttonContainer}>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={onContinue}
-        >
+        <Button variant="contained" color="primary" size="large" onClick={onContinue}>
           Continue to Dashboard
         </Button>
       </div>

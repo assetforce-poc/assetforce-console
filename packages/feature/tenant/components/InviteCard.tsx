@@ -1,8 +1,9 @@
 'use client';
 
-import { FC, ReactNode } from 'react';
 import { Paper, Typography } from '@assetforce/material';
 import clsx from 'clsx';
+import type { FC, ReactNode } from 'react';
+
 import styles from './styles.module.scss';
 
 interface InviteCardProps {
@@ -17,13 +18,7 @@ interface InviteCardProps {
  * Base card component for invite page states.
  * Provides consistent styling across all invite-related cards.
  */
-export const InviteCard: FC<InviteCardProps> = ({
-  title,
-  subtitle,
-  children,
-  icon,
-  iconVariant = 'primary',
-}) => {
+export const InviteCard: FC<InviteCardProps> = ({ title, subtitle, children, icon, iconVariant = 'primary' }) => {
   const iconClass = clsx(styles.icon, {
     [styles.iconPrimary]: iconVariant === 'primary',
     [styles.iconSuccess]: iconVariant === 'success',

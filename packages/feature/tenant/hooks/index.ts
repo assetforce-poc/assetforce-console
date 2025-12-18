@@ -1,4 +1,4 @@
-export { useValidateInvite } from './useValidateInvite';
+export * from './operations';
 export { useAcceptInvite } from './useAcceptInvite';
 export { useInviteTokenRecovery } from './useInviteTokenRecovery';
-export * from './operations';
+export { useValidateInvite } from './useValidateInvite';

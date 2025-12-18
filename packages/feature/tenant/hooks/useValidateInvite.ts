@@ -2,18 +2,16 @@
 
 import { useQuery } from '@apollo/client';
 import { useCallback, useMemo } from 'react';
+
 import type {
+  InviteErrorCode,
+  InviteStatus,
   InviteValidationResult,
   UseValidateInviteOptions,
   UseValidateInviteResult,
-  InviteStatus,
-  InviteErrorCode,
 } from '../types/invite';
-import {
-  VALIDATE_INVITE,
-  ValidateInviteResponse,
-  ValidateInviteVariables,
-} from './operations';
+import type { ValidateInviteResponse, ValidateInviteVariables } from './operations';
+import { VALIDATE_INVITE } from './operations';
 
 /**
  * Hook to validate a tenant invite token.
@@ -36,10 +34,12 @@ import {
 export function useValidateInvite(options: UseValidateInviteOptions): UseValidateInviteResult {
   const { token, skip = false } = options;
 
-  const { data, loading, error, refetch: apolloRefetch } = useQuery<
-    ValidateInviteResponse,
-    ValidateInviteVariables
-  >(VALIDATE_INVITE, {
+  const {
+    data,
+    loading,
+    error,
+    refetch: apolloRefetch,
+  } = useQuery<ValidateInviteResponse, ValidateInviteVariables>(VALIDATE_INVITE, {
     variables: { token: token || '' },
     skip: skip || !token,
     fetchPolicy: 'network-only', // Always fetch fresh data for validation

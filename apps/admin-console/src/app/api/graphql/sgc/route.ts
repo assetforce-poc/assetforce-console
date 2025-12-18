@@ -16,14 +16,15 @@ async function handler(request: NextRequest) {
 
     // Read request body
     const body = request.method !== 'GET' ? await request.text() : undefined;
-    const url = request.method === 'GET' ? `${SGC_GRAPHQL_URL}?${new URL(request.url).searchParams.toString()}` : SGC_GRAPHQL_URL;
+    const url =
+      request.method === 'GET' ? `${SGC_GRAPHQL_URL}?${new URL(request.url).searchParams.toString()}` : SGC_GRAPHQL_URL;
 
     // Forward to SGC with JWT token
     const response = await fetch(url, {
       method: request.method,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body,
     });

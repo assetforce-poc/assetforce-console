@@ -1,7 +1,8 @@
 'use client';
 
-import { FC } from 'react';
 import { Button } from '@assetforce/material';
+import type { FC } from 'react';
+
 import type { Invite } from '../types/invite';
 import { InviteCard } from './InviteCard';
 import styles from './styles.module.scss';
@@ -15,18 +16,12 @@ interface InviteLoginRequiredProps {
 /**
  * Card displayed when user needs to log in before accepting invite.
  */
-export const InviteLoginRequired: FC<InviteLoginRequiredProps> = ({
-  invite,
-  onLogin,
-  onRegister,
-}) => {
+export const InviteLoginRequired: FC<InviteLoginRequiredProps> = ({ invite, onLogin, onRegister }) => {
   return (
     <InviteCard
       title="Sign In Required"
       subtitle={
-        invite
-          ? `Sign in to accept your invitation to ${invite.tenantName}`
-          : 'Sign in to accept this invitation'
+        invite ? `Sign in to accept your invitation to ${invite.tenantName}` : 'Sign in to accept this invitation'
       }
       icon={<span>🔒</span>}
       iconVariant="primary"
@@ -39,17 +34,10 @@ export const InviteLoginRequired: FC<InviteLoginRequiredProps> = ({
         </div>
       )}
 
-      <p className={styles.textCenter}>
-        Please sign in with the email address this invitation was sent to.
-      </p>
+      <p className={styles.textCenter}>Please sign in with the email address this invitation was sent to.</p>
 
       <div className={styles.buttonContainer}>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={onLogin}
-        >
+        <Button variant="contained" color="primary" size="large" onClick={onLogin}>
           Sign In
         </Button>
 

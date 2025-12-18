@@ -2,16 +2,10 @@
 
 import { useMutation } from '@apollo/client';
 import { useCallback, useState } from 'react';
-import type {
-  InviteAcceptResult,
-  UseAcceptInviteResult,
-  InviteErrorCode,
-} from '../types/invite';
-import {
-  ACCEPT_INVITE,
-  AcceptInviteResponse,
-  AcceptInviteVariables,
-} from './operations';
+
+import type { InviteAcceptResult, InviteErrorCode,UseAcceptInviteResult } from '../types/invite';
+import type { AcceptInviteResponse, AcceptInviteVariables } from './operations';
+import { ACCEPT_INVITE } from './operations';
 
 /**
  * Hook to accept a tenant invite.
@@ -36,12 +30,12 @@ import {
  * ```
  */
 export function useAcceptInvite(): UseAcceptInviteResult {
-  const [acceptMutation, { loading: mutationLoading }] = useMutation<
-    AcceptInviteResponse,
-    AcceptInviteVariables
-  >(ACCEPT_INVITE, {
-    errorPolicy: 'all',
-  });
+  const [acceptMutation, { loading: mutationLoading }] = useMutation<AcceptInviteResponse, AcceptInviteVariables>(
+    ACCEPT_INVITE,
+    {
+      errorPolicy: 'all',
+    }
+  );
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
