@@ -22,7 +22,7 @@
     "@assetforce/graphql": "*",
     "@assetforce/material": "*",
     "clsx": "^2.0.0",
-    "next": "15.0.0",
+    "next": "16.0.7",
     "react": "19.2.1"
   },
   "devDependencies": {
