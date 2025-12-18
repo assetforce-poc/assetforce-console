@@ -28,6 +28,7 @@ COPY packages/feature/common/package.json ./packages/feature/common/
 COPY packages/feature/user/package.json ./packages/feature/user/
 COPY packages/feature/account/package.json ./packages/feature/account/
 COPY packages/feature/service/package.json ./packages/feature/service/
+COPY packages/feature/tenant/package.json ./packages/feature/tenant/
 
 # Install dependencies
 # GITHUB_PACKAGES_TOKEN is required for @assetforce/* packages

@@ -17,6 +17,7 @@
     "@assetforce/form": "*",
     "@assetforce/graphql": "*",
     "@assetforce/material": "*",
+    "@assetforce/tenant": "*",
     "@emotion/cache": "~11.14.0",
     "@hookform/resolvers": "~5.2.0",
     "next": "16.0.7",

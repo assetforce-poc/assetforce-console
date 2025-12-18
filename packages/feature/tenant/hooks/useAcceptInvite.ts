@@ -3,7 +3,7 @@
 import { useMutation } from '@apollo/client';
 import { useCallback, useState } from 'react';
 
-import type { InviteAcceptResult, InviteErrorCode,UseAcceptInviteResult } from '../types/invite';
+import type { InviteAcceptResult, InviteErrorCode, UseAcceptInviteResult } from '../types/invite';
 import type { AcceptInviteResponse, AcceptInviteVariables } from './operations';
 import { ACCEPT_INVITE } from './operations';
 
