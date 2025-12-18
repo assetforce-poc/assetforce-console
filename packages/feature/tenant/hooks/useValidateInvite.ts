@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react/hooks';
 import { useCallback, useMemo } from 'react';
 
 import type {
