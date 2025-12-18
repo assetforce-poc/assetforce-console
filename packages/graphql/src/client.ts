@@ -1,16 +1,16 @@
 'use client';
 
 import { ApolloClient, from, HttpLink, InMemoryCache } from '@apollo/client';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { ErrorLink } from '@apollo/client/link/error';
 
-const errorLink = new ErrorLink(({ error }) => {
-  if (CombinedGraphQLErrors.is(error)) {
-    error.errors.forEach(({ message, locations, path }) =>
+const errorLink = new ErrorLink(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message, locations, path }) =>
       console.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
     );
-  } else {
-    console.error(`[Network error]: ${error}`);
+  }
+  if (networkError) {
+    console.error(`[Network error]: ${networkError}`);
   }
 });
 
