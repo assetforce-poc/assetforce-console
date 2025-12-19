@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation } from '@apollo/client/react/hooks';
+import { useMutation } from '@apollo/client/react';
 import { useCallback, useState } from 'react';
 
 import type { InviteAcceptResult, InviteErrorCode, UseAcceptInviteResult } from '../types/invite';
