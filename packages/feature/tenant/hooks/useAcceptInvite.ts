@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation } from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useCallback, useState } from 'react';
 
 import type { InviteAcceptResult, InviteErrorCode, UseAcceptInviteResult } from '../types/invite';
@@ -46,13 +47,16 @@ export function useAcceptInvite(): UseAcceptInviteResult {
       setError(null);
 
       try {
-        const { data, errors } = await acceptMutation({
+        const { data, error } = await acceptMutation({
           variables: { token },
         });
 
         // Handle GraphQL errors
-        if (errors && errors.length > 0) {
-          const errorMessage = errors.map((e) => e.message).join(', ');
+        if (error) {
+          let errorMessage = error.message;
+          if (CombinedGraphQLErrors.is(error)) {
+            errorMessage = error.errors.map((e) => e.message).join(', ');
+          }
           setError(new Error(errorMessage));
           return {
             success: false,
