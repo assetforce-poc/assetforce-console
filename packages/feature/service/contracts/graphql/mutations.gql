@@ -1,0 +1,30 @@
+#import "@assetforce/graphql"
+#import "./queries.gql"
+
+mutation UpsertGraphQLContract($input: GraphQLContractUpsertInput!) {
+  service {
+    contract {
+      upsertGraphQL(input: $input) {
+        ...ServiceContractFields
+      }
+    }
+  }
+}
+
+mutation DeprecateContract($input: ContractDeprecateInput!) {
+  service {
+    contract {
+      deprecate(input: $input) {
+        ...ServiceContractFields
+      }
+    }
+  }
+}
+
+mutation DeleteContract($id: ID!) {
+  service {
+    contract {
+      delete(id: $id)
+    }
+  }
+}

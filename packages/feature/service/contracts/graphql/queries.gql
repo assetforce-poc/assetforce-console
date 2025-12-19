@@ -1,0 +1,54 @@
+#import "@assetforce/graphql"
+
+fragment ServiceContractFields on ServiceContract {
+  id
+  tenant
+  serviceId
+  type
+  protocol
+  graphql {
+    operation
+    schema {
+      url
+      hash
+      version
+    }
+  }
+  version
+  deprecation {
+    reason
+    since
+    alternative
+    removal
+  }
+  deprecated
+  createdAt
+  updatedAt
+}
+
+query ListContracts($input: ContractListInput!) {
+  service {
+    contract {
+      list(input: $input) {
+        items {
+          ...ServiceContractFields
+        }
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+        }
+        total
+      }
+    }
+  }
+}
+
+query GetContract($id: ID!) {
+  service {
+    contract {
+      one(id: $id) {
+        ...ServiceContractFields
+      }
+    }
+  }
+}
