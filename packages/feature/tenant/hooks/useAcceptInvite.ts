@@ -1,7 +1,7 @@
 'use client';
 
-import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { useCallback, useState } from 'react';
 
 import type { InviteAcceptResult, InviteErrorCode, UseAcceptInviteResult } from '../types/invite';
