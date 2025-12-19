@@ -13,8 +13,7 @@
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --config jest.config.cjs --watch",
-    "test:coverage": "jest --config jest.config.cjs --coverage",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "test:coverage": "jest --config jest.config.cjs --coverage"
   },
   "dependencies": {
     "@apollo/client": "~4.0.9",

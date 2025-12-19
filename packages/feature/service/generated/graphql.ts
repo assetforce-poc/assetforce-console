@@ -18,6 +18,35 @@ export type Scalars = {
   _FieldSet: { input: any; output: any; }
 };
 
+/** Schema change severity classification */
+export type ChangeSeverity =
+  /** Breaking changes requiring major version bump */
+  | 'MAJOR'
+  /** Backward-compatible additions requiring minor version bump */
+  | 'MINOR'
+  /** Non-structural changes requiring patch version bump */
+  | 'PATCH';
+
+/** A contract this service CONSUMES and its providers */
+export type ConsumesNode = {
+  __typename?: 'ConsumesNode';
+  /** The contract this service consumes */
+  contract: ServiceContract;
+  /** Services that PROVIDE this contract */
+  providers: Array<Service>;
+};
+
+/** Dependency graph showing what a service provides/consumes */
+export type ContractDependencyGraph = {
+  __typename?: 'ContractDependencyGraph';
+  /** Contracts this service CONSUMES and who PROVIDES them */
+  consumes: Array<ConsumesNode>;
+  /** Contracts this service PROVIDES and who CONSUMES them */
+  provides: Array<ProvidesNode>;
+  /** The service this graph is for */
+  service: Service;
+};
+
 export type ContractDeprecateInput = {
   /** Suggested alternative */
   alternative?: InputMaybe<Scalars['String']['input']>;
@@ -70,6 +99,14 @@ export type Dependency = {
   critical: Scalars['Boolean']['output'];
   sourceServiceId: Scalars['ID']['output'];
   targetServiceId: Scalars['ID']['output'];
+};
+
+/** Input for dependency graph query */
+export type DependencyGraphInput = {
+  /** Service ID to get dependency graph for */
+  serviceId: Scalars['ID']['input'];
+  /** Tenant filter (null = current tenant) */
+  tenant?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type DependencyInput = {
@@ -377,8 +414,36 @@ export type ExchangeHealthStatus = {
  */
 export type ExchangeMutations = {
   __typename?: 'ExchangeMutations';
+  /** Schema change notification mutations */
+  notification: ExchangeNotificationMutations;
   /** Subgraph-related mutations */
   subgraph: ExchangeSubgraphMutations;
+};
+
+/** Schema change notification mutations (under exchange namespace) */
+export type ExchangeNotificationMutations = {
+  __typename?: 'ExchangeNotificationMutations';
+  /** Acknowledge schema change notifications */
+  acknowledge: Array<SchemaChangeNotification>;
+};
+
+
+/** Schema change notification mutations (under exchange namespace) */
+export type ExchangeNotificationMutationsAcknowledgeArgs = {
+  ids: Array<Scalars['ID']['input']>;
+};
+
+/** Schema change notification queries (under exchange namespace) */
+export type ExchangeNotificationQueries = {
+  __typename?: 'ExchangeNotificationQueries';
+  /** List schema change notifications for a target service */
+  list: SchemaChangeNotificationConnection;
+};
+
+
+/** Schema change notification queries (under exchange namespace) */
+export type ExchangeNotificationQueriesListArgs = {
+  input: NotificationListInput;
 };
 
 /**
@@ -390,6 +455,8 @@ export type ExchangeQueries = {
   __typename?: 'ExchangeQueries';
   /** Get gateway health status */
   health: ExchangeHealthStatus;
+  /** Schema change notifications for service owners */
+  notification: ExchangeNotificationQueries;
   /** Subgraph-related queries */
   subgraph: ExchangeSubgraphQueries;
 };
@@ -568,6 +635,18 @@ export type Mutation = {
   service: ServiceMutations;
 };
 
+/** Input for schema change notification list query */
+export type NotificationListInput = {
+  /** Filter by acknowledged status (null = all) */
+  acknowledged?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Pagination */
+  page?: InputMaybe<PageInput>;
+  /** Filter by change severity (null = all) */
+  severity?: InputMaybe<Array<ChangeSeverity>>;
+  /** Filter by target service ID */
+  target: Scalars['ID']['input'];
+};
+
 export type PageInput = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -607,6 +686,15 @@ export type Protocol =
   /** REST protocol - future extension */
   | 'REST';
 
+/** A contract this service PROVIDES and its consumers */
+export type ProvidesNode = {
+  __typename?: 'ProvidesNode';
+  /** Services that CONSUME this contract */
+  consumers: Array<Service>;
+  /** The contract this service provides */
+  contract: ServiceContract;
+};
+
 /**
  *  ============================================================
  *  Root Types
@@ -629,6 +717,89 @@ export type RestContractType = {
   path: Scalars['String']['output'];
   /** Schema reference (OpenAPI) */
   schema?: Maybe<SchemaReferenceType>;
+};
+
+/** Schema change detection record */
+export type SchemaChange = {
+  __typename?: 'SchemaChange';
+  detectedAt: Scalars['DateTime']['output'];
+  diffSummary: Scalars['String']['output'];
+  hash: SchemaHashPair;
+  id: Scalars['ID']['output'];
+  severity: ChangeSeverity;
+  subgraphName: Scalars['String']['output'];
+};
+
+/** Connection response for schema change list */
+export type SchemaChangeConnection = {
+  __typename?: 'SchemaChangeConnection';
+  items: Array<SchemaChange>;
+  limit: Scalars['Int']['output'];
+  offset: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
+/** Input for schema change list query */
+export type SchemaChangeListInput = {
+  /** Pagination */
+  page?: InputMaybe<PageInput>;
+  /** Filter by change severity (null = all) */
+  severity?: InputMaybe<ChangeSeverity>;
+  /** Filter by subgraph name (null = all) */
+  subgraphName?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Schema change notification (supports all severities: MAJOR/MINOR/PATCH) */
+export type SchemaChangeNotification = {
+  __typename?: 'SchemaChangeNotification';
+  /** Whether the notification has been acknowledged */
+  acknowledged: Scalars['Boolean']['output'];
+  /** When the notification was acknowledged */
+  acknowledgedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Who acknowledged the notification */
+  acknowledgedBy?: Maybe<Scalars['String']['output']>;
+  /** Contract identifier that changed */
+  contract: Scalars['String']['output'];
+  /** When the notification was detected */
+  detectedAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  /** Schema change that triggered this notification */
+  schemaChange: SchemaChange;
+  /** Source service (who made the schema change) */
+  source: Scalars['ID']['output'];
+  /** Summary of the schema change */
+  summary: Scalars['String']['output'];
+  /** Target service (who receives the notification) */
+  target: Scalars['ID']['output'];
+};
+
+/** Connection response for schema change notification list */
+export type SchemaChangeNotificationConnection = {
+  __typename?: 'SchemaChangeNotificationConnection';
+  items: Array<SchemaChangeNotification>;
+  limit: Scalars['Int']['output'];
+  offset: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
+/** Schema hash pair (old and new) */
+export type SchemaHashPair = {
+  __typename?: 'SchemaHashPair';
+  new: Scalars['String']['output'];
+  old: Scalars['String']['output'];
+};
+
+/** Schema-related queries */
+export type SchemaQueries = {
+  __typename?: 'SchemaQueries';
+  /** List schema changes for subgraphs with optional filtering */
+  changes: SchemaChangeConnection;
+};
+
+
+/** Schema-related queries */
+export type SchemaQueriesChangesArgs = {
+  input: SchemaChangeListInput;
 };
 
 /** Schema reference for tracking schema versions and changes */
@@ -780,17 +951,26 @@ export type ServiceContractQueries = {
   __typename?: 'ServiceContractQueries';
   /** Find services that consume a specific GraphQL operation. */
   consumers: Array<ServiceContract>;
+  /** Get dependency graph for a service showing what it provides/consumes and related services. */
+  dependencies: ContractDependencyGraph;
   /** List contracts with optional filters. */
   list: ServiceContractConnection;
   /** Get a single contract by ID. */
   one: ServiceContract;
   /** Find services that provide a specific GraphQL operation. */
   providers: Array<ServiceContract>;
+  /** Schema-related queries (M7: schema change detection) */
+  schema: SchemaQueries;
 };
 
 
 export type ServiceContractQueriesConsumersArgs = {
   input: ContractLookupInput;
+};
+
+
+export type ServiceContractQueriesDependenciesArgs = {
+  input: DependencyGraphInput;
 };
 
 
@@ -1176,6 +1356,43 @@ export type _Service = {
   sdl: Scalars['String']['output'];
 };
 
+export type UpsertGraphQlContractMutationVariables = Exact<{
+  input: GraphQlContractUpsertInput;
+}>;
+
+
+export type UpsertGraphQlContractMutation = { __typename?: 'Mutation', service: { __typename?: 'ServiceMutations', contract: { __typename?: 'ServiceContractMutations', upsertGraphQL: { __typename?: 'ServiceContract', id: string, tenant: string, serviceId: string, type: ContractType, protocol: Protocol, version?: string | null, deprecated: boolean, createdAt?: any | null, updatedAt?: any | null, graphql?: { __typename?: 'GraphQLContractType', operation: string, schema?: { __typename?: 'SchemaReferenceType', url: string, hash?: string | null, version?: string | null } | null } | null, deprecation?: { __typename?: 'DeprecationType', reason: string, since?: string | null, alternative?: string | null, removal?: string | null } | null } } } };
+
+export type DeprecateContractMutationVariables = Exact<{
+  input: ContractDeprecateInput;
+}>;
+
+
+export type DeprecateContractMutation = { __typename?: 'Mutation', service: { __typename?: 'ServiceMutations', contract: { __typename?: 'ServiceContractMutations', deprecate: { __typename?: 'ServiceContract', id: string, tenant: string, serviceId: string, type: ContractType, protocol: Protocol, version?: string | null, deprecated: boolean, createdAt?: any | null, updatedAt?: any | null, graphql?: { __typename?: 'GraphQLContractType', operation: string, schema?: { __typename?: 'SchemaReferenceType', url: string, hash?: string | null, version?: string | null } | null } | null, deprecation?: { __typename?: 'DeprecationType', reason: string, since?: string | null, alternative?: string | null, removal?: string | null } | null } } } };
+
+export type DeleteContractMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteContractMutation = { __typename?: 'Mutation', service: { __typename?: 'ServiceMutations', contract: { __typename?: 'ServiceContractMutations', delete: boolean } } };
+
+export type ServiceContractFieldsFragment = { __typename?: 'ServiceContract', id: string, tenant: string, serviceId: string, type: ContractType, protocol: Protocol, version?: string | null, deprecated: boolean, createdAt?: any | null, updatedAt?: any | null, graphql?: { __typename?: 'GraphQLContractType', operation: string, schema?: { __typename?: 'SchemaReferenceType', url: string, hash?: string | null, version?: string | null } | null } | null, deprecation?: { __typename?: 'DeprecationType', reason: string, since?: string | null, alternative?: string | null, removal?: string | null } | null };
+
+export type ListContractsQueryVariables = Exact<{
+  input: ContractListInput;
+}>;
+
+
+export type ListContractsQuery = { __typename?: 'Query', service: { __typename?: 'ServiceQueries', contract: { __typename?: 'ServiceContractQueries', list: { __typename?: 'ServiceContractConnection', total: number, limit: number, offset: number, items: Array<{ __typename?: 'ServiceContract', id: string, tenant: string, serviceId: string, type: ContractType, protocol: Protocol, version?: string | null, deprecated: boolean, createdAt?: any | null, updatedAt?: any | null, graphql?: { __typename?: 'GraphQLContractType', operation: string, schema?: { __typename?: 'SchemaReferenceType', url: string, hash?: string | null, version?: string | null } | null } | null, deprecation?: { __typename?: 'DeprecationType', reason: string, since?: string | null, alternative?: string | null, removal?: string | null } | null }> } } } };
+
+export type GetContractQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetContractQuery = { __typename?: 'Query', service: { __typename?: 'ServiceQueries', contract: { __typename?: 'ServiceContractQueries', one: { __typename?: 'ServiceContract', id: string, tenant: string, serviceId: string, type: ContractType, protocol: Protocol, version?: string | null, deprecated: boolean, createdAt?: any | null, updatedAt?: any | null, graphql?: { __typename?: 'GraphQLContractType', operation: string, schema?: { __typename?: 'SchemaReferenceType', url: string, hash?: string | null, version?: string | null } | null } | null, deprecation?: { __typename?: 'DeprecationType', reason: string, since?: string | null, alternative?: string | null, removal?: string | null } | null } } } };
+
 export type GetServiceDetailQueryVariables = Exact<{
   input: ServiceOneInput;
 }>;
@@ -1190,6 +1407,11 @@ export type ListServicesQueryVariables = Exact<{
 
 export type ListServicesQuery = { __typename?: 'Query', service: { __typename?: 'ServiceQueries', list: { __typename?: 'ServiceConnection', total: number, limit: number, offset: number, items: Array<{ __typename?: 'Service', id: string, slug: string, displayName: string, type: ServiceType, lifecycle?: ServiceLifecycle | null, tags?: Array<string> | null, createdAt?: any | null, updatedAt?: any | null, health: { __typename?: 'ServiceHealthSummary', status: HealthStatus, lastCheckedAt?: any | null } }> } } };
 
-
+export const ServiceContractFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"serviceId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ServiceContractFieldsFragment, unknown>;
+export const UpsertGraphQlContractDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpsertGraphQLContract"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GraphQLContractUpsertInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"upsertGraphQL"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceContractFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"serviceId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpsertGraphQlContractMutation, UpsertGraphQlContractMutationVariables>;
+export const DeprecateContractDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeprecateContract"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ContractDeprecateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deprecate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceContractFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"serviceId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<DeprecateContractMutation, DeprecateContractMutationVariables>;
+export const DeleteContractDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteContract"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]}}]}}]} as unknown as DocumentNode<DeleteContractMutation, DeleteContractMutationVariables>;
+export const ListContractsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListContracts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ContractListInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"list"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceContractFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"offset"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"serviceId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ListContractsQuery, ListContractsQueryVariables>;
+export const GetContractDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetContract"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceContractFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"serviceId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<GetContractQuery, GetContractQueryVariables>;
 export const GetServiceDetailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetServiceDetail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceOneInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"lifecycle"}},{"kind":"Field","name":{"kind":"Name","value":"repoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"docsUrl"}},{"kind":"Field","name":{"kind":"Name","value":"tags"}},{"kind":"Field","name":{"kind":"Name","value":"health"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"lastCheckedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastSuccessAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastFailureAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"dependencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"target"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"critical"}}]}},{"kind":"Field","name":{"kind":"Name","value":"instances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"environment"}},{"kind":"Field","name":{"kind":"Name","value":"baseUrl"}},{"kind":"Field","name":{"kind":"Name","value":"healthPath"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"probeApprovalStatus"}},{"kind":"Field","name":{"kind":"Name","value":"lastStatus"}},{"kind":"Field","name":{"kind":"Name","value":"lastCheckedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastFailureReason"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetServiceDetailQuery, GetServiceDetailQueryVariables>;
 export const ListServicesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListServices"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceListInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"list"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"lifecycle"}},{"kind":"Field","name":{"kind":"Name","value":"health"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"lastCheckedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tags"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"offset"}}]}}]}}]}}]} as unknown as DocumentNode<ListServicesQuery, ListServicesQueryVariables>;

@@ -33,11 +33,9 @@ query ListContracts($input: ContractListInput!) {
         items {
           ...ServiceContractFields
         }
-        pageInfo {
-          hasNextPage
-          hasPreviousPage
-        }
         total
+        limit
+        offset
       }
     }
   }

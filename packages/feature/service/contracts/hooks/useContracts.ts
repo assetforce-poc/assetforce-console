@@ -7,7 +7,7 @@ import {
   DeprecateContractDocument,
   ListContractsDocument,
   UpsertGraphQLContractDocument,
-} from '../generated/graphql';
+} from '../../generated/graphql';
 import type { ContractDeprecateInput, ContractListInput, GraphQLContractUpsertInput } from '../types';
 
 /**
@@ -44,7 +44,8 @@ export function useContracts(input: ContractListInput) {
     // Query data
     contracts: data?.service?.contract?.list?.items || [],
     total: data?.service?.contract?.list?.total || 0,
-    pageInfo: data?.service?.contract?.list?.pageInfo,
+    limit: data?.service?.contract?.list?.limit || 0,
+    offset: data?.service?.contract?.list?.offset || 0,
     loading,
     error: error as Error | undefined,
     refetch: async () => {
