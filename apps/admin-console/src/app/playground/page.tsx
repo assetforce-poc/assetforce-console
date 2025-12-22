@@ -1,10 +1,10 @@
 'use client';
 
+import 'graphiql/graphiql.css';
+
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
 import { useMemo } from 'react';
-
-import 'graphiql/graphiql.css';
 
 /**
  * GraphQL Playground Page
@@ -23,7 +23,7 @@ export default function PlaygroundPage() {
       createGraphiQLFetcher({
         url: '/api/graphql/sxp',
       }),
-    [],
+    []
   );
 
   return (

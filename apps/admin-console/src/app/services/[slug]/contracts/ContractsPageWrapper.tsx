@@ -4,9 +4,9 @@ import { Alert, Box, CircularProgress } from '@assetforce/material';
 import { ContractsPage } from '@assetforce/service/contracts';
 import { useServiceDetail } from '@assetforce/service/detail';
 
-export interface ContractsPageWrapperProps {
+export type ContractsPageWrapperProps = {
   slug: string;
-}
+};
 
 /**
  * ContractsPageWrapper - Fetch service ID and render ContractsPage
@@ -26,19 +26,11 @@ export function ContractsPageWrapper({ slug }: ContractsPageWrapperProps) {
   }
 
   if (error) {
-    return (
-      <Alert severity="error">
-        Failed to load service details: {error.message}
-      </Alert>
-    );
+    return <Alert severity="error">Failed to load service details: {error.message}</Alert>;
   }
 
   if (!service) {
-    return (
-      <Alert severity="warning">
-        Service not found.
-      </Alert>
-    );
+    return <Alert severity="warning">Service not found.</Alert>;
   }
 
   return <ContractsPage slug={slug} serviceId={service.id} />;
