@@ -5,6 +5,7 @@
  */
 
 import type { DeepOmit } from '@assetforce/graphql';
+
 import type {
   ContractDeprecateInput as ContractDeprecateInputGql,
   ContractListInput as ContractListInputGql,

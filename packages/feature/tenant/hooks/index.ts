@@ -4,11 +4,11 @@ export { useInviteTokenRecovery } from './useInviteTokenRecovery';
 export { useValidateInvite } from './useValidateInvite';
 
 // Tenant hooks
-export { useTenants } from './useTenants';
 export { useTenant } from './useTenant';
+export { useTenants } from './useTenants';
 
 // Admin hooks
-export { useSendInvite } from './useSendInvite';
-export { useInvites } from './useInvites';
 export { useCancelInvite } from './useCancelInvite';
+export { useInvites } from './useInvites';
 export { useResendInvite } from './useResendInvite';
+export { useSendInvite } from './useSendInvite';

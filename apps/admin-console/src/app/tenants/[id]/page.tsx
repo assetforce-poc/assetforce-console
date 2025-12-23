@@ -1,6 +1,5 @@
 'use client';
 
-import { InviteList, InviteSendDialog, useTenant } from '@assetforce/tenant';
 import {
   Alert,
   Box,
@@ -13,6 +12,7 @@ import {
   Paper,
   Typography,
 } from '@assetforce/material';
+import { InviteList, InviteSendDialog, useTenant } from '@assetforce/tenant';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
@@ -97,11 +97,7 @@ export default function TenantDetailPage() {
                 {tenant.displayName || tenant.name}
               </Typography>
               <Box display="flex" gap={1} mb={1}>
-                <Chip
-                  label={tenant.type}
-                  color={TYPE_COLORS[tenant.type] || 'default'}
-                  size="small"
-                />
+                <Chip label={tenant.type} color={TYPE_COLORS[tenant.type] || 'default'} size="small" />
                 <Chip
                   label={tenant.isActive ? 'Active' : 'Inactive'}
                   color={tenant.isActive ? 'success' : 'default'}

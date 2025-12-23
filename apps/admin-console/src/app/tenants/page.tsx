@@ -1,8 +1,8 @@
 'use client';
 
-import { TenantList } from '@assetforce/tenant';
-import type { TenantItem } from '@assetforce/tenant';
 import { Box, Container, Typography } from '@assetforce/material';
+import type { TenantItem } from '@assetforce/tenant';
+import { TenantList } from '@assetforce/tenant';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 

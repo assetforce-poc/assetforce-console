@@ -85,11 +85,7 @@ export const TenantList: FC<TenantListProps> = ({ onTenantClick }) => {
                 <TableCell>{tenant.name}</TableCell>
                 <TableCell>{tenant.displayName || '-'}</TableCell>
                 <TableCell>
-                  <Chip
-                    label={tenant.type}
-                    color={TYPE_COLORS[tenant.type] || 'default'}
-                    size="small"
-                  />
+                  <Chip label={tenant.type} color={TYPE_COLORS[tenant.type] || 'default'} size="small" />
                 </TableCell>
                 <TableCell>
                   <Chip

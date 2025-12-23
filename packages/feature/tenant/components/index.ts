@@ -7,4 +7,4 @@ export { InviteLoginRequired } from './InviteLoginRequired';
 export { InviteSuccessCard } from './InviteSuccessCard';
 
 // Admin components
-export { InviteSendDialog, InviteList, TenantList } from './admin';
+export { InviteList, InviteSendDialog, TenantList } from './admin';

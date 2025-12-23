@@ -2,8 +2,8 @@
 
 import { useQuery } from '@apollo/client/react';
 
-import { LIST_TENANTS } from './operations';
 import type { ListTenantsResponse, TenantItem } from './operations';
+import { LIST_TENANTS } from './operations';
 
 interface UseTenantsResult {
   tenants: TenantItem[];

@@ -42,9 +42,7 @@ export function useContracts(input: ContractListInput) {
 
   return {
     // Query data
-    contracts: (data?.service?.contract?.list?.items ?? []).filter(
-      (item): item is ServiceContract => Boolean(item)
-    ),
+    contracts: (data?.service?.contract?.list?.items ?? []).filter((item): item is ServiceContract => Boolean(item)),
     total: data?.service?.contract?.list?.total || 0,
     limit: data?.service?.contract?.list?.limit || 0,
     offset: data?.service?.contract?.list?.offset || 0,
@@ -55,10 +53,8 @@ export function useContracts(input: ContractListInput) {
     },
 
     // Mutations
-    upsertGraphQL: (input: GraphQLContractUpsertInput) =>
-      upsertGraphQLMutation({ variables: { input } }),
-    deprecate: (input: ContractDeprecateInput) =>
-      deprecateMutation({ variables: { input } }),
+    upsertGraphQL: (input: GraphQLContractUpsertInput) => upsertGraphQLMutation({ variables: { input } }),
+    deprecate: (input: ContractDeprecateInput) => deprecateMutation({ variables: { input } }),
     deleteContract: (id: string) => deleteContractMutation({ variables: { id } }),
 
     // Loading states
