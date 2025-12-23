@@ -11,3 +11,6 @@ export { ApolloClientProvider } from './provider';
 // Export proxy utilities
 export type { GraphQLProxyOptions } from './proxy';
 export { createGraphQLProxy } from './proxy';
+
+// Export shared GraphQL types
+export type { DeepOmit } from './types';

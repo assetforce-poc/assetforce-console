@@ -34,7 +34,7 @@ export interface ContractFormDialogProps {
  * ContractFormDialog - Form for creating/updating GraphQL contracts
  */
 export function ContractFormDialog({ open, onClose, serviceId, onSubmit }: ContractFormDialogProps) {
-  const [type, setType] = useState<ContractType>(ContractType.PROVIDES);
+  const [type, setType] = useState<ContractType>(ContractType.Provides);
   const [operation, setOperation] = useState('');
   const [schemaUrl, setSchemaUrl] = useState('');
   const [schemaVersion, setSchemaVersion] = useState('');
@@ -59,7 +59,7 @@ export function ContractFormDialog({ open, onClose, serviceId, onSubmit }: Contr
       });
 
       // Reset form
-      setType(ContractType.PROVIDES);
+      setType(ContractType.Provides);
       setOperation('');
       setSchemaUrl('');
       setSchemaVersion('');
@@ -85,8 +85,8 @@ export function ContractFormDialog({ open, onClose, serviceId, onSubmit }: Contr
         <FormControl fullWidth required>
           <InputLabel>Contract Type</InputLabel>
           <Select value={type} onChange={(e) => setType(e.target.value as ContractType)} label="Contract Type">
-            <MenuItem value={ContractType.PROVIDES}>PROVIDES</MenuItem>
-            <MenuItem value={ContractType.CONSUMES}>CONSUMES</MenuItem>
+            <MenuItem value={ContractType.Provides}>PROVIDES</MenuItem>
+            <MenuItem value={ContractType.Consumes}>CONSUMES</MenuItem>
           </Select>
         </FormControl>
 
