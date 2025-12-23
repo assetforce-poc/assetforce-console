@@ -1,114 +1,32 @@
 /**
  * Tenant Invite Types
  * Task 051: Tenant Invitation - Invite Acceptance Flow
+ *
+ * Types are generated from IMC GraphQL schema via codegen.
+ * Frontend-specific types (UI state, hook return types) are defined here.
  */
 
-// ===== Enums =====
+// ===== Re-export Generated Types =====
+export type {
+  Invite,
+  InviteStatus,
+  InviteError,
+  InviteErrorCode,
+  InviteSendInput,
+  InvitesInput,
+  InviteValidationResult,
+  InviteAcceptResult,
+  InviteSendResult,
+  InviteCancelResult,
+  InviteResendResult,
+  InviteConnection,
+  Membership,
+  TenantInfo,
+  AuthRequirement,
+  EmailMatchInfo,
+} from '../generated/graphql.js';
 
-export enum InviteStatus {
-  PENDING = 'PENDING',
-  ACCEPTED = 'ACCEPTED',
-  EXPIRED = 'EXPIRED',
-  CANCELLED = 'CANCELLED',
-}
-
-export enum InviteErrorCode {
-  // Token errors
-  INVALID_TOKEN = 'INVALID_TOKEN',
-  EXPIRED = 'EXPIRED',
-  ALREADY_ACCEPTED = 'ALREADY_ACCEPTED',
-  ALREADY_CANCELLED = 'ALREADY_CANCELLED',
-
-  // User state errors
-  EMAIL_MISMATCH = 'EMAIL_MISMATCH',
-  ALREADY_MEMBER = 'ALREADY_MEMBER',
-  ACCOUNT_INACTIVE = 'ACCOUNT_INACTIVE',
-  EMAIL_NOT_VERIFIED = 'EMAIL_NOT_VERIFIED',
-
-  // Tenant errors
-  TENANT_UNAVAILABLE = 'TENANT_UNAVAILABLE',
-  TENANT_NOT_FOUND = 'TENANT_NOT_FOUND',
-
-  // Auth errors
-  UNAUTHORIZED = 'UNAUTHORIZED',
-  FORBIDDEN = 'FORBIDDEN',
-
-  // Rate limiting
-  RATE_LIMITED = 'RATE_LIMITED',
-  DUPLICATE_PENDING = 'DUPLICATE_PENDING',
-}
-
-// ===== Types =====
-
-export interface TenantInfo {
-  id: string;
-  name: string;
-}
-
-export interface Invite {
-  id: string;
-  tenantId: string;
-  tenantName: string;
-  invitedEmail: string;
-  inviterEmail?: string;
-  role?: string;
-  message?: string;
-  status: InviteStatus;
-  expiresAt: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface AuthRequirement {
-  /** True if user must authenticate before accepting */
-  required: boolean;
-}
-
-export interface EmailMatchInfo {
-  /** Whether current user's email matches invited email */
-  match: boolean;
-  /** The email address the invite was sent to */
-  invited: string;
-  /** Current logged-in user's email (null if not logged in) */
-  current?: string;
-}
-
-export interface InviteError {
-  code: InviteErrorCode;
-  message: string;
-}
-
-export interface InviteValidationResult {
-  valid: boolean;
-  invite?: Invite;
-  error?: InviteError;
-  auth: AuthRequirement;
-  email?: EmailMatchInfo;
-}
-
-export interface Membership {
-  tenant: TenantInfo;
-  role: string;
-  createdAt: string;
-}
-
-export interface InviteAcceptResult {
-  success: boolean;
-  membership?: Membership;
-  error?: InviteError;
-}
-
-// ===== Input Types =====
-
-export interface InviteSendInput {
-  tenantId: string;  // Target tenant to invite user to (required)
-  email: string;
-  role?: string;
-  message?: string;
-  expiryDays?: number;
-}
-
-// ===== Hook Return Types =====
+// ===== Hook Return Types (Frontend-specific) =====
 
 export interface UseValidateInviteOptions {
   token: string | null;
@@ -118,17 +36,23 @@ export interface UseValidateInviteOptions {
 export interface UseValidateInviteResult {
   loading: boolean;
   error: Error | null;
-  data: InviteValidationResult | null;
+  data: import('../generated/graphql.js').InviteValidationResult | null;
   refetch: () => Promise<void>;
 }
 
 export interface UseAcceptInviteResult {
-  accept: (token: string) => Promise<InviteAcceptResult>;
+  accept: (token: string) => Promise<import('../generated/graphql.js').InviteAcceptResult>;
   loading: boolean;
   error: Error | null;
 }
 
-// ===== UI State Types =====
+export interface UseSendInviteResult {
+  send: (input: import('../generated/graphql.js').InviteSendInput) => Promise<import('../generated/graphql.js').InviteSendResult>;
+  loading: boolean;
+  error: Error | null;
+}
+
+// ===== UI State Types (Frontend-specific) =====
 
 export type InvitePageState =
   | 'loading'
@@ -144,8 +68,8 @@ export type InvitePageState =
 export interface InvitePageContext {
   state: InvitePageState;
   token: string | null;
-  invite?: Invite;
-  error?: InviteError;
-  auth: AuthRequirement;
-  email?: EmailMatchInfo;
+  invite?: import('../generated/graphql.js').Invite;
+  error?: import('../generated/graphql.js').InviteError;
+  auth: import('../generated/graphql.js').AuthRequirement;
+  email?: import('../generated/graphql.js').EmailMatchInfo;
 }

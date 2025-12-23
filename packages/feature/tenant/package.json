@@ -13,7 +13,8 @@
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --config jest.config.cjs --watch",
-    "test:coverage": "jest --config jest.config.cjs --coverage"
+    "test:coverage": "jest --config jest.config.cjs --coverage",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@apollo/client": "~4.0.9",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@assetforce/eslint-config": "*",
+    "@assetforce/graphql-config": "*",
     "@assetforce/jest-config": "*",
     "@assetforce/test-utils": "*",
     "@assetforce/typescript-config": "*",

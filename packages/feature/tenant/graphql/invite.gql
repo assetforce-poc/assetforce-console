@@ -1,0 +1,154 @@
+# Tenant Invite Operations
+# Task 051: Tenant Invitation - Invite Acceptance Flow
+# Generated from IMC GraphQL Schema
+
+# ===== Queries =====
+
+# Validate an invite token (works for both authenticated and anonymous users)
+query ValidateInvite($token: String!) {
+  tenant {
+    invite(token: $token) {
+      valid
+      invite {
+        id
+        tenantId
+        tenantName
+        invitedEmail
+        inviterEmail
+        role
+        message
+        status
+        expiresAt
+        createdAt
+        updatedAt
+      }
+      error {
+        code
+        message
+      }
+      auth {
+        required
+      }
+      email {
+        match
+        invited
+        current
+      }
+    }
+  }
+}
+
+# List tenant invites (admin only) - uses input object
+query ListInvites($input: InvitesInput!) {
+  tenant {
+    invites(input: $input) {
+      items {
+        id
+        tenantId
+        tenantName
+        invitedEmail
+        inviterEmail
+        role
+        status
+        message
+        expiresAt
+        createdAt
+        updatedAt
+      }
+      total
+      hasMore
+    }
+  }
+}
+
+# ===== Mutations =====
+
+# Accept an invite to join a tenant (requires authentication)
+mutation AcceptInvite($token: String!) {
+  tenant {
+    invite {
+      accept(token: $token) {
+        success
+        membership {
+          tenant {
+            id
+            name
+          }
+          role
+          createdAt
+        }
+        error {
+          code
+          message
+        }
+      }
+    }
+  }
+}
+
+# Send a new invitation (admin only)
+mutation SendInvite($input: InviteSendInput!) {
+  tenant {
+    invite {
+      send(input: $input) {
+        success
+        invite {
+          id
+          tenantId
+          tenantName
+          invitedEmail
+          role
+          expiresAt
+          createdAt
+        }
+        error {
+          code
+          message
+        }
+      }
+    }
+  }
+}
+
+# Cancel a pending invite (admin only)
+mutation CancelInvite($id: String!) {
+  tenant {
+    invite {
+      cancel(id: $id) {
+        success
+        error {
+          code
+          message
+        }
+      }
+    }
+  }
+}
+
+# Resend an invite (admin only) - cancels old, creates new
+mutation ResendInvite($id: String!) {
+  tenant {
+    invite {
+      resend(id: $id) {
+        success
+        cancelled {
+          id
+          status
+        }
+        created {
+          id
+          tenantId
+          tenantName
+          invitedEmail
+          role
+          expiresAt
+          createdAt
+        }
+        error {
+          code
+          message
+        }
+      }
+    }
+  }
+}
