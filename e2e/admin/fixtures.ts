@@ -9,6 +9,9 @@ export const urls = {
   accounts: '/accounts',
   accountDetail: (id: string) => `/accounts/${id}`,
   dashboard: '/',
+  services: '/services',
+  serviceDetail: (id: string) => `/services/${id}`,
+  adminConsole: 'http://localhost:3001',
 };
 
 /**
