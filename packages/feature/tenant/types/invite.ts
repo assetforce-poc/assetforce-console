@@ -101,6 +101,7 @@ export interface InviteAcceptResult {
 // ===== Input Types =====
 
 export interface InviteSendInput {
+  tenantId: string;  // Target tenant to invite user to (required)
   email: string;
   role?: string;
   message?: string;
