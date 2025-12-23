@@ -6,9 +6,14 @@ import {
   DeleteContractDocument,
   DeprecateContractDocument,
   ListContractsDocument,
-  UpsertGraphQLContractDocument,
+  UpsertGraphQlContractDocument,
 } from '../../generated/graphql';
-import type { ContractDeprecateInput, ContractListInput, GraphQLContractUpsertInput } from '../types';
+import type {
+  ContractDeprecateInput as ContractDeprecateInputGql,
+  ContractListInput as ContractListInputGql,
+  GraphQlContractUpsertInput as GraphQlContractUpsertInputGql,
+} from '../../generated/graphql';
+import type { ContractDeprecateInput, ContractListInput, GraphQLContractUpsertInput, ServiceContract } from '../types';
 
 /**
  * Hook for querying and managing service contracts
@@ -21,12 +26,12 @@ import type { ContractDeprecateInput, ContractListInput, GraphQLContractUpsertIn
 export function useContracts(input: ContractListInput) {
   // Query contracts list
   const { data, loading, error, refetch } = useQuery(ListContractsDocument, {
-    variables: { input },
+    variables: { input: input as unknown as ContractListInputGql },
     skip: !input.serviceId,
   });
 
   // Upsert GraphQL contract mutation
-  const [upsertGraphQLMutation, { loading: upserting }] = useMutation(UpsertGraphQLContractDocument, {
+  const [upsertGraphQLMutation, { loading: upserting }] = useMutation(UpsertGraphQlContractDocument, {
     onCompleted: () => refetch(),
   });
 
@@ -42,7 +47,7 @@ export function useContracts(input: ContractListInput) {
 
   return {
     // Query data
-    contracts: data?.service?.contract?.list?.items || [],
+    contracts: (data?.service?.contract?.list?.items ?? []).filter(Boolean) as unknown as ServiceContract[],
     total: data?.service?.contract?.list?.total || 0,
     limit: data?.service?.contract?.list?.limit || 0,
     offset: data?.service?.contract?.list?.offset || 0,
@@ -53,8 +58,10 @@ export function useContracts(input: ContractListInput) {
     },
 
     // Mutations
-    upsertGraphQL: (input: GraphQLContractUpsertInput) => upsertGraphQLMutation({ variables: { input } }),
-    deprecate: (input: ContractDeprecateInput) => deprecateMutation({ variables: { input } }),
+    upsertGraphQL: (input: GraphQLContractUpsertInput) =>
+      upsertGraphQLMutation({ variables: { input: input as unknown as GraphQlContractUpsertInputGql } }),
+    deprecate: (input: ContractDeprecateInput) =>
+      deprecateMutation({ variables: { input: input as unknown as ContractDeprecateInputGql } }),
     deleteContract: (id: string) => deleteContractMutation({ variables: { id } }),
 
     // Loading states

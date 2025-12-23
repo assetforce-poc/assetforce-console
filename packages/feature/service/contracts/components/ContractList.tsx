@@ -17,7 +17,7 @@ import {
   Tooltip,
   Typography,
 } from '@assetforce/material';
-import { Add, Delete, Warning } from '@assetforce/material/icons';
+import { Icons } from '@assetforce/material';
 import { useState } from 'react';
 
 import type { ContractType, Protocol, ServiceContract } from '../types';
@@ -96,7 +96,7 @@ export function ContractList({
         <CardContent>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Typography variant="h6">Contracts</Typography>
-            <Button variant="contained" startIcon={<Add />} onClick={() => setFormOpen(true)} disabled={loading}>
+            <Button variant="contained" startIcon={<Icons.Add />} onClick={() => setFormOpen(true)} disabled={loading}>
               Add Contract
             </Button>
           </Box>
@@ -150,7 +150,7 @@ export function ContractList({
                       <TableCell>
                         {contract.deprecated ? (
                           <Tooltip title={contract.deprecation?.reason || 'Deprecated'}>
-                            <Chip label="DEPRECATED" size="small" color="error" icon={<Warning />} />
+                            <Chip label="DEPRECATED" size="small" color="error" icon={<Icons.Warning />} />
                           </Tooltip>
                         ) : (
                           <Chip label="ACTIVE" size="small" color="success" />
@@ -161,13 +161,13 @@ export function ContractList({
                           {!contract.deprecated && (
                             <Tooltip title="Deprecate">
                               <IconButton size="small" onClick={() => handleDeprecate(contract)}>
-                                <Warning fontSize="small" />
+                                <Icons.Warning fontSize="small" />
                               </IconButton>
                             </Tooltip>
                           )}
                           <Tooltip title="Delete">
                             <IconButton size="small" color="error" onClick={() => handleDelete(contract.id)}>
-                              <Delete fontSize="small" />
+                              <Icons.Delete fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         </Box>

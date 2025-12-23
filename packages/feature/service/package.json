@@ -9,7 +9,9 @@
     ".": "./index.ts",
     "./list": "./list/index.ts",
     "./detail": "./detail/index.ts",
-    "./detail/components": "./detail/components/index.ts"
+    "./detail/components": "./detail/components/index.ts",
+    "./contracts": "./contracts/index.ts",
+    "./contracts/components": "./contracts/components/index.ts"
   },
   "scripts": {
     "lint": "eslint .",

@@ -98,7 +98,7 @@ const InvitePage = () => {
       setPageState('success');
     } else {
       // Handle specific error cases
-      if (result.error?.code === InviteErrorCode.ALREADY_MEMBER) {
+      if (result.error?.code === InviteErrorCode.AlreadyMember) {
         // User is already a member, redirect to home
         router.push('/');
         return;
@@ -154,7 +154,7 @@ const InvitePage = () => {
         return (
           <InviteExpiredCard
             error={{
-              code: InviteErrorCode.INVALID_TOKEN,
+              code: InviteErrorCode.InvalidToken,
               message: 'No invitation token provided.',
             }}
             onGoHome={handleGoHome}
@@ -167,7 +167,7 @@ const InvitePage = () => {
           <InviteExpiredCard
             error={
               data?.error || error
-                ? { code: InviteErrorCode.INVALID_TOKEN, message: error?.message || 'Unknown error' }
+                ? { code: InviteErrorCode.InvalidToken, message: error?.message || 'Unknown error' }
                 : undefined
             }
             onGoHome={handleGoHome}
@@ -175,12 +175,14 @@ const InvitePage = () => {
         );
 
       case 'login-required':
-        return <InviteLoginRequired invite={data?.invite} onLogin={handleLogin} onRegister={handleRegister} />;
+        return (
+          <InviteLoginRequired invite={data?.invite ?? undefined} onLogin={handleLogin} onRegister={handleRegister} />
+        );
 
       case 'email-mismatch':
         return data?.email ? (
           <InviteEmailMismatch
-            invite={data?.invite}
+            invite={data?.invite ?? undefined}
             email={data.email}
             onSwitchAccount={handleSwitchAccount}
             onCancel={handleGoHome}

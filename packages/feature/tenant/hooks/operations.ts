@@ -58,6 +58,7 @@ export const ACCEPT_INVITE = gql`
         accept(token: $token) {
           success
           membership {
+            subject
             tenant {
               id
               name
@@ -116,6 +117,7 @@ export interface AcceptInviteResponse {
       accept: {
         success: boolean;
         membership?: {
+          subject: string;
           tenant: {
             id: string;
             name: string;

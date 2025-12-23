@@ -8,23 +8,23 @@
 
 // ===== Re-export Generated Types =====
 export type {
-  Invite,
-  InviteStatus,
-  InviteError,
-  InviteErrorCode,
-  InviteSendInput,
-  InvitesInput,
-  InviteValidationResult,
-  InviteAcceptResult,
-  InviteSendResult,
-  InviteCancelResult,
-  InviteResendResult,
-  InviteConnection,
-  Membership,
-  TenantInfo,
   AuthRequirement,
   EmailMatchInfo,
-} from '../generated/graphql.js';
+  Invite,
+  InviteAcceptResult,
+  InviteCancelResult,
+  InviteConnection,
+  InviteError,
+  InviteResendResult,
+  InviteSendInput,
+  InviteSendResult,
+  InvitesInput,
+  InviteStatus,
+  InviteValidationResult,
+  Membership,
+  TenantInfo,
+} from '../generated/graphql';
+export { InviteErrorCode } from '../generated/graphql';
 
 // ===== Hook Return Types (Frontend-specific) =====
 
@@ -36,18 +36,20 @@ export interface UseValidateInviteOptions {
 export interface UseValidateInviteResult {
   loading: boolean;
   error: Error | null;
-  data: import('../generated/graphql.js').InviteValidationResult | null;
+  data: import('../generated/graphql').InviteValidationResult | null;
   refetch: () => Promise<void>;
 }
 
 export interface UseAcceptInviteResult {
-  accept: (token: string) => Promise<import('../generated/graphql.js').InviteAcceptResult>;
+  accept: (token: string) => Promise<import('../generated/graphql').InviteAcceptResult>;
   loading: boolean;
   error: Error | null;
 }
 
 export interface UseSendInviteResult {
-  send: (input: import('../generated/graphql.js').InviteSendInput) => Promise<import('../generated/graphql.js').InviteSendResult>;
+  send: (
+    input: import('../generated/graphql').InviteSendInput
+  ) => Promise<import('../generated/graphql').InviteSendResult>;
   loading: boolean;
   error: Error | null;
 }
@@ -68,8 +70,8 @@ export type InvitePageState =
 export interface InvitePageContext {
   state: InvitePageState;
   token: string | null;
-  invite?: import('../generated/graphql.js').Invite;
-  error?: import('../generated/graphql.js').InviteError;
-  auth: import('../generated/graphql.js').AuthRequirement;
-  email?: import('../generated/graphql.js').EmailMatchInfo;
+  invite?: import('../generated/graphql').Invite;
+  error?: import('../generated/graphql').InviteError;
+  auth: import('../generated/graphql').AuthRequirement;
+  email?: import('../generated/graphql').EmailMatchInfo;
 }

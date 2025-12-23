@@ -29,11 +29,12 @@ export type Application = {
 };
 
 /**  Intentionally excludes "APPROVED/REJECTED" actions (admin-only, out of 052 scope). */
-export type ApplicationStatus =
-  | 'APPROVED'
-  | 'CANCELLED'
-  | 'PENDING'
-  | 'REJECTED';
+export enum ApplicationStatus {
+  Approved = 'APPROVED',
+  Cancelled = 'CANCELLED',
+  Pending = 'PENDING',
+  Rejected = 'REJECTED'
+}
 
 export type ApplyResult = {
   __typename?: 'ApplyResult';
@@ -102,7 +103,7 @@ export type EmailMatchInfo = {
   match: Scalars['Boolean']['output'];
 };
 
-export type ErrorDetail =
+export enum ErrorDetail {
   /**
    * The deadline expired before the operation could complete.
    *
@@ -114,7 +115,7 @@ export type ErrorDetail =
    * HTTP Mapping: 504 Gateway Timeout
    * Error Type: UNAVAILABLE
    */
-  | 'DEADLINE_EXCEEDED'
+  DeadlineExceeded = 'DEADLINE_EXCEEDED',
   /**
    * The server detected that the client is exhibiting a behavior that
    * might be generating excessive load.
@@ -122,7 +123,7 @@ export type ErrorDetail =
    * HTTP Mapping: 420 Enhance Your Calm
    * Error Type: UNAVAILABLE
    */
-  | 'ENHANCE_YOUR_CALM'
+  EnhanceYourCalm = 'ENHANCE_YOUR_CALM',
   /**
    * The requested field is not found in the schema.
    *
@@ -137,7 +138,7 @@ export type ErrorDetail =
    * HTTP Mapping: 404 Not Found
    * Error Type: BAD_REQUEST
    */
-  | 'FIELD_NOT_FOUND'
+  FieldNotFound = 'FIELD_NOT_FOUND',
   /**
    * The client specified an invalid argument.
    *
@@ -148,7 +149,7 @@ export type ErrorDetail =
    * HTTP Mapping: 400 Bad Request
    * Error Type: BAD_REQUEST
    */
-  | 'INVALID_ARGUMENT'
+  InvalidArgument = 'INVALID_ARGUMENT',
   /**
    * The provided cursor is not valid.
    *
@@ -159,7 +160,7 @@ export type ErrorDetail =
    * HTTP Mapping: 404 Not Found
    * Error Type: NOT_FOUND
    */
-  | 'INVALID_CURSOR'
+  InvalidCursor = 'INVALID_CURSOR',
   /**
    * Unable to perform operation because a required resource is missing.
    *
@@ -174,7 +175,7 @@ export type ErrorDetail =
    * HTTP Mapping: 400 Bad Request or 500 Internal Server Error
    * Error Type: FAILED_PRECONDITION
    */
-  | 'MISSING_RESOURCE'
+  MissingResource = 'MISSING_RESOURCE',
   /**
    * Service Error.
    *
@@ -190,28 +191,28 @@ export type ErrorDetail =
    * HTTP Mapping: 502 Bad Gateway
    * Error Type: UNAVAILABLE
    */
-  | 'SERVICE_ERROR'
+  ServiceError = 'SERVICE_ERROR',
   /**
    * Request failed due to network errors.
    *
    * HTTP Mapping: 503 Unavailable
    * Error Type: UNAVAILABLE
    */
-  | 'TCP_FAILURE'
+  TcpFailure = 'TCP_FAILURE',
   /**
    * Request throttled based on server concurrency limits.
    *
    * HTTP Mapping: 503 Unavailable
    * Error Type: UNAVAILABLE
    */
-  | 'THROTTLED_CONCURRENCY'
+  ThrottledConcurrency = 'THROTTLED_CONCURRENCY',
   /**
    * Request throttled based on server CPU limits
    *
    * HTTP Mapping: 503 Unavailable.
    * Error Type: UNAVAILABLE
    */
-  | 'THROTTLED_CPU'
+  ThrottledCpu = 'THROTTLED_CPU',
   /**
    * The server detected that the client is exhibiting a behavior that
    * might be generating excessive load.
@@ -219,14 +220,14 @@ export type ErrorDetail =
    * HTTP Mapping: 429 Too Many Requests
    * Error Type: UNAVAILABLE
    */
-  | 'TOO_MANY_REQUESTS'
+  TooManyRequests = 'TOO_MANY_REQUESTS',
   /**
    * The operation is not implemented or is not currently supported/enabled.
    *
    * HTTP Mapping: 501 Not Implemented
    * Error Type: BAD_REQUEST
    */
-  | 'UNIMPLEMENTED'
+  Unimplemented = 'UNIMPLEMENTED',
   /**
    * Unknown error.
    *
@@ -235,9 +236,10 @@ export type ErrorDetail =
    *
    * HTTP Mapping: 500 Internal Server Error
    */
-  | 'UNKNOWN';
+  Unknown = 'UNKNOWN'
+}
 
-export type ErrorType =
+export enum ErrorType {
   /**
    * Bad Request.
    *
@@ -247,7 +249,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 400 Bad Request
    */
-  | 'BAD_REQUEST'
+  BadRequest = 'BAD_REQUEST',
   /**
    * The operation was rejected because the system is not in a state
    * required for the operation's execution.  For example, the directory
@@ -266,7 +268,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 400 Bad Request or 500 Internal Server Error
    */
-  | 'FAILED_PRECONDITION'
+  FailedPrecondition = 'FAILED_PRECONDITION',
   /**
    * Internal error.
    *
@@ -276,7 +278,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 500 Internal Server Error
    */
-  | 'INTERNAL'
+  Internal = 'INTERNAL',
   /**
    * The requested entity was not found.
    *
@@ -291,7 +293,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 404 Not Found
    */
-  | 'NOT_FOUND'
+  NotFound = 'NOT_FOUND',
   /**
    * The caller does not have permission to execute the specified
    * operation.
@@ -308,7 +310,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 403 Forbidden
    */
-  | 'PERMISSION_DENIED'
+  PermissionDenied = 'PERMISSION_DENIED',
   /**
    * The request does not have valid authentication credentials.
    *
@@ -317,7 +319,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 401 Unauthorized
    */
-  | 'UNAUTHENTICATED'
+  Unauthenticated = 'UNAUTHENTICATED',
   /**
    * Currently Unavailable.
    *
@@ -327,7 +329,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 503 Unavailable
    */
-  | 'UNAVAILABLE'
+  Unavailable = 'UNAVAILABLE',
   /**
    * Unknown error.
    *
@@ -345,7 +347,8 @@ export type ErrorType =
    *
    * HTTP Mapping: 520 Unknown Error
    */
-  | 'UNKNOWN';
+  Unknown = 'UNKNOWN'
+}
 
 export type Group = {
   __typename?: 'Group';
@@ -395,12 +398,13 @@ export type GroupQueriesOneArgs = {
   id: Scalars['String']['input'];
 };
 
-export type GroupType =
-  | 'DEPARTMENT'
-  | 'FUNCTION'
-  | 'PROJECT'
-  | 'ROLE'
-  | 'TEAM';
+export enum GroupType {
+  Department = 'DEPARTMENT',
+  Function = 'FUNCTION',
+  Project = 'PROJECT',
+  Role = 'ROLE',
+  Team = 'TEAM'
+}
 
 export type GroupUserMutations = {
   __typename?: 'GroupUserMutations';
@@ -502,29 +506,30 @@ export type InviteError = {
   message: Scalars['String']['output'];
 };
 
-export type InviteErrorCode =
-  | 'ACCOUNT_INACTIVE'
-  | 'ALREADY_ACCEPTED'
-  | 'ALREADY_CANCELLED'
-  | 'ALREADY_MEMBER'
-  | 'DUPLICATE_PENDING'
-  | 'EMAIL_MISMATCH'
-  | 'EMAIL_NOT_VERIFIED'
-  | 'EXPIRED'
-  | 'FORBIDDEN'
+export enum InviteErrorCode {
+  AccountInactive = 'ACCOUNT_INACTIVE',
+  AlreadyAccepted = 'ALREADY_ACCEPTED',
+  AlreadyCancelled = 'ALREADY_CANCELLED',
+  AlreadyMember = 'ALREADY_MEMBER',
+  DuplicatePending = 'DUPLICATE_PENDING',
+  EmailMismatch = 'EMAIL_MISMATCH',
+  EmailNotVerified = 'EMAIL_NOT_VERIFIED',
+  Expired = 'EXPIRED',
+  Forbidden = 'FORBIDDEN',
   /**  User state errors */
-  | 'INVALID_EMAIL'
+  InvalidEmail = 'INVALID_EMAIL',
   /**  Token errors */
-  | 'INVALID_TOKEN'
+  InvalidToken = 'INVALID_TOKEN',
   /**  Not found errors */
-  | 'INVITE_NOT_FOUND'
+  InviteNotFound = 'INVITE_NOT_FOUND',
   /**  Rate limiting */
-  | 'RATE_LIMITED'
-  | 'TENANT_NOT_FOUND'
+  RateLimited = 'RATE_LIMITED',
+  TenantNotFound = 'TENANT_NOT_FOUND',
   /**  Tenant errors */
-  | 'TENANT_UNAVAILABLE'
+  TenantUnavailable = 'TENANT_UNAVAILABLE',
   /**  Auth errors */
-  | 'UNAUTHORIZED';
+  Unauthorized = 'UNAUTHORIZED'
+}
 
 export type InviteResendResult = {
   __typename?: 'InviteResendResult';
@@ -556,11 +561,12 @@ export type InviteSendResult = {
   success: Scalars['Boolean']['output'];
 };
 
-export type InviteStatus =
-  | 'ACCEPTED'
-  | 'CANCELLED'
-  | 'EXPIRED'
-  | 'PENDING';
+export enum InviteStatus {
+  Accepted = 'ACCEPTED',
+  Cancelled = 'CANCELLED',
+  Expired = 'EXPIRED',
+  Pending = 'PENDING'
+}
 
 export type InviteValidationResult = {
   __typename?: 'InviteValidationResult';
@@ -606,11 +612,12 @@ export type Membership = {
   tenant: TenantInfo;
 };
 
-export type MembershipType =
-  | 'DELEGATED'
-  | 'DIRECT'
-  | 'INHERITED'
-  | 'TEMPORARY';
+export enum MembershipType {
+  Delegated = 'DELEGATED',
+  Direct = 'DIRECT',
+  Inherited = 'INHERITED',
+  Temporary = 'TEMPORARY'
+}
 
 /**  ========== Root Mutation (singular namespace) ========== */
 export type Mutation = {
@@ -800,11 +807,12 @@ export type TenantQueriesOneArgs = {
 };
 
 /**  ========== Enums ========== */
-export type TenantType =
-  | 'DEMO'
-  | 'PRODUCTION'
-  | 'SANDBOX'
-  | 'TRIAL';
+export enum TenantType {
+  Demo = 'DEMO',
+  Production = 'PRODUCTION',
+  Sandbox = 'SANDBOX',
+  Trial = 'TRIAL'
+}
 
 export type TenantUserMutations = {
   __typename?: 'TenantUserMutations';
@@ -973,18 +981,20 @@ export type UserQueriesOneArgs = {
   input: UserOneInput;
 };
 
-export type UserStatus =
-  | 'ACTIVE'
-  | 'ARCHIVED'
-  | 'INACTIVE'
-  | 'SUSPENDED';
+export enum UserStatus {
+  Active = 'ACTIVE',
+  Archived = 'ARCHIVED',
+  Inactive = 'INACTIVE',
+  Suspended = 'SUSPENDED'
+}
 
-export type UserType =
-  | 'DEMO'
-  | 'PARTNER'
-  | 'PRODUCTION'
-  | 'SYSTEM'
-  | 'TRIAL';
+export enum UserType {
+  Demo = 'DEMO',
+  Partner = 'PARTNER',
+  Production = 'PRODUCTION',
+  System = 'SYSTEM',
+  Trial = 'TRIAL'
+}
 
 export type _Service = {
   __typename?: '_Service';
@@ -1010,7 +1020,7 @@ export type AcceptInviteMutationVariables = Exact<{
 }>;
 
 
-export type AcceptInviteMutation = { __typename?: 'Mutation', tenant: { __typename?: 'TenantMutations', invite: { __typename?: 'TenantInviteMutations', accept: { __typename?: 'InviteAcceptResult', success: boolean, membership?: { __typename?: 'Membership', role: string, createdAt: string, tenant: { __typename?: 'TenantInfo', id: string, name: string } } | null, error?: { __typename?: 'InviteError', code: InviteErrorCode, message: string } | null } } } };
+export type AcceptInviteMutation = { __typename?: 'Mutation', tenant: { __typename?: 'TenantMutations', invite: { __typename?: 'TenantInviteMutations', accept: { __typename?: 'InviteAcceptResult', success: boolean, membership?: { __typename?: 'Membership', subject: string, role: string, createdAt: string, tenant: { __typename?: 'TenantInfo', id: string, name: string } } | null, error?: { __typename?: 'InviteError', code: InviteErrorCode, message: string } | null } } } };
 
 export type SendInviteMutationVariables = Exact<{
   input: InviteSendInput;
@@ -1036,7 +1046,7 @@ export type ResendInviteMutation = { __typename?: 'Mutation', tenant: { __typena
 
 export const ValidateInviteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ValidateInvite"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tenant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invite"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"valid"}},{"kind":"Field","name":{"kind":"Name","value":"invite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenantId"}},{"kind":"Field","name":{"kind":"Name","value":"tenantName"}},{"kind":"Field","name":{"kind":"Name","value":"invitedEmail"}},{"kind":"Field","name":{"kind":"Name","value":"inviterEmail"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"auth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"required"}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"match"}},{"kind":"Field","name":{"kind":"Name","value":"invited"}},{"kind":"Field","name":{"kind":"Name","value":"current"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ValidateInviteQuery, ValidateInviteQueryVariables>;
 export const ListInvitesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListInvites"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InvitesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tenant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invites"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenantId"}},{"kind":"Field","name":{"kind":"Name","value":"tenantName"}},{"kind":"Field","name":{"kind":"Name","value":"invitedEmail"}},{"kind":"Field","name":{"kind":"Name","value":"inviterEmail"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"hasMore"}}]}}]}}]}}]} as unknown as DocumentNode<ListInvitesQuery, ListInvitesQueryVariables>;
-export const AcceptInviteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AcceptInvite"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tenant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accept"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"membership"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tenant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<AcceptInviteMutation, AcceptInviteMutationVariables>;
+export const AcceptInviteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AcceptInvite"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tenant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accept"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"membership"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<AcceptInviteMutation, AcceptInviteMutationVariables>;
 export const SendInviteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendInvite"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InviteSendInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tenant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"send"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"invite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenantId"}},{"kind":"Field","name":{"kind":"Name","value":"tenantName"}},{"kind":"Field","name":{"kind":"Name","value":"invitedEmail"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<SendInviteMutation, SendInviteMutationVariables>;
 export const CancelInviteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CancelInvite"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tenant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cancel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<CancelInviteMutation, CancelInviteMutationVariables>;
 export const ResendInviteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ResendInvite"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tenant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invite"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resend"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"cancelled"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenantId"}},{"kind":"Field","name":{"kind":"Name","value":"tenantName"}},{"kind":"Field","name":{"kind":"Name","value":"invitedEmail"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<ResendInviteMutation, ResendInviteMutationVariables>;

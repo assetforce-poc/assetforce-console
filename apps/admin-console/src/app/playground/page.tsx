@@ -6,6 +6,8 @@ import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
 import { useMemo } from 'react';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GraphQL Playground Page
  *
@@ -20,11 +22,17 @@ import { useMemo } from 'react';
 export default function PlaygroundPage() {
   const fetcher = useMemo(
     () =>
-      createGraphiQLFetcher({
-        url: '/api/graphql/sxp',
-      }),
+      typeof window === 'undefined'
+        ? null
+        : createGraphiQLFetcher({
+            url: '/api/graphql/sxp',
+          }),
     []
   );
+
+  if (!fetcher) {
+    return null;
+  }
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>

@@ -130,15 +130,16 @@ export type AccountQueriesOneArgs = {
 };
 
 /** Account status enumeration */
-export type AccountStatus =
+export enum AccountStatus {
   /** Active and verified */
-  | 'ACTIVE'
+  Active = 'ACTIVE',
   /** Administratively disabled */
-  | 'LOCKED'
+  Locked = 'LOCKED',
   /** Email not verified yet */
-  | 'PENDING_VERIFICATION'
+  PendingVerification = 'PENDING_VERIFICATION',
   /** User disabled or has required actions */
-  | 'SUSPENDED';
+  Suspended = 'SUSPENDED'
+}
 
 /**
  * Key-value attribute entry.
@@ -231,7 +232,7 @@ export type EmailVerificationResult = {
   tenantStatus?: Maybe<TenantStatus>;
 };
 
-export type ErrorDetail =
+export enum ErrorDetail {
   /**
    * The deadline expired before the operation could complete.
    *
@@ -243,7 +244,7 @@ export type ErrorDetail =
    * HTTP Mapping: 504 Gateway Timeout
    * Error Type: UNAVAILABLE
    */
-  | 'DEADLINE_EXCEEDED'
+  DeadlineExceeded = 'DEADLINE_EXCEEDED',
   /**
    * The server detected that the client is exhibiting a behavior that
    * might be generating excessive load.
@@ -251,7 +252,7 @@ export type ErrorDetail =
    * HTTP Mapping: 420 Enhance Your Calm
    * Error Type: UNAVAILABLE
    */
-  | 'ENHANCE_YOUR_CALM'
+  EnhanceYourCalm = 'ENHANCE_YOUR_CALM',
   /**
    * The requested field is not found in the schema.
    *
@@ -266,7 +267,7 @@ export type ErrorDetail =
    * HTTP Mapping: 404 Not Found
    * Error Type: BAD_REQUEST
    */
-  | 'FIELD_NOT_FOUND'
+  FieldNotFound = 'FIELD_NOT_FOUND',
   /**
    * The client specified an invalid argument.
    *
@@ -277,7 +278,7 @@ export type ErrorDetail =
    * HTTP Mapping: 400 Bad Request
    * Error Type: BAD_REQUEST
    */
-  | 'INVALID_ARGUMENT'
+  InvalidArgument = 'INVALID_ARGUMENT',
   /**
    * The provided cursor is not valid.
    *
@@ -288,7 +289,7 @@ export type ErrorDetail =
    * HTTP Mapping: 404 Not Found
    * Error Type: NOT_FOUND
    */
-  | 'INVALID_CURSOR'
+  InvalidCursor = 'INVALID_CURSOR',
   /**
    * Unable to perform operation because a required resource is missing.
    *
@@ -303,7 +304,7 @@ export type ErrorDetail =
    * HTTP Mapping: 400 Bad Request or 500 Internal Server Error
    * Error Type: FAILED_PRECONDITION
    */
-  | 'MISSING_RESOURCE'
+  MissingResource = 'MISSING_RESOURCE',
   /**
    * Service Error.
    *
@@ -319,28 +320,28 @@ export type ErrorDetail =
    * HTTP Mapping: 502 Bad Gateway
    * Error Type: UNAVAILABLE
    */
-  | 'SERVICE_ERROR'
+  ServiceError = 'SERVICE_ERROR',
   /**
    * Request failed due to network errors.
    *
    * HTTP Mapping: 503 Unavailable
    * Error Type: UNAVAILABLE
    */
-  | 'TCP_FAILURE'
+  TcpFailure = 'TCP_FAILURE',
   /**
    * Request throttled based on server concurrency limits.
    *
    * HTTP Mapping: 503 Unavailable
    * Error Type: UNAVAILABLE
    */
-  | 'THROTTLED_CONCURRENCY'
+  ThrottledConcurrency = 'THROTTLED_CONCURRENCY',
   /**
    * Request throttled based on server CPU limits
    *
    * HTTP Mapping: 503 Unavailable.
    * Error Type: UNAVAILABLE
    */
-  | 'THROTTLED_CPU'
+  ThrottledCpu = 'THROTTLED_CPU',
   /**
    * The server detected that the client is exhibiting a behavior that
    * might be generating excessive load.
@@ -348,14 +349,14 @@ export type ErrorDetail =
    * HTTP Mapping: 429 Too Many Requests
    * Error Type: UNAVAILABLE
    */
-  | 'TOO_MANY_REQUESTS'
+  TooManyRequests = 'TOO_MANY_REQUESTS',
   /**
    * The operation is not implemented or is not currently supported/enabled.
    *
    * HTTP Mapping: 501 Not Implemented
    * Error Type: BAD_REQUEST
    */
-  | 'UNIMPLEMENTED'
+  Unimplemented = 'UNIMPLEMENTED',
   /**
    * Unknown error.
    *
@@ -364,9 +365,10 @@ export type ErrorDetail =
    *
    * HTTP Mapping: 500 Internal Server Error
    */
-  | 'UNKNOWN';
+  Unknown = 'UNKNOWN'
+}
 
-export type ErrorType =
+export enum ErrorType {
   /**
    * Bad Request.
    *
@@ -376,7 +378,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 400 Bad Request
    */
-  | 'BAD_REQUEST'
+  BadRequest = 'BAD_REQUEST',
   /**
    * The operation was rejected because the system is not in a state
    * required for the operation's execution.  For example, the directory
@@ -395,7 +397,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 400 Bad Request or 500 Internal Server Error
    */
-  | 'FAILED_PRECONDITION'
+  FailedPrecondition = 'FAILED_PRECONDITION',
   /**
    * Internal error.
    *
@@ -405,7 +407,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 500 Internal Server Error
    */
-  | 'INTERNAL'
+  Internal = 'INTERNAL',
   /**
    * The requested entity was not found.
    *
@@ -420,7 +422,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 404 Not Found
    */
-  | 'NOT_FOUND'
+  NotFound = 'NOT_FOUND',
   /**
    * The caller does not have permission to execute the specified
    * operation.
@@ -437,7 +439,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 403 Forbidden
    */
-  | 'PERMISSION_DENIED'
+  PermissionDenied = 'PERMISSION_DENIED',
   /**
    * The request does not have valid authentication credentials.
    *
@@ -446,7 +448,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 401 Unauthorized
    */
-  | 'UNAUTHENTICATED'
+  Unauthenticated = 'UNAUTHENTICATED',
   /**
    * Currently Unavailable.
    *
@@ -456,7 +458,7 @@ export type ErrorType =
    *
    * HTTP Mapping: 503 Unavailable
    */
-  | 'UNAVAILABLE'
+  Unavailable = 'UNAVAILABLE',
   /**
    * Unknown error.
    *
@@ -474,7 +476,8 @@ export type ErrorType =
    *
    * HTTP Mapping: 520 Unknown Error
    */
-  | 'UNKNOWN';
+  Unknown = 'UNKNOWN'
+}
 
 /** 4D Identity Context - Zone/Tenant/Subject/Groups */
 export type IdentityContext = {
@@ -556,15 +559,16 @@ export type OperationContext = {
  * Operation role enumeration.
  * Defines who is performing an operation.
  */
-export type OperationRole =
+export enum OperationRole {
   /** Administrator operation */
-  | 'ADMIN'
+  Admin = 'ADMIN',
   /** Anonymous/unauthenticated operation */
-  | 'ANONYMOUS'
+  Anonymous = 'ANONYMOUS',
   /** System automated operation */
-  | 'SYSTEM'
+  System = 'SYSTEM',
   /** End user self-service operation */
-  | 'USER';
+  User = 'USER'
+}
 
 /** Pagination information for list queries */
 export type Pagination = {

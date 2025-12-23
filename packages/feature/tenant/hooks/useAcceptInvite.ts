@@ -99,6 +99,7 @@ export function useAcceptInvite(): UseAcceptInviteResult {
                   id: result.membership.tenant.id,
                   name: result.membership.tenant.name,
                 },
+                subject: result.membership.subject,
                 role: result.membership.role,
                 createdAt: result.membership.createdAt,
               }

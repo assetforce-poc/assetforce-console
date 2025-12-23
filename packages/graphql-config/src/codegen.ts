@@ -39,7 +39,7 @@ export function createCodegenConfig(options: {
         config: {
           useTypeImports: true,
           skipTypename: false,
-          enumsAsTypes: true,
+          enumsAsConst: true,
           documentMode: 'documentNode',
         },
       },
