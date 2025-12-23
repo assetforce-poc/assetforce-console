@@ -1,74 +1,38 @@
 /**
  * Service Contract Types
  *
- * Type definitions for service contracts (PROVIDES/CONSUMES)
- * aligned with SGC GraphQL schema.
+ * Re-exported from GraphQL codegen to avoid hand-maintained duplicates.
  */
 
-export enum ContractType {
-  PROVIDES = 'PROVIDES',
-  CONSUMES = 'CONSUMES',
-}
+import type {
+  ContractDeprecateInput as ContractDeprecateInputGql,
+  ContractListInput as ContractListInputGql,
+  ContractType as ContractTypeGql,
+  DeprecationType as DeprecationTypeGql,
+  GraphQlContractType as GraphQlContractTypeGql,
+  GraphQlContractUpsertInput as GraphQlContractUpsertInputGql,
+  Protocol as ProtocolGql,
+  SchemaReferenceType as SchemaReferenceTypeGql,
+  ServiceContract as ServiceContractGql,
+} from '../generated/graphql';
 
-export enum Protocol {
-  GRAPHQL = 'GRAPHQL',
-  REST = 'REST',
-  GRPC = 'GRPC',
-  EVENT = 'EVENT',
-}
+type StripTypename<T> = T extends (infer U)[]
+  ? StripTypename<U>[]
+  : T extends object
+    ? { [K in keyof T as K extends '__typename' ? never : K]: StripTypename<T[K]> }
+    : T;
 
-export interface SchemaReference {
-  url: string;
-  hash?: string;
-  version?: string;
-}
+export type ContractDeprecateInput = ContractDeprecateInputGql;
+export type ContractListInput = ContractListInputGql;
+export type ContractType = ContractTypeGql;
+export type GraphQlContractUpsertInput = GraphQlContractUpsertInputGql;
+export type Protocol = ProtocolGql;
 
-export interface GraphQLContract {
-  operation: string;
-  schema?: SchemaReference;
-}
+export type SchemaReference = StripTypename<SchemaReferenceTypeGql>;
+export type DeprecationInfo = StripTypename<DeprecationTypeGql>;
+export type GraphQlContract = StripTypename<GraphQlContractTypeGql>;
+export type ServiceContract = StripTypename<ServiceContractGql>;
 
-export interface DeprecationInfo {
-  reason: string;
-  since?: string;
-  alternative?: string;
-  removal?: string;
-}
-
-export interface ServiceContract {
-  id: string;
-  tenant: string;
-  serviceId: string;
-  type: ContractType;
-  protocol: Protocol;
-  graphql?: GraphQLContract;
-  version?: string;
-  deprecation?: DeprecationInfo;
-  deprecated: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface ContractListInput {
-  serviceId?: string;
-  type?: ContractType;
-  protocol?: Protocol;
-}
-
-export interface GraphQLContractUpsertInput {
-  serviceId: string;
-  type: ContractType;
-  operation: string;
-  schemaUrl?: string;
-  schemaHash?: string;
-  schemaVersion?: string;
-  version?: string;
-}
-
-export interface ContractDeprecateInput {
-  id: string;
-  reason: string;
-  since?: string;
-  alternative?: string;
-  removal?: string;
-}
+// Back-compat aliases for existing usage.
+export type GraphQLContract = GraphQlContract;
+export type GraphQLContractUpsertInput = GraphQlContractUpsertInput;

@@ -8,11 +8,6 @@ import {
   ListContractsDocument,
   UpsertGraphQlContractDocument,
 } from '../../generated/graphql';
-import type {
-  ContractDeprecateInput as ContractDeprecateInputGql,
-  ContractListInput as ContractListInputGql,
-  GraphQlContractUpsertInput as GraphQlContractUpsertInputGql,
-} from '../../generated/graphql';
 import type { ContractDeprecateInput, ContractListInput, GraphQLContractUpsertInput, ServiceContract } from '../types';
 
 /**
@@ -26,7 +21,7 @@ import type { ContractDeprecateInput, ContractListInput, GraphQLContractUpsertIn
 export function useContracts(input: ContractListInput) {
   // Query contracts list
   const { data, loading, error, refetch } = useQuery(ListContractsDocument, {
-    variables: { input: input as unknown as ContractListInputGql },
+    variables: { input },
     skip: !input.serviceId,
   });
 
@@ -47,7 +42,9 @@ export function useContracts(input: ContractListInput) {
 
   return {
     // Query data
-    contracts: (data?.service?.contract?.list?.items ?? []).filter(Boolean) as unknown as ServiceContract[],
+    contracts: (data?.service?.contract?.list?.items ?? []).filter(
+      (item): item is ServiceContract => Boolean(item)
+    ),
     total: data?.service?.contract?.list?.total || 0,
     limit: data?.service?.contract?.list?.limit || 0,
     offset: data?.service?.contract?.list?.offset || 0,
@@ -59,9 +56,9 @@ export function useContracts(input: ContractListInput) {
 
     // Mutations
     upsertGraphQL: (input: GraphQLContractUpsertInput) =>
-      upsertGraphQLMutation({ variables: { input: input as unknown as GraphQlContractUpsertInputGql } }),
+      upsertGraphQLMutation({ variables: { input } }),
     deprecate: (input: ContractDeprecateInput) =>
-      deprecateMutation({ variables: { input: input as unknown as ContractDeprecateInputGql } }),
+      deprecateMutation({ variables: { input } }),
     deleteContract: (id: string) => deleteContractMutation({ variables: { id } }),
 
     // Loading states

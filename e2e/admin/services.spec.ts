@@ -21,9 +21,7 @@ test.describe('Services Page - SGC', () => {
 
       // Check page header
       await expect(page.getByRole('heading', { name: 'Services' })).toBeVisible();
-      await expect(
-        page.getByText('Manage registered services in the platform')
-      ).toBeVisible();
+      await expect(page.getByText('Manage registered services in the platform')).toBeVisible();
     });
 
     test('should display service list or empty state', async ({ page }) => {
@@ -31,7 +29,10 @@ test.describe('Services Page - SGC', () => {
       await page.waitForLoadState('networkidle');
 
       // Either service list exists or empty state message
-      const hasServiceList = await page.getByTestId('service-list').isVisible().catch(() => false);
+      const hasServiceList = await page
+        .getByTestId('service-list')
+        .isVisible()
+        .catch(() => false);
       const hasEmptyState = await page
         .getByText(/No services registered|Failed to load services/)
         .isVisible()
@@ -47,9 +48,18 @@ test.describe('Services Page - SGC', () => {
       await page.waitForLoadState('networkidle');
 
       // Check for error message or loading state
-      const hasError = await page.getByText(/Failed to load services/).isVisible().catch(() => false);
-      const hasLoading = await page.getByText(/Loading/).isVisible().catch(() => false);
-      const hasServiceList = await page.getByTestId('service-list').isVisible().catch(() => false);
+      const hasError = await page
+        .getByText(/Failed to load services/)
+        .isVisible()
+        .catch(() => false);
+      const hasLoading = await page
+        .getByText(/Loading/)
+        .isVisible()
+        .catch(() => false);
+      const hasServiceList = await page
+        .getByTestId('service-list')
+        .isVisible()
+        .catch(() => false);
 
       // At least one should be visible
       expect(hasError || hasLoading || hasServiceList).toBeTruthy();
