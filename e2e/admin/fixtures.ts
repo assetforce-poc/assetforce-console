@@ -11,7 +11,7 @@ export const urls = {
   dashboard: '/',
   services: '/services',
   serviceDetail: (id: string) => `/services/${id}`,
-  adminConsole: 'http://localhost:3001',
+  adminConsole: process.env.BASE_URL || 'http://localhost:3001',
 };
 
 /**
@@ -35,6 +35,53 @@ export const testAccounts = {
     password: 'Test1234!',
   },
 };
+
+export const testServices = {
+  sgc: {
+    slug: 'e2e-test-service',
+    displayName: 'E2E Test Service',
+    type: 'CORE',
+    lifecycle: 'DEVELOPMENT',
+  },
+};
+
+export async function upsertTestService(
+  page: Page,
+  overrides: Partial<typeof testServices.sgc> = {}
+): Promise<{ id: string; slug: string; displayName: string }> {
+  const input = { ...testServices.sgc, ...overrides };
+  const response = await page.request.post('/api/graphql/sgc', {
+    data: {
+      query: `
+        mutation UpsertService($input: ServiceUpsertInput!) {
+          service {
+            upsert(input: $input) {
+              id
+              slug
+              displayName
+            }
+          }
+        }
+      `,
+      variables: { input },
+    },
+  });
+
+  const responseText = await response.text();
+  if (!response.ok()) {
+    throw new Error(`Failed to upsert test service: ${response.status()} ${responseText}`);
+  }
+  if (!responseText) {
+    throw new Error('Failed to upsert test service: empty response');
+  }
+  const json = JSON.parse(responseText);
+  if (json?.errors?.length || !json?.data?.service?.upsert) {
+    const message = json?.errors?.[0]?.message || 'Failed to upsert test service';
+    throw new Error(message);
+  }
+
+  return json.data.service.upsert;
+}
 
 /**
  * Helper function to login as a test user (creates session in AAC)

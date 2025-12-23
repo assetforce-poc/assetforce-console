@@ -5,3 +5,6 @@ export { InviteExpiredCard } from './InviteExpiredCard';
 export { InviteLoading } from './InviteLoading';
 export { InviteLoginRequired } from './InviteLoginRequired';
 export { InviteSuccessCard } from './InviteSuccessCard';
+
+// Admin components
+export { InviteSendDialog, InviteList, TenantList } from './admin';

@@ -9,7 +9,7 @@
  *    yarn e2e # or yarn e2e:ui for UI mode
  */
 
-import { test, expect, urls } from './fixtures';
+import { test, expect, upsertTestService, urls } from './fixtures';
 
 test.describe('Services Page - SGC', () => {
   test.describe('Page Structure', () => {
@@ -86,11 +86,13 @@ test.describe('Services Page - SGC', () => {
 
 test.describe('Service Detail Page - SGC', () => {
   test.describe('Page Structure', () => {
-    test.skip('should display service detail page when service ID is provided', async ({ page }) => {
-      // Skip for now - requires test data setup
-      // TODO: Create test service via API first, then test detail page
-      await page.goto(urls.adminConsole + '/services/test-service-id');
+    test('should display service detail page when service ID is provided', async ({ page }) => {
+      const service = await upsertTestService(page);
+
+      await page.goto(urls.adminConsole + `/services/${service.slug}`);
       await page.waitForLoadState('networkidle');
+
+      await expect(page.getByTestId('service-detail')).toBeVisible();
     });
   });
 });

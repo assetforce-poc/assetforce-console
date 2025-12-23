@@ -234,7 +234,7 @@ test.describe('Account Detail Page', () => {
   test.describe('Account Attributes Card', () => {
     test('should display attributes table with headers when account has attributes', async ({ page }) => {
       // Use real verified test account (has system-generated attributes)
-      const accountId = await getAccountIdByUsername(page, testAccounts.verified.username);
+      const accountId = await getAccountIdByUsername(page, testAccounts.attrs.username);
 
       await page.goto(urls.accountDetail(accountId));
       await page.waitForLoadState('networkidle');
@@ -466,10 +466,10 @@ test.describe('Account Detail Page', () => {
 
     test('should have accessible table structures when account has data', async ({ page }) => {
       // Login to create a session
-      await loginAsTestUser(page, testAccounts.verified.username, testAccounts.verified.password);
+      await loginAsTestUser(page, testAccounts.attrs.username, testAccounts.attrs.password);
 
       // Get account ID and visit detail page
-      const accountId = await getAccountIdByUsername(page, testAccounts.verified.username);
+      const accountId = await getAccountIdByUsername(page, testAccounts.attrs.username);
       await page.goto(urls.accountDetail(accountId));
 
       await page.waitForLoadState('networkidle');
