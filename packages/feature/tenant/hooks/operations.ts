@@ -405,6 +405,145 @@ export interface ResendInviteVariables {
   id: string;
 }
 
+// ===== Application Operations (Admin) =====
+
+/**
+ * List tenant applications (admin only).
+ */
+export const LIST_APPLICATIONS = gql`
+  query ListApplications($input: ApplicationsInput!) {
+    tenant {
+      applicationsList(input: $input) {
+        id
+        subject
+        applicant {
+          name
+          email
+        }
+        status
+        message
+        createdAt
+        updatedAt
+        tenant {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Approve a pending application (admin only).
+ */
+export const APPROVE_APPLICATION = gql`
+  mutation ApproveApplication($input: ApplicationActionInput!) {
+    tenant {
+      application {
+        approve(input: $input) {
+          success
+          message
+          application {
+            id
+            status
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Reject a pending application (admin only).
+ */
+export const REJECT_APPLICATION = gql`
+  mutation RejectApplication($input: ApplicationActionInput!) {
+    tenant {
+      application {
+        reject(input: $input) {
+          success
+          message
+          application {
+            id
+            status
+          }
+        }
+      }
+    }
+  }
+`;
+
+// ===== Application Response Types =====
+
+export interface ApplicantInfo {
+  name?: string;
+  email?: string;
+}
+
+export interface ApplicationItem {
+  id: string;
+  subject: string;
+  applicant?: ApplicantInfo;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+  message?: string;
+  createdAt: string;
+  updatedAt?: string;
+  tenant: {
+    id: string;
+    name: string;
+  };
+}
+
+export interface ListApplicationsResponse {
+  tenant: {
+    applicationsList: ApplicationItem[];
+  };
+}
+
+export interface ListApplicationsVariables {
+  input: {
+    tenantId: string;
+    status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+  };
+}
+
+export interface ApproveApplicationResponse {
+  tenant: {
+    application: {
+      approve: {
+        success: boolean;
+        message?: string;
+        application?: {
+          id: string;
+          status: string;
+        };
+      };
+    };
+  };
+}
+
+export interface RejectApplicationResponse {
+  tenant: {
+    application: {
+      reject: {
+        success: boolean;
+        message?: string;
+        application?: {
+          id: string;
+          status: string;
+        };
+      };
+    };
+  };
+}
+
+export interface ApplicationActionVariables {
+  input: {
+    applicationId: string;
+    message?: string;
+  };
+}
+
 // ===== Tenant Types =====
 
 export interface TenantItem {

@@ -76,9 +76,7 @@ describe('useInvites', () => {
         refetch: jest.fn(),
       } as any);
 
-      const { result } = renderHook(() =>
-        useInvites({ tenantId: 'tenant-001', limit: 10, offset: 0 })
-      );
+      const { result } = renderHook(() => useInvites({ tenantId: 'tenant-001', limit: 10, offset: 0 }));
 
       expect(result.current.loading).toBe(false);
       expect(result.current.data?.items).toHaveLength(2);
@@ -94,9 +92,7 @@ describe('useInvites', () => {
         refetch: jest.fn(),
       } as any);
 
-      renderHook(() =>
-        useInvites({ tenantId: 'tenant-001', status: 'PENDING' })
-      );
+      renderHook(() => useInvites({ tenantId: 'tenant-001', status: 'PENDING' }));
 
       expect(mockUseQuery).toHaveBeenCalledWith(
         expect.anything(),

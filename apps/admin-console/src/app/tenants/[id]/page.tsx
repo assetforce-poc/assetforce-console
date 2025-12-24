@@ -12,7 +12,7 @@ import {
   Paper,
   Typography,
 } from '@assetforce/material';
-import { InviteList, InviteSendDialog, useTenant } from '@assetforce/tenant';
+import { ApplicationList, InviteList, InviteSendDialog, useTenant } from '@assetforce/tenant';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
@@ -112,6 +112,19 @@ export default function TenantDetailPage() {
             </Box>
           </Box>
         </Paper>
+
+        {/* Applications Section */}
+        <Box mb={3}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <Typography variant="h5" component="h2">
+              Applications
+            </Typography>
+          </Box>
+
+          <ApplicationList tenantId={tenantId} />
+        </Box>
+
+        <Divider sx={{ my: 3 }} />
 
         {/* Invites Section */}
         <Box mb={3}>

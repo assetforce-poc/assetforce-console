@@ -216,10 +216,7 @@ describe('useValidateInvite', () => {
 
       renderHook(() => useValidateInvite({ token: 'test-token', skip: true }));
 
-      expect(mockUseQuery).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ skip: true })
-      );
+      expect(mockUseQuery).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ skip: true }));
     });
   });
 

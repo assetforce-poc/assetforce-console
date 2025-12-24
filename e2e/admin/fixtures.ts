@@ -34,6 +34,13 @@ export const testAccounts = {
     email: 'attrs@e2etest.com',
     password: 'Test1234!',
   },
+  // Single tenant user for SGC tests (created by seed-test-data.sh, has tenant access)
+  // This account is seeded via AAC registration API with verified password
+  platformAdmin: {
+    username: 'singletenantuser',
+    email: 'single-tenant-user@test.com',
+    password: 'Test1234!',
+  },
 };
 
 export const testServices = {
@@ -45,12 +52,64 @@ export const testServices = {
   },
 };
 
+/**
+ * Get an access token from AAC for a user
+ * Uses the platform admin account by default for SGC operations
+ * @param page Playwright page object
+ * @param credentials Optional credentials (defaults to platformAdmin)
+ * @returns Access token string
+ */
+export async function getAccessToken(
+  page: Page,
+  credentials: { username: string; password: string } = testAccounts.platformAdmin
+): Promise<string> {
+  const response = await page.request.post('/api/graphql/aac', {
+    data: {
+      query: `
+        mutation Login($username: String!, $password: String!) {
+          authenticate {
+            login(username: $username, password: $password) {
+              success
+              accessToken
+              error
+            }
+          }
+        }
+      `,
+      variables: {
+        username: credentials.username,
+        password: credentials.password,
+      },
+    },
+  });
+
+  const data = await response.json();
+  const loginResult = data?.data?.authenticate?.login;
+
+  if (!loginResult?.success) {
+    const error = loginResult?.error || data?.errors?.[0]?.message || 'Unknown error';
+    throw new Error(`Failed to get access token: ${error}`);
+  }
+
+  if (!loginResult.accessToken) {
+    throw new Error('Login succeeded but no access token returned (multi-tenant user needs to enter tenant first)');
+  }
+
+  return loginResult.accessToken;
+}
+
 export async function upsertTestService(
   page: Page,
   overrides: Partial<typeof testServices.sgc> = {}
 ): Promise<{ id: string; slug: string; displayName: string }> {
+  // Get access token for SGC API calls
+  const accessToken = await getAccessToken(page);
+
   const input = { ...testServices.sgc, ...overrides };
   const response = await page.request.post('/api/graphql/sgc', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
     data: {
       query: `
         mutation UpsertService($input: ServiceUpsertInput!) {

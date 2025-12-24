@@ -7,8 +7,13 @@ export { useValidateInvite } from './useValidateInvite';
 export { useTenant } from './useTenant';
 export { useTenants } from './useTenants';
 
-// Admin hooks
+// Admin hooks - Invites
 export { useCancelInvite } from './useCancelInvite';
 export { useInvites } from './useInvites';
 export { useResendInvite } from './useResendInvite';
 export { useSendInvite } from './useSendInvite';
+
+// Admin hooks - Applications
+export { useApplications } from './useApplications';
+export { useApproveApplication } from './useApproveApplication';
+export { useRejectApplication } from './useRejectApplication';

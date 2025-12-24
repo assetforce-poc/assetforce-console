@@ -18,23 +18,51 @@ export type Scalars = {
   _FieldSet: { input: any; output: any; }
 };
 
+/** Applicant information snapshot (captured at application time) */
+export type ApplicantInfo = {
+  __typename?: 'ApplicantInfo';
+  email?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type Application = {
   __typename?: 'Application';
+  /** Applicant info snapshot (captured at application time) */
+  applicant?: Maybe<ApplicantInfo>;
   createdAt: Scalars['String']['output'];
   id: Scalars['String']['output'];
   message?: Maybe<Scalars['String']['output']>;
   status: ApplicationStatus;
+  subject: Scalars['String']['output'];
   tenant: Tenant;
-  updatedAt: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
 };
 
-/**  Intentionally excludes "APPROVED/REJECTED" actions (admin-only, out of 052 scope). */
+export type ApplicationActionInput = {
+  applicationId: Scalars['String']['input'];
+  /** Optional message to include in notification */
+  message?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ApplicationActionResult = {
+  __typename?: 'ApplicationActionResult';
+  application?: Maybe<Application>;
+  message?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
 export enum ApplicationStatus {
   Approved = 'APPROVED',
   Cancelled = 'CANCELLED',
   Pending = 'PENDING',
   Rejected = 'REJECTED'
 }
+
+export type ApplicationsInput = {
+  /** Filter by status (optional, defaults to all) */
+  status?: InputMaybe<ApplicationStatus>;
+  tenantId: Scalars['String']['input'];
+};
 
 export type ApplyResult = {
   __typename?: 'ApplyResult';
@@ -640,7 +668,7 @@ export type Query = {
 /**
  *  Architecture Note:
  *  - Zone is PHYSICAL deployment boundary configured via application.yml
- *  - Not stored in database, not exposed via API
+ *  - Exposed via Tenant.zoneId (from config, not database)
  *  - Subject is AID (Snowflake BIGINT) from AAC
  *  ========== Core Types ==========
  */
@@ -653,6 +681,29 @@ export type Tenant = {
   keycloakRealm?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   type: TenantType;
+  /** Zone ID from deployment configuration (not stored in database) */
+  zoneId: Scalars['String']['output'];
+};
+
+/**  ========== Admin Application Management ========== */
+export type TenantApplicationMutations = {
+  __typename?: 'TenantApplicationMutations';
+  /** Approve a pending application (admin only) */
+  approve: ApplicationActionResult;
+  /** Reject a pending application (admin only) */
+  reject: ApplicationActionResult;
+};
+
+
+/**  ========== Admin Application Management ========== */
+export type TenantApplicationMutationsApproveArgs = {
+  input: ApplicationActionInput;
+};
+
+
+/**  ========== Admin Application Management ========== */
+export type TenantApplicationMutationsRejectArgs = {
+  input: ApplicationActionInput;
 };
 
 export type TenantApplyInput = {
@@ -744,6 +795,7 @@ export type TenantLeaveInput = {
 
 export type TenantMutations = {
   __typename?: 'TenantMutations';
+  application: TenantApplicationMutations;
   create: Tenant;
   invite: TenantInviteMutations;
   users: TenantUserMutations;
@@ -758,6 +810,11 @@ export type TenantMutationsCreateArgs = {
 export type TenantQueries = {
   __typename?: 'TenantQueries';
   applications: Array<Application>;
+  /**
+   * List all applications for a tenant (admin view).
+   * Returns pending and processed applications.
+   */
+  applicationsList: Array<Application>;
   available: TenantConnection;
   cooldown: CooldownStatus;
   /**
@@ -774,6 +831,12 @@ export type TenantQueries = {
   list: Array<Tenant>;
   mine: Array<Tenant>;
   one?: Maybe<Tenant>;
+};
+
+
+/**  ========== Namespace Query Types ========== */
+export type TenantQueriesApplicationsListArgs = {
+  input: ApplicationsInput;
 };
 
 
