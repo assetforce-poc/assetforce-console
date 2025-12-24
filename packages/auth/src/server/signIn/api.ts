@@ -40,6 +40,9 @@ export const createSignIn =
         session.pendingTenantSelection = true;
         session.availableTenants = authResult.availableTenants;
         session._pendingSubject = authResult.subject;
+        // Store accessToken for selectTenant call
+        session.accessToken = authResult.accessToken;
+        session.refreshToken = authResult.refreshToken;
         await session.save();
 
         return {

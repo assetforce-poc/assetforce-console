@@ -32,7 +32,7 @@ export interface AuthClient {
   /** Authenticate with username and password */
   authenticate(username: string, password: string): Promise<LoginResult>;
   /** Select tenant after authentication (for multi-tenant scenarios) */
-  selectTenant(subject: string, realmId: string): Promise<AuthResult>;
+  selectTenant(subject: string, realmId: string, accessToken: string): Promise<AuthResult>;
   /** Refresh access token */
   refreshToken(refreshToken: string): Promise<AuthResult>;
   /** Logout current session */

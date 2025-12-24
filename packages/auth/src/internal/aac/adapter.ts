@@ -71,6 +71,10 @@ export interface AuthenticateResult {
   subject?: string;
   /** Available tenants (only if requiresTenantSelection) */
   availableTenants?: AppTenant[];
+  /** Access token (for multi-tenant: needed for selectTenant call) */
+  accessToken?: string;
+  /** Refresh token (for multi-tenant: stored for later use) */
+  refreshToken?: string;
   /** Session data (only if single tenant or selected) */
   sessionData?: SessionData;
   /** Error message if failed */
@@ -107,6 +111,9 @@ export function fromLoginResult(result: LoginResult): AuthenticateResult {
       requiresTenantSelection: true,
       subject: result.subject ?? undefined,
       availableTenants: result.tenants.map(toTenant),
+      // Include tokens so they can be used when selectTenant is called
+      accessToken: result.accessToken ?? undefined,
+      refreshToken: result.refreshToken ?? undefined,
     };
   }
 

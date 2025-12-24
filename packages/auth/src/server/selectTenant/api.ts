@@ -12,7 +12,13 @@ export const createSelectTenant =
   (authClient: AuthClient) =>
   async (subject: string, tenantId: string, session: IronSession<SessionData>): Promise<SelectTenantResult> => {
     try {
-      const result = await authClient.selectTenant(subject, tenantId);
+      // Get accessToken from session (set during login)
+      const accessToken = session.accessToken;
+      if (!accessToken) {
+        return { success: false, error: 'No access token available. Please login again.' };
+      }
+
+      const result = await authClient.selectTenant(subject, tenantId, accessToken);
 
       if (!result.success) {
         return { success: false, error: result.error || 'Tenant selection failed' };

@@ -193,12 +193,14 @@ export class AACClient implements AuthClient {
    *
    * @param subject - Subject ID from LoginResult
    * @param tenantId - Selected tenant ID
+   * @param accessToken - Access token from LoginResult (required)
    */
-  async selectTenant(subject: string, tenantId: string): Promise<AuthResult> {
-    const data = await this.execute<{ authenticate: { enter: AuthResult } }>(ENTER_TENANT_MUTATION, {
-      subject,
-      tenantId,
-    });
+  async selectTenant(subject: string, tenantId: string, accessToken: string): Promise<AuthResult> {
+    const data = await this.execute<{ authenticate: { enter: AuthResult } }>(
+      ENTER_TENANT_MUTATION,
+      { subject, tenantId },
+      accessToken
+    );
     return data.authenticate.enter;
   }
 

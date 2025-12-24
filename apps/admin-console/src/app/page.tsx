@@ -9,7 +9,7 @@ export default function Home() {
 
   // TODO: Re-enable user stats after feature/user module is properly implemented
   const stats = [
-    { title: 'Total Users', value: '-', icon: Icons.People, href: '/users' },
+    { title: 'Tenants', value: '-', icon: Icons.Business, href: '/tenants' },
     { title: 'Accounts', value: '-', icon: Icons.ManageAccounts, href: '/accounts' },
     { title: 'Services', value: '-', icon: Icons.Hub, href: '/services' },
   ];
@@ -78,7 +78,10 @@ export default function Home() {
         </Grid>
 
         <Box sx={{ mt: 4, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <Button component={Link} href="/users" variant="contained" startIcon={<Icons.People />}>
+          <Button component={Link} href="/tenants" variant="contained" startIcon={<Icons.Business />}>
+            Manage Tenants
+          </Button>
+          <Button component={Link} href="/users" variant="outlined" startIcon={<Icons.People />}>
             Manage Users
           </Button>
           <Button component={Link} href="/accounts" variant="outlined" startIcon={<Icons.ManageAccounts />}>
