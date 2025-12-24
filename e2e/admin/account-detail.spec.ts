@@ -143,7 +143,7 @@ test.describe('Account Detail Page', () => {
       const email = `tmp${timestamp}@e2etest.com`;
 
       // Register new account (will be unverified by default)
-      const registerResponse = await page.request.post('/api/graphql/aac', {
+      const registerResponse = await page.request.post(`${urls.adminConsole}/api/graphql/aac`, {
         data: {
           query: `
             mutation Register($input: RegisterInput!) {
@@ -188,7 +188,7 @@ test.describe('Account Detail Page', () => {
       const email = `tmp${timestamp}@e2etest.com`;
 
       // Register new account
-      const registerResponse = await page.request.post('/api/graphql/aac', {
+      const registerResponse = await page.request.post(`${urls.adminConsole}/api/graphql/aac`, {
         data: {
           query: `
             mutation Register($input: RegisterInput!) {
@@ -247,9 +247,7 @@ test.describe('Account Detail Page', () => {
 
       // Card should contain either table headers (Key, Value) or empty state message
       await expect(
-        attributesCard.getByRole('columnheader', { name: 'Key' }).or(
-          attributesCard.getByText(/No attributes found/i)
-        )
+        attributesCard.getByRole('columnheader', { name: 'Key' }).or(attributesCard.getByText(/No attributes found/i))
       ).toBeVisible();
     });
 
@@ -310,9 +308,7 @@ test.describe('Account Detail Page', () => {
 
       // Card should contain either session columns or empty state message
       await expect(
-        sessionCard.getByRole('columnheader', { name: /Start Time/i }).or(
-          sessionCard.getByText(/No sessions found/i)
-        )
+        sessionCard.getByRole('columnheader', { name: /Start Time/i }).or(sessionCard.getByText(/No sessions found/i))
       ).toBeVisible();
     });
 

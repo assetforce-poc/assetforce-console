@@ -98,7 +98,8 @@ test.describe('Service Detail Page - SGC', () => {
       // Page must show one of: service detail, error message, or not found
       // Using .or() for clean assertion without if-else
       await expect(
-        page.getByTestId('service-detail')
+        page
+          .getByTestId('service-detail')
           .or(page.getByTestId('service-detail-error'))
           .or(page.getByTestId('service-detail-not-found'))
       ).toBeVisible();

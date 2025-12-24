@@ -4,14 +4,17 @@
 
 import { test as base, expect, Page } from '@playwright/test';
 
-// Page URLs
+// Base URL for admin console
+const adminConsole = process.env.BASE_URL || 'http://localhost:3001';
+
+// Page URLs (all absolute to avoid Playwright navigation issues)
 export const urls = {
-  accounts: '/accounts',
-  accountDetail: (id: string) => `/accounts/${id}`,
-  dashboard: '/',
-  services: '/services',
-  serviceDetail: (id: string) => `/services/${id}`,
-  adminConsole: process.env.BASE_URL || 'http://localhost:3001',
+  accounts: `${adminConsole}/accounts`,
+  accountDetail: (id: string) => `${adminConsole}/accounts/${id}`,
+  dashboard: adminConsole,
+  services: `${adminConsole}/services`,
+  serviceDetail: (id: string) => `${adminConsole}/services/${id}`,
+  adminConsole,
 };
 
 /**
@@ -63,7 +66,8 @@ export async function getAccessToken(
   page: Page,
   credentials: { username: string; password: string } = testAccounts.platformAdmin
 ): Promise<string> {
-  const response = await page.request.post('/api/graphql/aac', {
+  const baseUrl = urls.adminConsole;
+  const response = await page.request.post(`${baseUrl}/api/graphql/aac`, {
     data: {
       query: `
         mutation Login($username: String!, $password: String!) {
@@ -104,9 +108,10 @@ export async function upsertTestService(
 ): Promise<{ id: string; slug: string; displayName: string }> {
   // Get access token for SGC API calls
   const accessToken = await getAccessToken(page);
+  const baseUrl = urls.adminConsole;
 
   const input = { ...testServices.sgc, ...overrides };
-  const response = await page.request.post('/api/graphql/sgc', {
+  const response = await page.request.post(`${baseUrl}/api/graphql/sgc`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -150,7 +155,8 @@ export async function upsertTestService(
  */
 export async function loginAsTestUser(page: Page, username: string, password: string): Promise<void> {
   // Call AAC GraphQL login mutation directly to create session (using new namespace API)
-  const response = await page.request.post('/api/graphql/aac', {
+  const baseUrl = urls.adminConsole;
+  const response = await page.request.post(`${baseUrl}/api/graphql/aac`, {
     data: {
       query: `
         mutation Login($username: String!, $password: String!) {
@@ -184,7 +190,8 @@ export async function loginAsTestUser(page: Page, username: string, password: st
  */
 export async function getAccountIdByUsername(page: Page, username: string): Promise<string> {
   // Fetch all accounts and find by username (simple and reliable)
-  const response = await page.request.post('/api/graphql/aac', {
+  const baseUrl = urls.adminConsole;
+  const response = await page.request.post(`${baseUrl}/api/graphql/aac`, {
     data: {
       query: `
         query GetAllAccounts {
