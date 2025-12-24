@@ -101,6 +101,54 @@ const LOGOUT_MUTATION = `
   }
 `;
 
+// ========== Password Management Mutations ==========
+
+const FORGOT_PASSWORD_MUTATION = `
+  mutation ForgotPassword($email: String!) {
+    account {
+      password {
+        forgot(email: $email) {
+          success
+          message
+        }
+      }
+    }
+  }
+`;
+
+const RESET_PASSWORD_MUTATION = `
+  mutation ResetPassword($input: ResetPasswordInput!) {
+    account {
+      password {
+        reset(input: $input) {
+          success
+          message
+        }
+      }
+    }
+  }
+`;
+
+const CHANGE_PASSWORD_MUTATION = `
+  mutation ChangePassword($input: ChangePasswordInput!) {
+    account {
+      password {
+        change(input: $input) {
+          success
+          message
+        }
+      }
+    }
+  }
+`;
+
+// ========== Password Result Types ==========
+
+export interface PasswordResult {
+  success: boolean;
+  message?: string | null;
+}
+
 /**
  * AACClientOptions - Options for creating AAC client
  */
@@ -220,6 +268,50 @@ export class AACClient implements AuthClient {
   async logout(accessToken: string): Promise<boolean> {
     const data = await this.execute<{ authenticate: { logout: boolean } }>(LOGOUT_MUTATION, {}, accessToken);
     return data.authenticate.logout;
+  }
+
+  // ========== Password Management Methods ==========
+
+  /**
+   * Request password reset email
+   *
+   * @param email - User's email address
+   * @returns Always success (to prevent email enumeration)
+   */
+  async forgotPassword(email: string): Promise<PasswordResult> {
+    const data = await this.execute<{ account: { password: { forgot: PasswordResult } } }>(FORGOT_PASSWORD_MUTATION, {
+      email,
+    });
+    return data.account.password.forgot;
+  }
+
+  /**
+   * Reset password using token from email
+   *
+   * @param token - Action token from password reset email
+   * @param newPassword - New password
+   */
+  async resetPassword(token: string, newPassword: string): Promise<PasswordResult> {
+    const data = await this.execute<{ account: { password: { reset: PasswordResult } } }>(RESET_PASSWORD_MUTATION, {
+      input: { token, newPassword },
+    });
+    return data.account.password.reset;
+  }
+
+  /**
+   * Change password for authenticated user
+   *
+   * @param currentPassword - Current password for verification
+   * @param newPassword - New password
+   * @param accessToken - JWT access token (required for authentication)
+   */
+  async changePassword(currentPassword: string, newPassword: string, accessToken: string): Promise<PasswordResult> {
+    const data = await this.execute<{ account: { password: { change: PasswordResult } } }>(
+      CHANGE_PASSWORD_MUTATION,
+      { input: { currentPassword, newPassword } },
+      accessToken
+    );
+    return data.account.password.change;
   }
 }
 

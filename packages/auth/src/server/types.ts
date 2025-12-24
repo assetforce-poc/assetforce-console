@@ -38,6 +38,34 @@ export interface RefreshResult {
   error?: string;
 }
 
+// ========== Password Management Types ==========
+
+/**
+ * ForgotPasswordResult
+ */
+export interface ForgotPasswordResult {
+  success: boolean;
+  message?: string;
+}
+
+/**
+ * ResetPasswordResult
+ */
+export interface ResetPasswordResult {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
+
+/**
+ * ChangePasswordResult
+ */
+export interface ChangePasswordResult {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
+
 /**
  * Handler Context - Passed to each route handler
  */
@@ -50,6 +78,14 @@ export interface HandlerContext {
     selectTenant: (subject: string, tenantId: string, session: IronSession<SessionData>) => Promise<SelectTenantResult>;
     signOut: (session: IronSession<SessionData>) => Promise<void>;
     refresh: (session: IronSession<SessionData>) => Promise<RefreshResult>;
+    // Password management
+    forgotPassword: (email: string) => Promise<ForgotPasswordResult>;
+    resetPassword: (token: string, newPassword: string) => Promise<ResetPasswordResult>;
+    changePassword: (
+      currentPassword: string,
+      newPassword: string,
+      session: IronSession<SessionData>
+    ) => Promise<ChangePasswordResult>;
   };
 }
 
@@ -67,6 +103,10 @@ export const ROUTE = {
   SELECT_TENANT: 'select-tenant',
   SIGNOUT: 'signout',
   REFRESH: 'refresh',
+  // Password management routes
+  FORGOT_PASSWORD: 'forgot-password',
+  RESET_PASSWORD: 'reset-password',
+  CHANGE_PASSWORD: 'change-password',
 } as const;
 
 export type RouteKey = (typeof ROUTE)[keyof typeof ROUTE];

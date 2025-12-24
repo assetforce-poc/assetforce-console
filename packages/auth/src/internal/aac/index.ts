@@ -6,7 +6,7 @@ export {
   toTenant,
   toUser,
 } from './adapter';
-export { AACClient, type AACClientOptions, createAACClient } from './client';
+export { AACClient, type AACClientOptions, createAACClient, type PasswordResult } from './client';
 
 // AuthClient interface and result types (for custom implementations)
 // Note: IdentityContext, LoginResult, Subject, Tenant are re-exported from generated GraphQL types

@@ -22,11 +22,15 @@ export const urls = {
   tenantRequest: '/tenant/request',
   dashboard: '/dashboard',
   home: '/',
+  // Password management
+  forgotPassword: '/auth/password/forgot',
+  resetPassword: '/auth/password/reset',
+  changePassword: '/auth/password/change',
 };
 
 // MailHog API configuration
 export const mailhog = {
-  apiUrl: process.env.MAILHOG_API_URL || 'http://localhost:8125',
+  apiUrl: process.env.MAILHOG_API_URL || 'http://localhost:8225',
 
   /**
    * Get all emails from MailHog
@@ -54,6 +58,73 @@ export const mailhog = {
   async getLatestMessageTo(email: string) {
     const messages = await this.getMessagesTo(email);
     return messages.length > 0 ? messages[0] : null;
+  },
+
+  /**
+   * Extract password reset token from email content
+   * Supports both:
+   * - Custom format: /password/reset?token=xxx
+   * - Keycloak action token format: /action-token?key=xxx
+   */
+  extractPasswordResetToken(message: any): string | null {
+    let body = this.getEmailBody(message);
+
+    // Remove quoted-printable soft line breaks
+    body = body.replace(/=\r?\n/g, '');
+
+    // Look for password reset URL patterns
+    const patterns = [
+      // Custom format
+      /password\/reset\?token=3D([a-zA-Z0-9._-]+)/i, // quoted-printable encoded
+      /password\/reset\?token=([a-zA-Z0-9._-]+)/i, // normal
+      // Keycloak action token format (JWT)
+      /action-token\?key=3D([a-zA-Z0-9._-]+)/i, // quoted-printable encoded
+      /action-token\?key=([a-zA-Z0-9._-]+)/i, // normal
+    ];
+
+    for (const pattern of patterns) {
+      const match = body.match(pattern);
+      if (match) {
+        return match[1];
+      }
+    }
+
+    return null;
+  },
+
+  /**
+   * Get email body from nested MIME parts
+   */
+  getEmailBody(message: any): string {
+    let body = '';
+
+    if (message.MIME?.Parts) {
+      for (const part of message.MIME.Parts) {
+        if (part.MIME?.Parts) {
+          for (const subpart of part.MIME.Parts) {
+            if (subpart.Body) {
+              body += subpart.Body;
+            }
+            if (subpart.MIME?.Parts) {
+              for (const innerPart of subpart.MIME.Parts) {
+                if (innerPart.Body) {
+                  body += innerPart.Body;
+                }
+              }
+            }
+          }
+        }
+        if (part.Body) {
+          body += part.Body;
+        }
+      }
+    }
+
+    if (!body && message.Content?.Body) {
+      body = message.Content.Body;
+    }
+
+    return body;
   },
 
   /**
@@ -140,12 +211,63 @@ export const mailhog = {
   },
 };
 
+// Test accounts for authenticated tests (seeded from cosmos-realm.json)
+export const testAccounts = {
+  // User with single tenant membership (for change password tests)
+  singleTenant: {
+    username: 'single',  // For login form
+    email: 'single@example.com',  // For forgot password form
+    password: 'single123',
+  },
+  // Admin user
+  admin: {
+    username: 'admin',  // For login form
+    email: 'admin@example.com',  // For forgot password form
+    password: 'admin123',
+  },
+  // Multi-tenant user
+  multiTenant: {
+    username: 'multi',
+    email: 'multi@example.com',
+    password: 'multi123',
+  },
+};
+
+/**
+ * Login helper function
+ */
+export async function login(page: ReturnType<typeof base.page>, email: string, password: string): Promise<void> {
+  await page.goto(urls.login);
+
+  // Wait for login form
+  await page.waitForSelector('input[name="credential"]', { timeout: 10000 });
+
+  // Fill credentials
+  await page.locator('input[name="credential"]').fill(email);
+  await page.locator('input[name="password"]').fill(password);
+
+  // Submit
+  await page.getByRole('button', { name: /continue|sign in/i }).click();
+
+  // Wait for redirect (successful login redirects away from /auth/login)
+  await page.waitForURL((url) => !url.pathname.includes('/auth/login'), {
+    timeout: 15000,
+  });
+}
+
 // Extend base test with auth fixtures
 export const test = base.extend<{
   registerPage: ReturnType<typeof base.page>;
+  authenticatedPage: ReturnType<typeof base.page>;
 }>({
   registerPage: async ({ page }, use) => {
     await page.goto(urls.register);
+    await use(page);
+  },
+
+  // Authenticated page fixture - logs in before test
+  authenticatedPage: async ({ page }, use) => {
+    await login(page, testAccounts.singleTenant.email, testAccounts.singleTenant.password);
     await use(page);
   },
 });
