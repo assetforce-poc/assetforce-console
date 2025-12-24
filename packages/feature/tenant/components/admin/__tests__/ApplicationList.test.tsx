@@ -15,12 +15,8 @@ jest.mock('../../../hooks', () => ({
 import { useApplications, useApproveApplication, useRejectApplication } from '../../../hooks';
 
 const mockUseApplications = useApplications as jest.MockedFunction<typeof useApplications>;
-const mockUseApproveApplication = useApproveApplication as jest.MockedFunction<
-  typeof useApproveApplication
->;
-const mockUseRejectApplication = useRejectApplication as jest.MockedFunction<
-  typeof useRejectApplication
->;
+const mockUseApproveApplication = useApproveApplication as jest.MockedFunction<typeof useApproveApplication>;
+const mockUseRejectApplication = useRejectApplication as jest.MockedFunction<typeof useRejectApplication>;
 
 describe('ApplicationList', () => {
   const mockRefetch = jest.fn();

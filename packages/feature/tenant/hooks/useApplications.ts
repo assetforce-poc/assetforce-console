@@ -3,11 +3,7 @@
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 
-import type {
-  ApplicationItem,
-  ListApplicationsResponse,
-  ListApplicationsVariables,
-} from './operations';
+import type { ApplicationItem, ListApplicationsResponse, ListApplicationsVariables } from './operations';
 import { LIST_APPLICATIONS } from './operations';
 
 export interface UseApplicationsOptions {

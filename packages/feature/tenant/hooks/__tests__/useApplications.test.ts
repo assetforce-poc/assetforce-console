@@ -27,9 +27,7 @@ describe('useApplications', () => {
         refetch: mockRefetch,
       } as any);
 
-      const { result } = renderHook(() =>
-        useApplications({ tenantId: 'tenant-001' })
-      );
+      const { result } = renderHook(() => useApplications({ tenantId: 'tenant-001' }));
 
       expect(result.current.loading).toBe(true);
       expect(result.current.data).toBeNull();
@@ -63,9 +61,7 @@ describe('useApplications', () => {
         refetch: mockRefetch,
       } as any);
 
-      const { result } = renderHook(() =>
-        useApplications({ tenantId: 'tenant-001' })
-      );
+      const { result } = renderHook(() => useApplications({ tenantId: 'tenant-001' }));
 
       expect(result.current.loading).toBe(false);
       expect(result.current.data).toHaveLength(1);
@@ -87,9 +83,7 @@ describe('useApplications', () => {
         refetch: mockRefetch,
       } as any);
 
-      const { result } = renderHook(() =>
-        useApplications({ tenantId: 'tenant-001' })
-      );
+      const { result } = renderHook(() => useApplications({ tenantId: 'tenant-001' }));
 
       expect(result.current.data).toEqual([]);
     });
@@ -108,9 +102,7 @@ describe('useApplications', () => {
         refetch: mockRefetch,
       } as any);
 
-      renderHook(() =>
-        useApplications({ tenantId: 'tenant-001', status: 'PENDING' })
-      );
+      renderHook(() => useApplications({ tenantId: 'tenant-001', status: 'PENDING' }));
 
       expect(mockUseQuery).toHaveBeenCalledWith(
         expect.anything(),
@@ -135,9 +127,7 @@ describe('useApplications', () => {
         refetch: mockRefetch,
       } as any);
 
-      renderHook(() =>
-        useApplications({ tenantId: 'tenant-001', skip: true })
-      );
+      renderHook(() => useApplications({ tenantId: 'tenant-001', skip: true }));
 
       expect(mockUseQuery).toHaveBeenCalledWith(
         expect.anything(),
@@ -177,9 +167,7 @@ describe('useApplications', () => {
         refetch: mockRefetch,
       } as any);
 
-      const { result } = renderHook(() =>
-        useApplications({ tenantId: 'tenant-001' })
-      );
+      const { result } = renderHook(() => useApplications({ tenantId: 'tenant-001' }));
 
       expect(result.current.error).toBe(mockError);
       expect(result.current.data).toBeNull();
@@ -199,9 +187,7 @@ describe('useApplications', () => {
         refetch: mockRefetch,
       } as any);
 
-      const { result } = renderHook(() =>
-        useApplications({ tenantId: 'tenant-001' })
-      );
+      const { result } = renderHook(() => useApplications({ tenantId: 'tenant-001' }));
 
       expect(typeof result.current.refetch).toBe('function');
       result.current.refetch();

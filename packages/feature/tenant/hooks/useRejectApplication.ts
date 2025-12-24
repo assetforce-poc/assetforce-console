@@ -35,10 +35,9 @@ export interface UseRejectApplicationResult {
  * ```
  */
 export function useRejectApplication(): UseRejectApplicationResult {
-  const [rejectMutation, { loading, error }] = useMutation<
-    RejectApplicationResponse,
-    ApplicationActionVariables
-  >(REJECT_APPLICATION);
+  const [rejectMutation, { loading, error }] = useMutation<RejectApplicationResponse, ApplicationActionVariables>(
+    REJECT_APPLICATION
+  );
 
   const reject = useCallback(
     async (applicationId: string, message?: string): Promise<RejectResult> => {

@@ -35,10 +35,9 @@ export interface UseApproveApplicationResult {
  * ```
  */
 export function useApproveApplication(): UseApproveApplicationResult {
-  const [approveMutation, { loading, error }] = useMutation<
-    ApproveApplicationResponse,
-    ApplicationActionVariables
-  >(APPROVE_APPLICATION);
+  const [approveMutation, { loading, error }] = useMutation<ApproveApplicationResponse, ApplicationActionVariables>(
+    APPROVE_APPLICATION
+  );
 
   const approve = useCallback(
     async (applicationId: string): Promise<ApproveResult> => {
