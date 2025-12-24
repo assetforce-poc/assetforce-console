@@ -11,7 +11,9 @@
     "./detail": "./detail/index.ts",
     "./detail/components": "./detail/components/index.ts",
     "./contracts": "./contracts/index.ts",
-    "./contracts/components": "./contracts/components/index.ts"
+    "./contracts/components": "./contracts/components/index.ts",
+    "./dependencies": "./dependencies/index.ts",
+    "./dependencies/components": "./dependencies/components/index.ts"
   },
   "scripts": {
     "lint": "eslint .",

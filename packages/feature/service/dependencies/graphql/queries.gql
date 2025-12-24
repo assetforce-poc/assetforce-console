@@ -1,0 +1,54 @@
+#import "@assetforce/graphql"
+
+fragment ServiceIdentityFields on Service {
+  id
+  slug
+  displayName
+  type
+}
+
+fragment ServiceContractSummary on ServiceContract {
+  id
+  type
+  protocol
+  graphql {
+    operation
+  }
+  deprecated
+}
+
+fragment ProvidesNodeFields on ProvidesNode {
+  contract {
+    ...ServiceContractSummary
+  }
+  consumers {
+    ...ServiceIdentityFields
+  }
+}
+
+fragment ConsumesNodeFields on ConsumesNode {
+  contract {
+    ...ServiceContractSummary
+  }
+  providers {
+    ...ServiceIdentityFields
+  }
+}
+
+query GetDependencyGraph($input: DependencyGraphInput!) {
+  service {
+    contract {
+      dependencies(input: $input) {
+        service {
+          ...ServiceIdentityFields
+        }
+        provides {
+          ...ProvidesNodeFields
+        }
+        consumes {
+          ...ConsumesNodeFields
+        }
+      }
+    }
+  }
+}
