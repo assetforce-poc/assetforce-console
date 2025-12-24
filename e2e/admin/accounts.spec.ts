@@ -194,7 +194,51 @@ test.describe('Account Listing', () => {
     });
 
     test('should navigate to next page when multiple pages exist', async ({ page }) => {
-      // With seeded pagination accounts (25 total), we have 2 pages (20 + 5)
+      // Mock multi-page response (25 accounts = 2 pages with page size 20)
+      let currentPage = 1;
+      await page.route('**/api/graphql/aac', async (route) => {
+        const request = route.request();
+        const postData = request.postData();
+
+        if (postData?.includes('ListAccounts') || postData?.includes('account')) {
+          const pageSize = 20;
+          const totalAccounts = 25;
+          const startIndex = (currentPage - 1) * pageSize;
+          const endIndex = Math.min(startIndex + pageSize, totalAccounts);
+
+          const mockAccounts = Array.from({ length: endIndex - startIndex }, (_, i) => ({
+            id: `mock-${startIndex + i}`,
+            username: `page${currentPage}-user-${i}`,
+            email: `user${startIndex + i}@test.com`,
+            status: 'ACTIVE',
+            emailVerified: true,
+            createdAt: new Date().toISOString(),
+          }));
+
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              data: {
+                account: {
+                  list: {
+                    items: mockAccounts,
+                    total: totalAccounts,
+                    pageInfo: {
+                      hasNextPage: endIndex < totalAccounts,
+                      hasPreviousPage: currentPage > 1,
+                    },
+                  },
+                },
+              },
+            }),
+          });
+          currentPage++;
+        } else {
+          await route.continue();
+        }
+      });
+
       await page.goto(urls.accounts);
 
       // Wait for data

@@ -34,12 +34,12 @@ export const testAccounts = {
     email: 'attrs@e2etest.com',
     password: 'Test1234!',
   },
-  // Single tenant user for SGC tests (created by seed-test-data.sh, has tenant access)
-  // This account is seeded via AAC registration API with verified password
+  // Single tenant user for SGC tests (created by seed-unified-data.sh, has tenant access to mars)
+  // This account is seeded via direct DB insert with Keycloak cosmos realm user
   platformAdmin: {
-    username: 'singletenantuser',
-    email: 'single-tenant-user@test.com',
-    password: 'Test1234!',
+    username: 'single',
+    email: 'single@example.com',
+    password: 'single123',
   },
 };
 
