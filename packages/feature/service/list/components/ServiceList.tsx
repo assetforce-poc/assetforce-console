@@ -173,7 +173,11 @@ export function ServiceList({ type, lifecycle, search }: ServiceListProps) {
                   )}
                 </TableCell>
                 <TableCell>
-                  <ServiceStatusBadge status={service.health.status} />
+                  {service.health ? (
+                    <ServiceStatusBadge status={service.health.status} />
+                  ) : (
+                    <ServiceStatusBadge status="UNKNOWN" />
+                  )}
                 </TableCell>
                 <TableCell>{formatDate(service.updatedAt)}</TableCell>
               </TableRow>

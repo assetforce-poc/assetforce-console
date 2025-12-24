@@ -77,7 +77,7 @@ export function ServiceDetailPage({ slug }: ServiceDetailPageProps) {
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
           <Stack spacing={3}>
-            <ServiceHealthCard health={service.health} />
+            {service.health && <ServiceHealthCard health={service.health} />}
             <ServiceDependenciesCard dependencies={service.dependencies} />
           </Stack>
         </Grid>
