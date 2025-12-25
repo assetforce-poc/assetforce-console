@@ -41,3 +41,36 @@ query ListNotifications($input: NotificationListInput!) {
     }
   }
 }
+
+fragment DeprecationNotificationFields on ContractDeprecationNotification {
+  id
+  contractId
+  source
+  target
+  contractIdentifier
+  reason
+  sinceVersion
+  alternative
+  removalVersion
+  createdAt
+  acknowledged
+  acknowledgedAt
+  acknowledgedBy
+}
+
+query ListDeprecationNotifications($input: DeprecationNotificationListInput!) {
+  exchange {
+    notification {
+      deprecation {
+        list(input: $input) {
+          items {
+            ...DeprecationNotificationFields
+          }
+          total
+          limit
+          offset
+        }
+      }
+    }
+  }
+}

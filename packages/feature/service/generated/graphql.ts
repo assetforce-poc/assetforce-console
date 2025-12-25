@@ -15,7 +15,6 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   DateTime: { input: any; output: any; }
-  _FieldSet: { input: any; output: any; }
 };
 
 /** Schema change severity classification */
@@ -27,6 +26,19 @@ export enum ChangeSeverity {
   /** Non-structural changes requiring patch version bump */
   Patch = 'PATCH'
 }
+
+/** Summary of changes by severity */
+export type ChangeSummary = {
+  __typename?: 'ChangeSummary';
+  /** Breaking changes (severity=MAJOR) */
+  major: Scalars['Int']['output'];
+  /** Backward-compatible additions (severity=MINOR) */
+  minor: Scalars['Int']['output'];
+  /** Non-structural changes (severity=PATCH) */
+  patch: Scalars['Int']['output'];
+  /** Total number of changes */
+  total: Scalars['Int']['output'];
+};
 
 /** A contract this service CONSUMES and its providers */
 export type ConsumesNode = {
@@ -61,11 +73,45 @@ export type ContractDeprecateInput = {
   since?: InputMaybe<Scalars['String']['input']>;
 };
 
-/**
- *  ============================================================
- *  Contract Input Types (Phase 2 - SXP)
- *  ============================================================
- */
+/** Contract deprecation notification (sent to consumers when contract is deprecated) */
+export type ContractDeprecationNotification = {
+  __typename?: 'ContractDeprecationNotification';
+  /** Whether the notification has been acknowledged */
+  acknowledged: Scalars['Boolean']['output'];
+  /** When the notification was acknowledged */
+  acknowledgedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Who acknowledged the notification */
+  acknowledgedBy?: Maybe<Scalars['String']['output']>;
+  /** Suggested alternative (e.g., Query.usersV2) */
+  alternative?: Maybe<Scalars['String']['output']>;
+  /** ID of the deprecated contract */
+  contractId: Scalars['ID']['output'];
+  /** Contract identifier (e.g., Query.users) */
+  contractIdentifier: Scalars['String']['output'];
+  /** When the notification was created */
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  /** Deprecation reason */
+  reason?: Maybe<Scalars['String']['output']>;
+  /** Planned removal version */
+  removalVersion?: Maybe<Scalars['String']['output']>;
+  /** Version when deprecation started */
+  sinceVersion?: Maybe<Scalars['String']['output']>;
+  /** Source service (provider of the deprecated contract) */
+  source: Scalars['ID']['output'];
+  /** Target service (consumer who receives the notification) */
+  target: Scalars['ID']['output'];
+};
+
+/** Connection response for contract deprecation notification list */
+export type ContractDeprecationNotificationConnection = {
+  __typename?: 'ContractDeprecationNotificationConnection';
+  items: Array<ContractDeprecationNotification>;
+  limit: Scalars['Int']['output'];
+  offset: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
 export type ContractListInput = {
   /** Include all tenants. Platform-admin only. */
   allTenants?: InputMaybe<Scalars['Boolean']['input']>;
@@ -125,6 +171,16 @@ export type DependencySetInput = {
   serviceId: Scalars['ID']['input'];
 };
 
+/** Input for contract deprecation notification list query */
+export type DeprecationNotificationListInput = {
+  /** Filter by acknowledged status (null = all) */
+  acknowledged?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Pagination */
+  page?: InputMaybe<PageInput>;
+  /** Filter by target service ID */
+  target: Scalars['ID']['input'];
+};
+
 /** Deprecation information for a contract */
 export type DeprecationType = {
   __typename?: 'DeprecationType';
@@ -144,253 +200,6 @@ export enum Environment {
   Testing = 'TESTING'
 }
 
-export enum ErrorDetail {
-  /**
-   * The deadline expired before the operation could complete.
-   *
-   * For operations that change the state of the system, this error
-   * may be returned even if the operation has completed successfully.
-   * For example, a successful response from a server could have been
-   * delayed long enough for the deadline to expire.
-   *
-   * HTTP Mapping: 504 Gateway Timeout
-   * Error Type: UNAVAILABLE
-   */
-  DeadlineExceeded = 'DEADLINE_EXCEEDED',
-  /**
-   * The server detected that the client is exhibiting a behavior that
-   * might be generating excessive load.
-   *
-   * HTTP Mapping: 420 Enhance Your Calm
-   * Error Type: UNAVAILABLE
-   */
-  EnhanceYourCalm = 'ENHANCE_YOUR_CALM',
-  /**
-   * The requested field is not found in the schema.
-   *
-   * This differs from `NOT_FOUND` in that `NOT_FOUND` should be used when a
-   * query is valid, but is unable to return a result (if, for example, a
-   * specific video id doesn't exist). `FIELD_NOT_FOUND` is intended to be
-   * returned by the server to signify that the requested field is not known to exist.
-   * This may be returned in lieu of failing the entire query.
-   * See also `PERMISSION_DENIED` for cases where the
-   * requested field is invalid only for the given user or class of users.
-   *
-   * HTTP Mapping: 404 Not Found
-   * Error Type: BAD_REQUEST
-   */
-  FieldNotFound = 'FIELD_NOT_FOUND',
-  /**
-   * The client specified an invalid argument.
-   *
-   * Note that this differs from `FAILED_PRECONDITION`.
-   * `INVALID_ARGUMENT` indicates arguments that are problematic
-   * regardless of the state of the system (e.g., a malformed file name).
-   *
-   * HTTP Mapping: 400 Bad Request
-   * Error Type: BAD_REQUEST
-   */
-  InvalidArgument = 'INVALID_ARGUMENT',
-  /**
-   * The provided cursor is not valid.
-   *
-   * The most common usage for this error is when a client is paginating
-   * through a list that uses stateful cursors. In that case, the provided
-   * cursor may be expired.
-   *
-   * HTTP Mapping: 404 Not Found
-   * Error Type: NOT_FOUND
-   */
-  InvalidCursor = 'INVALID_CURSOR',
-  /**
-   * Unable to perform operation because a required resource is missing.
-   *
-   * Example: Client is attempting to refresh a list, but the specified
-   * list is expired. This requires an action by the client to get a new list.
-   *
-   * If the user is simply trying GET a resource that is not found,
-   * use the NOT_FOUND error type. FAILED_PRECONDITION.MISSING_RESOURCE
-   * is to be used particularly when the user is performing an operation
-   * that requires a particular resource to exist.
-   *
-   * HTTP Mapping: 400 Bad Request or 500 Internal Server Error
-   * Error Type: FAILED_PRECONDITION
-   */
-  MissingResource = 'MISSING_RESOURCE',
-  /**
-   * Service Error.
-   *
-   * There is a problem with an upstream service.
-   *
-   * This may be returned if a gateway receives an unknown error from a service
-   * or if a service is unreachable.
-   * If a request times out which waiting on a response from a service,
-   * `DEADLINE_EXCEEDED` may be returned instead.
-   * If a service returns a more specific error Type, the specific error Type may
-   * be returned instead.
-   *
-   * HTTP Mapping: 502 Bad Gateway
-   * Error Type: UNAVAILABLE
-   */
-  ServiceError = 'SERVICE_ERROR',
-  /**
-   * Request failed due to network errors.
-   *
-   * HTTP Mapping: 503 Unavailable
-   * Error Type: UNAVAILABLE
-   */
-  TcpFailure = 'TCP_FAILURE',
-  /**
-   * Request throttled based on server concurrency limits.
-   *
-   * HTTP Mapping: 503 Unavailable
-   * Error Type: UNAVAILABLE
-   */
-  ThrottledConcurrency = 'THROTTLED_CONCURRENCY',
-  /**
-   * Request throttled based on server CPU limits
-   *
-   * HTTP Mapping: 503 Unavailable.
-   * Error Type: UNAVAILABLE
-   */
-  ThrottledCpu = 'THROTTLED_CPU',
-  /**
-   * The server detected that the client is exhibiting a behavior that
-   * might be generating excessive load.
-   *
-   * HTTP Mapping: 429 Too Many Requests
-   * Error Type: UNAVAILABLE
-   */
-  TooManyRequests = 'TOO_MANY_REQUESTS',
-  /**
-   * The operation is not implemented or is not currently supported/enabled.
-   *
-   * HTTP Mapping: 501 Not Implemented
-   * Error Type: BAD_REQUEST
-   */
-  Unimplemented = 'UNIMPLEMENTED',
-  /**
-   * Unknown error.
-   *
-   * This error should only be returned when no other error detail applies.
-   * If a client sees an unknown errorDetail, it will be interpreted as UNKNOWN.
-   *
-   * HTTP Mapping: 500 Internal Server Error
-   */
-  Unknown = 'UNKNOWN'
-}
-
-export enum ErrorType {
-  /**
-   * Bad Request.
-   *
-   * There is a problem with the request.
-   * Retrying the same request is not likely to succeed.
-   * An example would be a query or argument that cannot be deserialized.
-   *
-   * HTTP Mapping: 400 Bad Request
-   */
-  BadRequest = 'BAD_REQUEST',
-  /**
-   * The operation was rejected because the system is not in a state
-   * required for the operation's execution.  For example, the directory
-   * to be deleted is non-empty, an rmdir operation is applied to
-   * a non-directory, etc.
-   *
-   * Service implementers can use the following guidelines to decide
-   * between `FAILED_PRECONDITION` and `UNAVAILABLE`:
-   *
-   * - Use `UNAVAILABLE` if the client can retry just the failing call.
-   * - Use `FAILED_PRECONDITION` if the client should not retry until
-   * the system state has been explicitly fixed.  E.g., if an "rmdir"
-   *      fails because the directory is non-empty, `FAILED_PRECONDITION`
-   * should be returned since the client should not retry unless
-   * the files are deleted from the directory.
-   *
-   * HTTP Mapping: 400 Bad Request or 500 Internal Server Error
-   */
-  FailedPrecondition = 'FAILED_PRECONDITION',
-  /**
-   * Internal error.
-   *
-   * An unexpected internal error was encountered. This means that some
-   * invariants expected by the underlying system have been broken.
-   * This error code is reserved for serious errors.
-   *
-   * HTTP Mapping: 500 Internal Server Error
-   */
-  Internal = 'INTERNAL',
-  /**
-   * The requested entity was not found.
-   *
-   * This could apply to a resource that has never existed (e.g. bad resource id),
-   * or a resource that no longer exists (e.g. cache expired.)
-   *
-   * Note to server developers: if a request is denied for an entire class
-   * of users, such as gradual feature rollout or undocumented allowlist,
-   * `NOT_FOUND` may be used. If a request is denied for some users within
-   * a class of users, such as user-based access control, `PERMISSION_DENIED`
-   * must be used.
-   *
-   * HTTP Mapping: 404 Not Found
-   */
-  NotFound = 'NOT_FOUND',
-  /**
-   * The caller does not have permission to execute the specified
-   * operation.
-   *
-   * `PERMISSION_DENIED` must not be used for rejections
-   * caused by exhausting some resource or quota.
-   * `PERMISSION_DENIED` must not be used if the caller
-   * cannot be identified (use `UNAUTHENTICATED`
-   * instead for those errors).
-   *
-   * This error Type does not imply the
-   * request is valid or the requested entity exists or satisfies
-   * other pre-conditions.
-   *
-   * HTTP Mapping: 403 Forbidden
-   */
-  PermissionDenied = 'PERMISSION_DENIED',
-  /**
-   * The request does not have valid authentication credentials.
-   *
-   * This is intended to be returned only for routes that require
-   * authentication.
-   *
-   * HTTP Mapping: 401 Unauthorized
-   */
-  Unauthenticated = 'UNAUTHENTICATED',
-  /**
-   * Currently Unavailable.
-   *
-   * The service is currently unavailable.  This is most likely a
-   * transient condition, which can be corrected by retrying with
-   * a backoff.
-   *
-   * HTTP Mapping: 503 Unavailable
-   */
-  Unavailable = 'UNAVAILABLE',
-  /**
-   * Unknown error.
-   *
-   * For example, this error may be returned when
-   * an error code received from another address space belongs to
-   * an error space that is not known in this address space.  Also
-   * errors raised by APIs that do not return enough error information
-   * may be converted to this error.
-   *
-   * If a client sees an unknown errorType, it will be interpreted as UNKNOWN.
-   * Unknown errors MUST NOT trigger any special behavior. These MAY be treated
-   * by an implementation as being equivalent to INTERNAL.
-   *
-   * When possible, a more specific error should be provided.
-   *
-   * HTTP Mapping: 520 Unknown Error
-   */
-  Unknown = 'UNKNOWN'
-}
-
 /** Event-specific contract configuration (future) */
 export type EventContractType = {
   __typename?: 'EventContractType';
@@ -398,6 +207,32 @@ export type EventContractType = {
   schema?: Maybe<SchemaReferenceType>;
   /** Event topic: user.created */
   topic: Scalars['String']['output'];
+};
+
+/** Deprecation notification mutations (under exchange.notification namespace) */
+export type ExchangeDeprecationNotificationMutations = {
+  __typename?: 'ExchangeDeprecationNotificationMutations';
+  /** Acknowledge contract deprecation notifications */
+  acknowledge: Array<ContractDeprecationNotification>;
+};
+
+
+/** Deprecation notification mutations (under exchange.notification namespace) */
+export type ExchangeDeprecationNotificationMutationsAcknowledgeArgs = {
+  ids: Array<Scalars['ID']['input']>;
+};
+
+/** Deprecation notification queries (under exchange.notification namespace) */
+export type ExchangeDeprecationNotificationQueries = {
+  __typename?: 'ExchangeDeprecationNotificationQueries';
+  /** List contract deprecation notifications for a target service */
+  list: ContractDeprecationNotificationConnection;
+};
+
+
+/** Deprecation notification queries (under exchange.notification namespace) */
+export type ExchangeDeprecationNotificationQueriesListArgs = {
+  input: DeprecationNotificationListInput;
 };
 
 export type ExchangeHealthStatus = {
@@ -412,11 +247,6 @@ export type ExchangeHealthStatus = {
   unhealthySubgraphs: Array<Scalars['String']['output']>;
 };
 
-/**
- *  ============================================================
- *  Exchange Mutation Namespace
- *  ============================================================
- */
 export type ExchangeMutations = {
   __typename?: 'ExchangeMutations';
   /** Schema change notification mutations */
@@ -430,6 +260,8 @@ export type ExchangeNotificationMutations = {
   __typename?: 'ExchangeNotificationMutations';
   /** Acknowledge schema change notifications */
   acknowledge: Array<SchemaChangeNotification>;
+  /** Deprecation notification namespace */
+  deprecation: ExchangeDeprecationNotificationMutations;
 };
 
 
@@ -441,6 +273,8 @@ export type ExchangeNotificationMutationsAcknowledgeArgs = {
 /** Schema change notification queries (under exchange namespace) */
 export type ExchangeNotificationQueries = {
   __typename?: 'ExchangeNotificationQueries';
+  /** Deprecation notification namespace */
+  deprecation: ExchangeDeprecationNotificationQueries;
   /** List schema change notifications for a target service */
   list: SchemaChangeNotificationConnection;
 };
@@ -451,11 +285,6 @@ export type ExchangeNotificationQueriesListArgs = {
   input: NotificationListInput;
 };
 
-/**
- *  ============================================================
- *  Exchange Query Namespace
- *  ============================================================
- */
 export type ExchangeQueries = {
   __typename?: 'ExchangeQueries';
   /** Get gateway health status */
@@ -530,12 +359,24 @@ export type ExchangeSubgraphSchemaMutations = {
   __typename?: 'ExchangeSubgraphSchemaMutations';
   /** Trigger schema refresh (introspection) for a subgraph */
   refresh?: Maybe<SubgraphSchema>;
+  /**
+   * Validate schema change before deployment.
+   * Returns impact analysis without actually deploying.
+   * Use this in CI/CD pipelines to detect breaking changes.
+   */
+  validate: SchemaValidationResult;
 };
 
 
 /** Schema operations for a subgraph */
 export type ExchangeSubgraphSchemaMutationsRefreshArgs = {
   name: Scalars['String']['input'];
+};
+
+
+/** Schema operations for a subgraph */
+export type ExchangeSubgraphSchemaMutationsValidateArgs = {
+  input: SchemaValidateInput;
 };
 
 /** GraphQL-specific contract configuration */
@@ -704,14 +545,8 @@ export type ProvidesNode = {
   contract: ServiceContract;
 };
 
-/**
- *  ============================================================
- *  Root Types
- *  ============================================================
- */
 export type Query = {
   __typename?: 'Query';
-  _service: _Service;
   /** Service Exchange Portal queries (Phase 2) */
   exchange: ExchangeQueries;
   service: ServiceQueries;
@@ -822,11 +657,27 @@ export type SchemaReferenceType = {
   version?: Maybe<Scalars['String']['output']>;
 };
 
-/**
- *  ============================================================
- *  Domain Types
- *  ============================================================
- */
+/** Input for schema validation */
+export type SchemaValidateInput = {
+  /** Subgraph name */
+  name: Scalars['String']['input'];
+  /** New schema SDL to validate */
+  schema: Scalars['String']['input'];
+};
+
+/** Result of schema validation */
+export type SchemaValidationResult = {
+  __typename?: 'SchemaValidationResult';
+  /** All detected changes (filter by severity client-side) */
+  changes: Array<SchemaChange>;
+  /** Services consuming affected contracts */
+  consumers: Array<Service>;
+  /** Change counts by severity */
+  summary: ChangeSummary;
+  /** No breaking changes detected */
+  valid: Scalars['Boolean']['output'];
+};
+
 export type Service = {
   __typename?: 'Service';
   /**
@@ -859,30 +710,15 @@ export type Service = {
 };
 
 
-/**
- *  ============================================================
- *  Domain Types
- *  ============================================================
- */
 export type ServiceContractsArgs = {
   type?: InputMaybe<ContractType>;
 };
 
 
-/**
- *  ============================================================
- *  Domain Types
- *  ============================================================
- */
 export type ServiceInstancesArgs = {
   environment?: InputMaybe<Environment>;
 };
 
-/**
- *  ============================================================
- *  Connection Types (Pagination)
- *  ============================================================
- */
 export type ServiceConnection = {
   __typename?: 'ServiceConnection';
   items: Array<Service>;
@@ -1127,11 +963,6 @@ export enum ServiceLifecycle {
   Testing = 'TESTING'
 }
 
-/**
- *  ============================================================
- *  Query Input Types
- *  ============================================================
- */
 export type ServiceListInput = {
   /**
    * Include all tenants. Platform-admin only.
@@ -1155,11 +986,6 @@ export type ServiceListInput = {
   type?: InputMaybe<ServiceType>;
 };
 
-/**
- *  ============================================================
- *  Mutation Namespaces
- *  ============================================================
- */
 export type ServiceMutations = {
   __typename?: 'ServiceMutations';
   /** Contract-related mutations (Phase 2 - SXP). */
@@ -1176,11 +1002,6 @@ export type ServiceMutations = {
 };
 
 
-/**
- *  ============================================================
- *  Mutation Namespaces
- *  ============================================================
- */
 export type ServiceMutationsUpsertArgs = {
   input: ServiceUpsertInput;
 };
@@ -1194,11 +1015,6 @@ export type ServiceOneInput = {
   tenant?: InputMaybe<Scalars['String']['input']>;
 };
 
-/**
- *  ============================================================
- *  Query Namespaces
- *  ============================================================
- */
 export type ServiceQueries = {
   __typename?: 'ServiceQueries';
   /** Contract-related queries (Phase 2 - SXP). */
@@ -1219,41 +1035,21 @@ export type ServiceQueries = {
 };
 
 
-/**
- *  ============================================================
- *  Query Namespaces
- *  ============================================================
- */
 export type ServiceQueriesListArgs = {
   input: ServiceListInput;
 };
 
 
-/**
- *  ============================================================
- *  Query Namespaces
- *  ============================================================
- */
 export type ServiceQueriesOneArgs = {
   input: ServiceOneInput;
 };
 
-/**
- *  ============================================================
- *  Enums
- *  ============================================================
- */
 export enum ServiceType {
   Core = 'CORE',
   Extension = 'EXTENSION',
   External = 'EXTERNAL'
 }
 
-/**
- *  ============================================================
- *  Mutation Input Types
- *  ============================================================
- */
 export type ServiceUpsertInput = {
   /** Human-readable display name */
   displayName: Scalars['String']['input'];
@@ -1309,11 +1105,6 @@ export type SubgraphConnection = {
   total: Scalars['Int']['output'];
 };
 
-/**
- *  ============================================================
- *  Exchange Input Types
- *  ============================================================
- */
 export type SubgraphRegisterInput = {
   /** Human-readable display name */
   displayName?: InputMaybe<Scalars['String']['input']>;
@@ -1361,11 +1152,6 @@ export type SubgraphUpdateInput = {
   name: Scalars['String']['input'];
   /** New routing priority */
   priority?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type _Service = {
-  __typename?: '_Service';
-  sdl: Scalars['String']['output'];
 };
 
 export type UpsertGraphQlContractMutationVariables = Exact<{
@@ -1506,6 +1292,13 @@ export type AcknowledgeNotificationsMutationVariables = Exact<{
 
 export type AcknowledgeNotificationsMutation = { __typename?: 'Mutation', exchange: { __typename?: 'ExchangeMutations', notification: { __typename?: 'ExchangeNotificationMutations', acknowledge: Array<{ __typename?: 'SchemaChangeNotification', id: string, source: string, target: string, contract: string, summary: string, detectedAt: any, acknowledged: boolean, acknowledgedAt?: any | null, acknowledgedBy?: string | null, schemaChange: { __typename?: 'SchemaChange', id: string, subgraphName: string, severity: ChangeSeverity, diffSummary: string, detectedAt: any, hash: { __typename?: 'SchemaHashPair', old: string, new: string } } }> } } };
 
+export type AcknowledgeDeprecationNotificationsMutationVariables = Exact<{
+  ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+}>;
+
+
+export type AcknowledgeDeprecationNotificationsMutation = { __typename?: 'Mutation', exchange: { __typename?: 'ExchangeMutations', notification: { __typename?: 'ExchangeNotificationMutations', deprecation: { __typename?: 'ExchangeDeprecationNotificationMutations', acknowledge: Array<{ __typename?: 'ContractDeprecationNotification', id: string, contractId: string, source: string, target: string, contractIdentifier: string, reason?: string | null, sinceVersion?: string | null, alternative?: string | null, removalVersion?: string | null, createdAt: any, acknowledged: boolean, acknowledgedAt?: any | null, acknowledgedBy?: string | null }> } } } };
+
 export type SchemaChangeFieldsFragment = { __typename?: 'SchemaChange', id: string, subgraphName: string, severity: ChangeSeverity, diffSummary: string, detectedAt: any, hash: { __typename?: 'SchemaHashPair', old: string, new: string } };
 
 export type NotificationFieldsFragment = { __typename?: 'SchemaChangeNotification', id: string, source: string, target: string, contract: string, summary: string, detectedAt: any, acknowledged: boolean, acknowledgedAt?: any | null, acknowledgedBy?: string | null, schemaChange: { __typename?: 'SchemaChange', id: string, subgraphName: string, severity: ChangeSeverity, diffSummary: string, detectedAt: any, hash: { __typename?: 'SchemaHashPair', old: string, new: string } } };
@@ -1517,6 +1310,15 @@ export type ListNotificationsQueryVariables = Exact<{
 
 export type ListNotificationsQuery = { __typename?: 'Query', exchange: { __typename?: 'ExchangeQueries', notification: { __typename?: 'ExchangeNotificationQueries', list: { __typename?: 'SchemaChangeNotificationConnection', total: number, limit: number, offset: number, items: Array<{ __typename?: 'SchemaChangeNotification', id: string, source: string, target: string, contract: string, summary: string, detectedAt: any, acknowledged: boolean, acknowledgedAt?: any | null, acknowledgedBy?: string | null, schemaChange: { __typename?: 'SchemaChange', id: string, subgraphName: string, severity: ChangeSeverity, diffSummary: string, detectedAt: any, hash: { __typename?: 'SchemaHashPair', old: string, new: string } } }> } } } };
 
+export type DeprecationNotificationFieldsFragment = { __typename?: 'ContractDeprecationNotification', id: string, contractId: string, source: string, target: string, contractIdentifier: string, reason?: string | null, sinceVersion?: string | null, alternative?: string | null, removalVersion?: string | null, createdAt: any, acknowledged: boolean, acknowledgedAt?: any | null, acknowledgedBy?: string | null };
+
+export type ListDeprecationNotificationsQueryVariables = Exact<{
+  input: DeprecationNotificationListInput;
+}>;
+
+
+export type ListDeprecationNotificationsQuery = { __typename?: 'Query', exchange: { __typename?: 'ExchangeQueries', notification: { __typename?: 'ExchangeNotificationQueries', deprecation: { __typename?: 'ExchangeDeprecationNotificationQueries', list: { __typename?: 'ContractDeprecationNotificationConnection', total: number, limit: number, offset: number, items: Array<{ __typename?: 'ContractDeprecationNotification', id: string, contractId: string, source: string, target: string, contractIdentifier: string, reason?: string | null, sinceVersion?: string | null, alternative?: string | null, removalVersion?: string | null, createdAt: any, acknowledged: boolean, acknowledgedAt?: any | null, acknowledgedBy?: string | null }> } } } } };
+
 export const ServiceContractFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"serviceId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ServiceContractFieldsFragment, unknown>;
 export const ServiceContractSummaryFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractSummary"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}}]}}]} as unknown as DocumentNode<ServiceContractSummaryFragment, unknown>;
 export const ServiceIdentityFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceIdentityFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Service"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]} as unknown as DocumentNode<ServiceIdentityFieldsFragment, unknown>;
@@ -1526,6 +1328,7 @@ export const SubgraphFieldsFragmentDoc = {"kind":"Document","definitions":[{"kin
 export const SubgraphSchemaFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SubgraphSchemaFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SubgraphSchema"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"sdl"}},{"kind":"Field","name":{"kind":"Name","value":"refreshedAt"}},{"kind":"Field","name":{"kind":"Name","value":"changed"}}]}}]} as unknown as DocumentNode<SubgraphSchemaFieldsFragment, unknown>;
 export const SchemaChangeFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SchemaChangeFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SchemaChange"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subgraphName"}},{"kind":"Field","name":{"kind":"Name","value":"hash"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"old"}},{"kind":"Field","name":{"kind":"Name","value":"new"}}]}},{"kind":"Field","name":{"kind":"Name","value":"severity"}},{"kind":"Field","name":{"kind":"Name","value":"diffSummary"}},{"kind":"Field","name":{"kind":"Name","value":"detectedAt"}}]}}]} as unknown as DocumentNode<SchemaChangeFieldsFragment, unknown>;
 export const NotificationFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"NotificationFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SchemaChangeNotification"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"target"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"schemaChange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SchemaChangeFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"detectedAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledged"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedBy"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SchemaChangeFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SchemaChange"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subgraphName"}},{"kind":"Field","name":{"kind":"Name","value":"hash"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"old"}},{"kind":"Field","name":{"kind":"Name","value":"new"}}]}},{"kind":"Field","name":{"kind":"Name","value":"severity"}},{"kind":"Field","name":{"kind":"Name","value":"diffSummary"}},{"kind":"Field","name":{"kind":"Name","value":"detectedAt"}}]}}]} as unknown as DocumentNode<NotificationFieldsFragment, unknown>;
+export const DeprecationNotificationFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DeprecationNotificationFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ContractDeprecationNotification"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"contractId"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"target"}},{"kind":"Field","name":{"kind":"Name","value":"contractIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"sinceVersion"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removalVersion"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledged"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedBy"}}]}}]} as unknown as DocumentNode<DeprecationNotificationFieldsFragment, unknown>;
 export const UpsertGraphQlContractDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpsertGraphQLContract"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GraphQLContractUpsertInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"upsertGraphQL"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceContractFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"serviceId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpsertGraphQlContractMutation, UpsertGraphQlContractMutationVariables>;
 export const DeprecateContractDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeprecateContract"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ContractDeprecateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deprecate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceContractFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"serviceId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<DeprecateContractMutation, DeprecateContractMutationVariables>;
 export const DeleteContractDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteContract"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"delete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]}}]}}]} as unknown as DocumentNode<DeleteContractMutation, DeleteContractMutationVariables>;
@@ -1544,4 +1347,6 @@ export const GetSubgraphDocument = {"kind":"Document","definitions":[{"kind":"Op
 export const GetExchangeHealthDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExchangeHealth"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exchange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"health"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"activeSubgraphs"}},{"kind":"Field","name":{"kind":"Name","value":"totalSubgraphs"}},{"kind":"Field","name":{"kind":"Name","value":"unhealthySubgraphs"}}]}}]}}]}}]} as unknown as DocumentNode<GetExchangeHealthQuery, GetExchangeHealthQueryVariables>;
 export const ListServicesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListServices"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceListInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"list"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"lifecycle"}},{"kind":"Field","name":{"kind":"Name","value":"health"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"lastCheckedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tags"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"offset"}}]}}]}}]}}]} as unknown as DocumentNode<ListServicesQuery, ListServicesQueryVariables>;
 export const AcknowledgeNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AcknowledgeNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exchange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notification"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"acknowledge"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"NotificationFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SchemaChangeFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SchemaChange"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subgraphName"}},{"kind":"Field","name":{"kind":"Name","value":"hash"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"old"}},{"kind":"Field","name":{"kind":"Name","value":"new"}}]}},{"kind":"Field","name":{"kind":"Name","value":"severity"}},{"kind":"Field","name":{"kind":"Name","value":"diffSummary"}},{"kind":"Field","name":{"kind":"Name","value":"detectedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"NotificationFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SchemaChangeNotification"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"target"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"schemaChange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SchemaChangeFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"detectedAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledged"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedBy"}}]}}]} as unknown as DocumentNode<AcknowledgeNotificationsMutation, AcknowledgeNotificationsMutationVariables>;
+export const AcknowledgeDeprecationNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AcknowledgeDeprecationNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exchange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notification"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"acknowledge"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DeprecationNotificationFields"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DeprecationNotificationFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ContractDeprecationNotification"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"contractId"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"target"}},{"kind":"Field","name":{"kind":"Name","value":"contractIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"sinceVersion"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removalVersion"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledged"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedBy"}}]}}]} as unknown as DocumentNode<AcknowledgeDeprecationNotificationsMutation, AcknowledgeDeprecationNotificationsMutationVariables>;
 export const ListNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NotificationListInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exchange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notification"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"list"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"NotificationFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"offset"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SchemaChangeFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SchemaChange"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subgraphName"}},{"kind":"Field","name":{"kind":"Name","value":"hash"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"old"}},{"kind":"Field","name":{"kind":"Name","value":"new"}}]}},{"kind":"Field","name":{"kind":"Name","value":"severity"}},{"kind":"Field","name":{"kind":"Name","value":"diffSummary"}},{"kind":"Field","name":{"kind":"Name","value":"detectedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"NotificationFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SchemaChangeNotification"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"target"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"summary"}},{"kind":"Field","name":{"kind":"Name","value":"schemaChange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SchemaChangeFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"detectedAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledged"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedBy"}}]}}]} as unknown as DocumentNode<ListNotificationsQuery, ListNotificationsQueryVariables>;
+export const ListDeprecationNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListDeprecationNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeprecationNotificationListInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exchange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"notification"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"list"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DeprecationNotificationFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"offset"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DeprecationNotificationFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ContractDeprecationNotification"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"contractId"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"target"}},{"kind":"Field","name":{"kind":"Name","value":"contractIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"sinceVersion"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removalVersion"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledged"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedAt"}},{"kind":"Field","name":{"kind":"Name","value":"acknowledgedBy"}}]}}]} as unknown as DocumentNode<ListDeprecationNotificationsQuery, ListDeprecationNotificationsQueryVariables>;

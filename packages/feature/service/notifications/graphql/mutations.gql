@@ -10,3 +10,15 @@ mutation AcknowledgeNotifications($ids: [ID!]!) {
     }
   }
 }
+
+mutation AcknowledgeDeprecationNotifications($ids: [ID!]!) {
+  exchange {
+    notification {
+      deprecation {
+        acknowledge(ids: $ids) {
+          ...DeprecationNotificationFields
+        }
+      }
+    }
+  }
+}
