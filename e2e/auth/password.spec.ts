@@ -234,7 +234,11 @@ test.describe('Change Password (Authenticated)', () => {
 
       // Should show error (either invalid password or auth error)
       // Matches: "INVALID_CURRENT_PASSWORD", "invalid password", "incorrect password", "wrong password", or "Not authenticated"
-      await expect(page.getByText(/INVALID_CURRENT_PASSWORD|invalid.*password|incorrect.*password|wrong.*password|not authenticated/i)).toBeVisible({ timeout: 10000 });
+      await expect(
+        page.getByText(
+          /INVALID_CURRENT_PASSWORD|invalid.*password|incorrect.*password|wrong.*password|not authenticated/i
+        )
+      ).toBeVisible({ timeout: 10000 });
     });
   });
 });
@@ -350,11 +354,16 @@ test.describe('Password Reset Email Flow', () => {
     const cleanupToken = mailhog.extractPasswordResetToken(cleanupEmail);
     if (cleanupToken) {
       await page.goto(`${passwordUrls.reset}?token=${cleanupToken}`);
-      await page.getByLabel(/new password/i).first().fill(originalPassword);
+      await page
+        .getByLabel(/new password/i)
+        .first()
+        .fill(originalPassword);
       await page.getByLabel(/confirm.*password/i).fill(originalPassword);
       await page.getByRole('button', { name: /reset password/i }).click();
       // Wait for success or error - either is acceptable for cleanup
-      await page.waitForURL((url) => url.pathname.includes('/login') || url.pathname.includes('/reset'), { timeout: 10000 }).catch(() => {});
+      await page
+        .waitForURL((url) => url.pathname.includes('/login') || url.pathname.includes('/reset'), { timeout: 10000 })
+        .catch(() => {});
     }
   });
 });

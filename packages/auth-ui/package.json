@@ -10,6 +10,10 @@
     ".": "./src/index.ts",
     "./layouts": "./src/layouts/index.ts",
     "./components": "./src/components/index.ts",
+    "./forms": "./src/forms/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./adapter": "./src/adapter/index.ts",
+    "./adapter/types": "./src/adapter/types.ts",
     "./themes": "./src/themes/index.ts"
   },
   "scripts": {

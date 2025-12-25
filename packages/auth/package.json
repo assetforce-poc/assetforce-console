@@ -13,7 +13,10 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "iron-session": "^8.0.4"
@@ -23,6 +26,7 @@
     "@assetforce/graphql": "*"
   },
   "devDependencies": {
+    "@assetforce/jest-config": "*",
     "@assetforce/typescript-config": "*",
     "@types/react": "~19.2.7",
     "typescript": "~5.9.3"

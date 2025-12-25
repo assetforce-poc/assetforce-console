@@ -83,7 +83,12 @@ function LoginContent() {
             Sign in to access your account
           </Typography>
           <MultiTenantLoginForm onSuccess={handleSuccess} onError={handleError} />
-          <Typography variant="body2" align="center" sx={{ mt: 3 }}>
+          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+            <MuiLink component={Link} href="/auth/password/forgot">
+              Forgot password?
+            </MuiLink>
+          </Typography>
+          <Typography variant="body2" align="center" sx={{ mt: 1 }}>
             Don&apos;t have an account?{' '}
             <MuiLink component={Link} href="/auth/register">
               Sign up

@@ -215,14 +215,14 @@ export const mailhog = {
 export const testAccounts = {
   // User with single tenant membership (for change password tests)
   singleTenant: {
-    username: 'single',  // For login form
-    email: 'single@example.com',  // For forgot password form
+    username: 'single', // For login form
+    email: 'single@example.com', // For forgot password form
     password: 'single123',
   },
   // Admin user
   admin: {
-    username: 'admin',  // For login form
-    email: 'admin@example.com',  // For forgot password form
+    username: 'admin', // For login form
+    email: 'admin@example.com', // For forgot password form
     password: 'admin123',
   },
   // Multi-tenant user

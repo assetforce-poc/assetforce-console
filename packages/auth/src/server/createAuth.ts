@@ -4,11 +4,21 @@ import { type AuthClient, createAACClient } from '../internal/aac';
 import { buildSessionOptions, getSessionFromCookies, getSessionFromHeaders } from '../internal/session';
 import type { AuthConfig, Session, SessionData } from '../types';
 import { HANDLERS } from './handlers';
+import { createChangePassword, createForgotPassword, createResetPassword } from './password/api';
 import { createRefresh } from './refresh/api';
 import { createSelectTenant } from './selectTenant/api';
 import { createSignIn } from './signIn/api';
 import { createSignOut } from './signOut/api';
-import type { RefreshResult, RouteKey, SelectTenantResult, SignInCredentials, SignInResult } from './types';
+import type {
+  ChangePasswordResult,
+  ForgotPasswordResult,
+  RefreshResult,
+  ResetPasswordResult,
+  RouteKey,
+  SelectTenantResult,
+  SignInCredentials,
+  SignInResult,
+} from './types';
 
 /**
  * AuthInstance - Auth instance interface
@@ -44,6 +54,19 @@ export interface AuthInstance {
 
     /** Refresh session tokens */
     refresh: (session: IronSession<SessionData>) => Promise<RefreshResult>;
+
+    /** Request password reset email */
+    forgotPassword: (email: string) => Promise<ForgotPasswordResult>;
+
+    /** Reset password with token */
+    resetPassword: (token: string, newPassword: string) => Promise<ResetPasswordResult>;
+
+    /** Change password for authenticated user */
+    changePassword: (
+      currentPassword: string,
+      newPassword: string,
+      session: IronSession<SessionData>
+    ) => Promise<ChangePasswordResult>;
   };
 
   /** Handler for API routes */
@@ -77,6 +100,9 @@ export const createAuth = (config: AuthConfig): AuthInstance => {
   const selectTenant = createSelectTenant(authClient);
   const signOut = createSignOut(authClient);
   const refresh = createRefresh(authClient);
+  const forgotPassword = createForgotPassword(authClient);
+  const resetPassword = createResetPassword(authClient);
+  const changePassword = createChangePassword(authClient);
 
   const api: AuthInstance['api'] = {
     getSession: async ({ headers }) => getSessionFromHeaders(headers, sessionOptions),
@@ -90,6 +116,9 @@ export const createAuth = (config: AuthConfig): AuthInstance => {
     selectTenant,
     signOut,
     refresh,
+    forgotPassword,
+    resetPassword,
+    changePassword,
   };
 
   const handler: AuthInstance['handler'] = async (request) => {
@@ -137,4 +166,12 @@ export const createAuth = (config: AuthConfig): AuthInstance => {
 };
 
 // Re-export types
-export type { RefreshResult, SelectTenantResult, SignInCredentials, SignInResult } from './types';
+export type {
+  ChangePasswordResult,
+  ForgotPasswordResult,
+  RefreshResult,
+  ResetPasswordResult,
+  SelectTenantResult,
+  SignInCredentials,
+  SignInResult,
+} from './types';
