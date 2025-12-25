@@ -1,0 +1,15 @@
+query ValidateActivationToken($token: String!) {
+  account {
+    activation {
+      validate(token: $token) {
+        valid
+        email
+        expiresAt
+        error {
+          code
+          message
+        }
+      }
+    }
+  }
+}

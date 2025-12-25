@@ -1,4 +1,5 @@
 // Sub-functions
+export * from './activation';
 export * from './login';
 export * from './register';
 export * from './tenant';

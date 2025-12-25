@@ -34,6 +34,49 @@ export type Account = {
   username: Scalars['String']['output'];
 };
 
+/** Activation-related mutations */
+export type AccountActivationMutations = {
+  __typename?: 'AccountActivationMutations';
+  /**
+   * Activate account using token from email.
+   * User operation - sets password and auto-login.
+   */
+  activate: ActivationResult;
+  /**
+   * Resend activation email to account with PENDING status.
+   * Admin operation.
+   */
+  resend: SendActivationResult;
+};
+
+
+/** Activation-related mutations */
+export type AccountActivationMutationsActivateArgs = {
+  input: ActivateAccountInput;
+};
+
+
+/** Activation-related mutations */
+export type AccountActivationMutationsResendArgs = {
+  accountId: Scalars['String']['input'];
+};
+
+/** Activation-related queries */
+export type AccountActivationQueries = {
+  __typename?: 'AccountActivationQueries';
+  /**
+   * Validate an activation token.
+   * Works for anonymous users (no auth required).
+   */
+  validate: ActivationValidationResult;
+};
+
+
+/** Activation-related queries */
+export type AccountActivationQueriesValidateArgs = {
+  token: Scalars['String']['input'];
+};
+
 /** Account connection with pagination support */
 export type AccountConnection = {
   __typename?: 'AccountConnection';
@@ -96,13 +139,74 @@ export type AccountEmailMutationsVerifyArgs = {
 /** Account-related mutations */
 export type AccountMutations = {
   __typename?: 'AccountMutations';
+  /** Activation-related operations (Task 061) */
+  activation: AccountActivationMutations;
+  /** Create a new user account (admin operation - Task 061) */
+  create: CreateUserResult;
   /** Email-related operations for an account */
   email: AccountEmailMutations;
+  /** Password-related operations for an account */
+  password: AccountPasswordMutations;
 };
+
+
+/** Account-related mutations */
+export type AccountMutationsCreateArgs = {
+  input: CreateUserInput;
+};
+
+/** Password-related mutations for an account */
+export type AccountPasswordMutations = {
+  __typename?: 'AccountPasswordMutations';
+  /**
+   * Change password for authenticated user.
+   * Requires Authorization header (JWT).
+   */
+  change: ChangePasswordResult;
+  /**
+   * Forgot password - send reset email.
+   * No authentication required.
+   * Always returns success to prevent email enumeration.
+   */
+  forgot: ForgotPasswordResult;
+  /**
+   * Reset password using token from email.
+   * Token authentication (from URL parameter).
+   */
+  reset: ResetPasswordResult;
+};
+
+
+/** Password-related mutations for an account */
+export type AccountPasswordMutationsChangeArgs = {
+  input: ChangePasswordInput;
+};
+
+
+/** Password-related mutations for an account */
+export type AccountPasswordMutationsForgotArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+/** Password-related mutations for an account */
+export type AccountPasswordMutationsResetArgs = {
+  input: ResetPasswordInput;
+};
+
+/** Account provisioning method */
+export enum AccountProvision {
+  /** Send activation email - user sets own password */
+  Email = 'EMAIL',
+  /** Admin sets temporary password - user must change on first login */
+  Temporary = 'TEMPORARY'
+}
 
 /** Account-related queries */
 export type AccountQueries = {
   __typename?: 'AccountQueries';
+  /** Activation-related queries (Task 061) */
+  activation: AccountActivationQueries;
   /**
    * List accounts with optional filters.
    * Phase 8: Returns all matching accounts (queries.pagination ignored)
@@ -141,6 +245,65 @@ export enum AccountStatus {
   Suspended = 'SUSPENDED'
 }
 
+/** Input for account activation */
+export type ActivateAccountInput = {
+  /** New password */
+  password: Scalars['String']['input'];
+  /** Activation token from email */
+  token: Scalars['String']['input'];
+};
+
+/** Activation error details */
+export type ActivationError = {
+  __typename?: 'ActivationError';
+  /** Error code */
+  code: ActivationErrorCode;
+  /** Human-readable message */
+  message: Scalars['String']['output'];
+  /** Password validation errors (if code is WEAK_PASSWORD) */
+  passwordErrors?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+/** Activation error codes */
+export enum ActivationErrorCode {
+  /** Account not found */
+  AccountNotFound = 'ACCOUNT_NOT_FOUND',
+  /** Account already activated */
+  AlreadyActivated = 'ALREADY_ACTIVATED',
+  /** Token has expired */
+  ExpiredToken = 'EXPIRED_TOKEN',
+  /** Token is invalid or corrupted */
+  InvalidToken = 'INVALID_TOKEN',
+  /** Generic server error */
+  ServerError = 'SERVER_ERROR',
+  /** Password does not meet requirements */
+  WeakPassword = 'WEAK_PASSWORD'
+}
+
+/** Result of account activation */
+export type ActivationResult = {
+  __typename?: 'ActivationResult';
+  /** Error details (on failure) */
+  error?: Maybe<ActivationError>;
+  /** Whether activation succeeded */
+  success: Scalars['Boolean']['output'];
+  /** JWT tokens for auto-login (on success) */
+  tokens?: Maybe<AuthTokens>;
+};
+
+/** Result of activation token validation */
+export type ActivationValidationResult = {
+  __typename?: 'ActivationValidationResult';
+  /** User email (for display in form) */
+  email?: Maybe<Scalars['String']['output']>;
+  /** Error details if invalid */
+  error?: Maybe<ActivationError>;
+  /** Token expiration time */
+  expiresAt?: Maybe<Scalars['String']['output']>;
+  /** Whether token is valid and not expired */
+  valid: Scalars['Boolean']['output'];
+};
+
 /**
  * Key-value attribute entry.
  * Sensitive values like emailVerificationToken are masked.
@@ -167,12 +330,26 @@ export type AuthResult = {
   tokenType?: Maybe<Scalars['String']['output']>;
 };
 
+/** JWT authentication tokens */
+export type AuthTokens = {
+  __typename?: 'AuthTokens';
+  /** JWT access token (short-lived) */
+  accessToken: Scalars['String']['output'];
+  /** Access token expiration in seconds */
+  expiresIn: Scalars['Int']['output'];
+  /** JWT refresh token (long-lived) */
+  refreshToken: Scalars['String']['output'];
+  /** Token type (typically Bearer) */
+  tokenType: Scalars['String']['output'];
+};
+
 /** Authentication-related mutations */
 export type AuthenticateMutations = {
   __typename?: 'AuthenticateMutations';
   /**
    * Enter a tenant after credential verification.
    * Used when user has multiple tenants and selected one.
+   * Requires Authorization header with accessToken from login response.
    */
   enter: AuthResult;
   /**
@@ -208,6 +385,52 @@ export type AuthenticateMutationsLoginArgs = {
 /** Authentication-related mutations */
 export type AuthenticateMutationsRefreshTokenArgs = {
   refreshToken: Scalars['String']['input'];
+};
+
+/** Input for password change operation */
+export type ChangePasswordInput = {
+  /** Current password for verification */
+  currentPassword: Scalars['String']['input'];
+  /** New password */
+  newPassword: Scalars['String']['input'];
+};
+
+/** Result of password change operation */
+export type ChangePasswordResult = {
+  __typename?: 'ChangePasswordResult';
+  /** Success or error message */
+  message?: Maybe<Scalars['String']['output']>;
+  /** Whether change was successful */
+  success: Scalars['Boolean']['output'];
+};
+
+/** Input for creating a new user account */
+export type CreateUserInput = {
+  /** Display name (required) */
+  displayName: Scalars['String']['input'];
+  /** User email (required) */
+  email: Scalars['String']['input'];
+  /** Initial password (required when provision = TEMPORARY) */
+  password?: InputMaybe<Scalars['String']['input']>;
+  /** Account provisioning method */
+  provision: AccountProvision;
+  /** Role within the tenant */
+  role: Scalars['String']['input'];
+  /** Tenant ID to assign user to */
+  tenantId: Scalars['String']['input'];
+};
+
+/** Result of user creation */
+export type CreateUserResult = {
+  __typename?: 'CreateUserResult';
+  /** Created account ID */
+  accountId: Scalars['String']['output'];
+  /** User email */
+  email: Scalars['String']['output'];
+  /** Error if any */
+  error?: Maybe<UserError>;
+  /** Account status (PENDING for EMAIL, ACTIVE for TEMPORARY) */
+  status: AccountStatus;
 };
 
 /** Email availability status (replaces EmailAvailability) */
@@ -479,6 +702,15 @@ export enum ErrorType {
   Unknown = 'UNKNOWN'
 }
 
+/** Result of forgot password operation */
+export type ForgotPasswordResult = {
+  __typename?: 'ForgotPasswordResult';
+  /** User-friendly message */
+  message?: Maybe<Scalars['String']['output']>;
+  /** Always true to prevent email enumeration */
+  success: Scalars['Boolean']['output'];
+};
+
 /** 4D Identity Context - Zone/Tenant/Subject/Groups */
 export type IdentityContext = {
   __typename?: 'IdentityContext';
@@ -487,6 +719,28 @@ export type IdentityContext = {
   /** Tenant ID (Keycloak realm name) */
   tenant: Scalars['String']['output'];
   zone?: Maybe<Scalars['String']['output']>;
+};
+
+/**
+ * Tenant invite email mutations.
+ * Called by IMC to send invite emails via Keycloak.
+ */
+export type InviteMutations = {
+  __typename?: 'InviteMutations';
+  /**
+   * Send tenant invite email via Keycloak's tenant-invite SPI.
+   * Creates user if not exists, generates action token, and sends email.
+   */
+  send: TenantInviteEmailResult;
+};
+
+
+/**
+ * Tenant invite email mutations.
+ * Called by IMC to send invite emails via Keycloak.
+ */
+export type InviteMutationsSendArgs = {
+  input: TenantInviteEmailInput;
 };
 
 /** Query parameters for list operations */
@@ -529,6 +783,8 @@ export type Mutation = {
   account: AccountMutations;
   /** Authentication-related mutations (new namespace) */
   authenticate: AuthenticateMutations;
+  /** Invite-related mutations (internal API for IMC) */
+  invite: InviteMutations;
   /** Registration-related mutations (new namespace) */
   registration: RegistrationMutations;
   /** Verify account email by admin (bypasses email verification flow) */
@@ -699,12 +955,40 @@ export type ResendVerificationResult = {
   success: Scalars['Boolean']['output'];
 };
 
+/** Input for password reset operation */
+export type ResetPasswordInput = {
+  /** New password */
+  newPassword: Scalars['String']['input'];
+  /** Token from password reset email */
+  token: Scalars['String']['input'];
+};
+
+/** Result of password reset operation */
+export type ResetPasswordResult = {
+  __typename?: 'ResetPasswordResult';
+  /** Success or error message */
+  message?: Maybe<Scalars['String']['output']>;
+  /** Whether reset was successful */
+  success: Scalars['Boolean']['output'];
+};
+
 /** Search input parameters */
 export type SearchInput = {
   /** Fields to search in */
   fields?: InputMaybe<Array<Scalars['String']['input']>>;
   /** Search query string */
   query?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Result of resend activation email */
+export type SendActivationResult = {
+  __typename?: 'SendActivationResult';
+  /** Error if failed */
+  error?: Maybe<ActivationError>;
+  /** Token expiration time */
+  expiresAt?: Maybe<Scalars['String']['output']>;
+  /** Whether email was sent successfully */
+  success: Scalars['Boolean']['output'];
 };
 
 export type Session = {
@@ -771,6 +1055,37 @@ export type Tenant = {
   zoneId: Scalars['String']['output'];
 };
 
+/** Input for sending tenant invite email */
+export type TenantInviteEmailInput = {
+  /** Email address to invite */
+  email: Scalars['String']['input'];
+  /** Expiration in days (default: 7) */
+  expirationDays?: InputMaybe<Scalars['Int']['input']>;
+  /** IMC invite ID (UUID) */
+  inviteId: Scalars['String']['input'];
+  /** Inviter display name */
+  inviterName?: InputMaybe<Scalars['String']['input']>;
+  /** Optional personal message */
+  message?: InputMaybe<Scalars['String']['input']>;
+  /** Role to assign upon acceptance */
+  role?: InputMaybe<Scalars['String']['input']>;
+  /** Tenant display name */
+  tenantName?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Result of tenant invite email operation */
+export type TenantInviteEmailResult = {
+  __typename?: 'TenantInviteEmailResult';
+  /** Error message if failed */
+  error?: Maybe<Scalars['String']['output']>;
+  /** The invite URL sent in email */
+  inviteUrl?: Maybe<Scalars['String']['output']>;
+  /** Whether the operation succeeded */
+  success: Scalars['Boolean']['output'];
+  /** Keycloak user ID (if user was created or found) */
+  userId?: Maybe<Scalars['String']['output']>;
+};
+
 /** User's tenant membership status */
 export type TenantStatus = {
   __typename?: 'TenantStatus';
@@ -792,6 +1107,15 @@ export type TokenValidation = {
   tenant?: Maybe<Scalars['String']['output']>;
   username?: Maybe<Scalars['String']['output']>;
   valid: Scalars['Boolean']['output'];
+};
+
+/** User error details */
+export type UserError = {
+  __typename?: 'UserError';
+  /** Error code */
+  code: Scalars['String']['output'];
+  /** Human-readable message */
+  message: Scalars['String']['output'];
 };
 
 /** Email verification result (replaces EmailVerificationResult) */
@@ -823,12 +1147,26 @@ export type _Service = {
   sdl: Scalars['String']['output'];
 };
 
+export type CreateUserMutationVariables = Exact<{
+  input: CreateUserInput;
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', account: { __typename?: 'AccountMutations', create: { __typename?: 'CreateUserResult', accountId: string, email: string, status: AccountStatus, error?: { __typename?: 'UserError', code: string, message: string } | null } } };
+
 export type GetAccountDetailQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
 export type GetAccountDetailQuery = { __typename?: 'Query', account: { __typename?: 'AccountQueries', one: { __typename?: 'AccountDetail', id: string, username: string, email?: string | null, status: AccountStatus, emailVerified: boolean, createdAt: string, updatedAt?: string | null, firstName?: string | null, lastName?: string | null, attributes: Array<{ __typename?: 'AttributeEntry', key: string, value: string, isSensitive: boolean }>, sessions: Array<{ __typename?: 'SessionInfo', id: string, ipAddress?: string | null, userAgent?: string | null, start?: string | null, lastAccess?: string | null }> } } };
+
+export type ResendActivationMutationVariables = Exact<{
+  accountId: Scalars['String']['input'];
+}>;
+
+
+export type ResendActivationMutation = { __typename?: 'Mutation', account: { __typename?: 'AccountMutations', activation: { __typename?: 'AccountActivationMutations', resend: { __typename?: 'SendActivationResult', success: boolean, expiresAt?: string | null, error?: { __typename?: 'ActivationError', code: ActivationErrorCode, message: string } | null } } } };
 
 export type VerifyEmailByAdminMutationVariables = Exact<{
   accountId: Scalars['String']['input'];
@@ -846,6 +1184,8 @@ export type ListAccountsQueryVariables = Exact<{
 export type ListAccountsQuery = { __typename?: 'Query', account: { __typename?: 'AccountQueries', list: { __typename?: 'AccountConnection', total: number, items: Array<{ __typename?: 'Account', id: string, username: string, email?: string | null, status: AccountStatus, emailVerified: boolean, createdAt: string }>, pagination: { __typename?: 'Pagination', current: number, size: number, total: number, hasNext: boolean, hasPrev: boolean } } } };
 
 
+export const CreateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"create"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accountId"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CreateUserMutation, CreateUserMutationVariables>;
 export const GetAccountDetailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAccountDetail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"attributes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isSensitive"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sessions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ipAddress"}},{"kind":"Field","name":{"kind":"Name","value":"userAgent"}},{"kind":"Field","name":{"kind":"Name","value":"start"}},{"kind":"Field","name":{"kind":"Name","value":"lastAccess"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetAccountDetailQuery, GetAccountDetailQueryVariables>;
+export const ResendActivationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ResendActivation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accountId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resend"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"accountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<ResendActivationMutation, ResendActivationMutationVariables>;
 export const VerifyEmailByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"VerifyEmailByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accountId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verifyEmailByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"accountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]} as unknown as DocumentNode<VerifyEmailByAdminMutation, VerifyEmailByAdminMutationVariables>;
 export const ListAccountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListAccounts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"status"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AccountStatus"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"queries"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ListQueriesInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"list"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"status"},"value":{"kind":"Variable","name":{"kind":"Name","value":"status"}}},{"kind":"Argument","name":{"kind":"Name","value":"queries"},"value":{"kind":"Variable","name":{"kind":"Name","value":"queries"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"pagination"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"current"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"hasNext"}},{"kind":"Field","name":{"kind":"Name","value":"hasPrev"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ListAccountsQuery, ListAccountsQueryVariables>;

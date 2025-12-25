@@ -14,6 +14,7 @@ import {
 } from '@assetforce/material';
 import { useState } from 'react';
 
+import type { SendActivationResult } from '../../generated/graphql';
 import { AccountStatusBadge } from '../../list/components/AccountStatusBadge';
 import type { AccountDetail } from '../types';
 
@@ -61,21 +62,31 @@ export interface AccountInfoCardProps {
   account: AccountDetail;
   onVerifyEmail?: () => Promise<void>;
   verifyLoading?: boolean;
+  onResendActivation?: () => Promise<SendActivationResult>;
+  resendLoading?: boolean;
 }
 
 /**
- * AccountInfoCard - Display account basic information with verify email button
+ * AccountInfoCard - Display account basic information with action buttons
  *
  * @example
  * ```tsx
  * <AccountInfoCard
  *   account={account}
  *   onVerifyEmail={handleVerify}
- *   verifyLoading={loading}
+ *   verifyLoading={verifyLoading}
+ *   onResendActivation={handleResend}
+ *   resendLoading={resendLoading}
  * />
  * ```
  */
-export function AccountInfoCard({ account, onVerifyEmail, verifyLoading = false }: AccountInfoCardProps) {
+export function AccountInfoCard({
+  account,
+  onVerifyEmail,
+  verifyLoading = false,
+  onResendActivation,
+  resendLoading = false,
+}: AccountInfoCardProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -92,24 +103,55 @@ export function AccountInfoCard({ account, onVerifyEmail, verifyLoading = false 
     }
   };
 
+  const handleResend = async () => {
+    if (!onResendActivation) return;
+
+    try {
+      setError(null);
+      setSuccess(null);
+      const result = await onResendActivation();
+      if (result.success) {
+        setSuccess('Activation email sent successfully');
+      } else {
+        setError(result.error?.message || 'Failed to send activation email');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send activation email');
+    }
+  };
+
   const canVerifyEmail = !account.emailVerified && !!onVerifyEmail;
+  const canResendActivation = account.status === 'PENDING_VERIFICATION' && !!onResendActivation;
 
   return (
     <Card>
       <CardHeader
         title="Account Information"
         action={
-          canVerifyEmail && (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleVerify}
-              disabled={verifyLoading}
-              startIcon={verifyLoading ? <CircularProgress size={20} /> : null}
-            >
-              {verifyLoading ? 'Verifying...' : 'Verify Email'}
-            </Button>
-          )
+          <Stack direction="row" spacing={1}>
+            {canVerifyEmail && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleVerify}
+                disabled={verifyLoading}
+                startIcon={verifyLoading ? <CircularProgress size={20} /> : null}
+              >
+                {verifyLoading ? 'Verifying...' : 'Verify Email'}
+              </Button>
+            )}
+            {canResendActivation && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleResend}
+                disabled={resendLoading}
+                startIcon={resendLoading ? <CircularProgress size={20} /> : null}
+              >
+                {resendLoading ? 'Sending...' : 'Resend Activation'}
+              </Button>
+            )}
+          </Stack>
         }
       />
       <CardContent>

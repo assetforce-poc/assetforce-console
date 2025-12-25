@@ -1,0 +1,20 @@
+mutation ActivateAccount($input: ActivateAccountInput!) {
+  account {
+    activation {
+      activate(input: $input) {
+        success
+        tokens {
+          accessToken
+          refreshToken
+          expiresIn
+          tokenType
+        }
+        error {
+          code
+          message
+          passwordErrors
+        }
+      }
+    }
+  }
+}

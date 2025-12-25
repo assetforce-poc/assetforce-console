@@ -1,0 +1,16 @@
+#import "@assetforce/graphql"
+
+mutation ResendActivation($accountId: String!) {
+  account {
+    activation {
+      resend(accountId: $accountId) {
+        success
+        expiresAt
+        error {
+          code
+          message
+        }
+      }
+    }
+  }
+}

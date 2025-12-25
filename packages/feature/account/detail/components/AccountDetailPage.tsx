@@ -2,7 +2,7 @@
 
 import { Alert, Box, CircularProgress, Stack } from '@assetforce/material';
 
-import { useAccountDetail, useVerifyEmail } from '../hooks';
+import { useAccountDetail, useResendActivation, useVerifyEmail } from '../hooks';
 import { AccountAttributesCard } from './AccountAttributesCard';
 import { AccountInfoCard } from './AccountInfoCard';
 import { SessionHistoryCard } from './SessionHistoryCard';
@@ -20,12 +20,21 @@ export interface AccountDetailPageProps {
 export function AccountDetailPage({ accountId }: AccountDetailPageProps) {
   const { account, loading, error, refetch } = useAccountDetail(accountId);
   const { verifyEmail, loading: verifyLoading } = useVerifyEmail();
+  const { resendActivation, loading: resendLoading } = useResendActivation();
 
   const handleVerifyEmail = async () => {
     const result = await verifyEmail(accountId);
     if (result.success) {
       await refetch(); // Refresh account data
     }
+  };
+
+  const handleResendActivation = async () => {
+    const result = await resendActivation(accountId);
+    if (result.success) {
+      await refetch(); // Refresh account data
+    }
+    return result;
   };
 
   if (loading) {
@@ -47,7 +56,13 @@ export function AccountDetailPage({ accountId }: AccountDetailPageProps) {
   return (
     <Stack spacing={3}>
       {/* Account Information Card */}
-      <AccountInfoCard account={account} onVerifyEmail={handleVerifyEmail} verifyLoading={verifyLoading} />
+      <AccountInfoCard
+        account={account}
+        onVerifyEmail={handleVerifyEmail}
+        verifyLoading={verifyLoading}
+        onResendActivation={handleResendActivation}
+        resendLoading={resendLoading}
+      />
 
       {/* Account Attributes Card */}
       <AccountAttributesCard attributes={account.attributes || []} />

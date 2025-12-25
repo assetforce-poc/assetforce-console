@@ -1,0 +1,15 @@
+#import "@assetforce/graphql"
+
+mutation CreateUser($input: CreateUserInput!) {
+  account {
+    create(input: $input) {
+      accountId
+      email
+      status
+      error {
+        code
+        message
+      }
+    }
+  }
+}
