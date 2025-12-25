@@ -1,21 +1,19 @@
 import { ApolloClientProvider } from '@assetforce/graphql/provider';
 import { Box, Breadcrumbs, Container, Typography } from '@assetforce/material';
-import { ServiceDetailPage } from '@assetforce/service/detail';
 import Link from 'next/link';
 
-import { ServiceDetailTabs } from './ServiceDetailTabs';
+import { NotificationsPageWrapper } from './NotificationsPageWrapper';
 
-type ServiceDetailPageProps = {
+type NotificationsPageProps = {
   params: Promise<{ slug: string }>;
 };
 
 /**
- * Service Detail Page Route - Admin Console
+ * Service Notifications Page Route - Admin Console
  *
- * This is the page router entry point for service details.
- * All actual content is in @assetforce/service/detail/components
+ * Displays schema change notifications for a service.
  */
-export default async function Page({ params }: ServiceDetailPageProps) {
+export default async function Page({ params }: NotificationsPageProps) {
   const { slug } = await params;
 
   return (
@@ -25,24 +23,22 @@ export default async function Page({ params }: ServiceDetailPageProps) {
           {/* Breadcrumbs */}
           <Breadcrumbs sx={{ mb: 2 }}>
             <Link href="/services">Services</Link>
+            <Link href={`/services/${slug}`}>{slug}</Link>
             <Typography component="span" color="text.primary">
-              {slug}
+              Notifications
             </Typography>
           </Breadcrumbs>
 
           {/* Page Title */}
           <Typography variant="h4" component="h1" gutterBottom>
-            Service Detail
+            Schema Change Notifications
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            View service information, health status, and instances
+            View and acknowledge schema changes that may affect this service
           </Typography>
 
-          {/* Tab Navigation */}
-          <ServiceDetailTabs slug={slug} />
-
-          {/* Service Detail Content from Feature Package */}
-          <ServiceDetailPage slug={slug} />
+          {/* Notifications Content */}
+          <NotificationsPageWrapper slug={slug} />
         </Box>
       </Container>
     </ApolloClientProvider>

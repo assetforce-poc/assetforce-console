@@ -13,7 +13,12 @@
     "./contracts": "./contracts/index.ts",
     "./contracts/components": "./contracts/components/index.ts",
     "./dependencies": "./dependencies/index.ts",
-    "./dependencies/components": "./dependencies/components/index.ts"
+    "./dependencies/components": "./dependencies/components/index.ts",
+    "./exchange": "./exchange/index.ts",
+    "./exchange/subgraphs": "./exchange/subgraphs/index.ts",
+    "./exchange/subgraphs/components": "./exchange/subgraphs/components/index.ts",
+    "./notifications": "./notifications/index.ts",
+    "./notifications/components": "./notifications/components/index.ts"
   },
   "scripts": {
     "lint": "eslint .",

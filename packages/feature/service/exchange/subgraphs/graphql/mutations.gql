@@ -1,0 +1,62 @@
+#import "@assetforce/graphql"
+#import "./queries.gql"
+
+mutation RegisterSubgraph($input: SubgraphRegisterInput!) {
+  exchange {
+    subgraph {
+      register(input: $input) {
+        ...SubgraphFields
+      }
+    }
+  }
+}
+
+mutation UpdateSubgraph($input: SubgraphUpdateInput!) {
+  exchange {
+    subgraph {
+      update(input: $input) {
+        ...SubgraphFields
+      }
+    }
+  }
+}
+
+mutation ActivateSubgraph($name: String!) {
+  exchange {
+    subgraph {
+      activate(name: $name) {
+        ...SubgraphFields
+      }
+    }
+  }
+}
+
+mutation DeactivateSubgraph($name: String!) {
+  exchange {
+    subgraph {
+      deactivate(name: $name) {
+        ...SubgraphFields
+      }
+    }
+  }
+}
+
+mutation RemoveSubgraph($name: String!) {
+  exchange {
+    subgraph {
+      remove(name: $name)
+    }
+  }
+}
+
+mutation RefreshSubgraphSchema($name: String!) {
+  exchange {
+    subgraph {
+      schema {
+        refresh(name: $name) {
+          ...SubgraphSchemaFields
+        }
+      }
+    }
+  }
+}

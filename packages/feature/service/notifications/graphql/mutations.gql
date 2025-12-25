@@ -1,0 +1,12 @@
+#import "@assetforce/graphql"
+#import "./queries.gql"
+
+mutation AcknowledgeNotifications($ids: [ID!]!) {
+  exchange {
+    notification {
+      acknowledge(ids: $ids) {
+        ...NotificationFields
+      }
+    }
+  }
+}

@@ -12,6 +12,7 @@ export default function Home() {
     { title: 'Tenants', value: '-', icon: Icons.Business, href: '/tenants' },
     { title: 'Accounts', value: '-', icon: Icons.ManageAccounts, href: '/accounts' },
     { title: 'Services', value: '-', icon: Icons.Hub, href: '/services' },
+    { title: 'Exchange', value: '-', icon: Icons.SwapHoriz, href: '/exchange/subgraphs' },
   ];
 
   return (
@@ -52,7 +53,7 @@ export default function Home() {
 
         <Grid container spacing={3} sx={{ mt: 2 }}>
           {stats.map((stat) => (
-            <Grid size={{ xs: 12, sm: 4 }} key={stat.title}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={stat.title}>
               <Paper
                 component={Link}
                 href={stat.href}
@@ -89,6 +90,9 @@ export default function Home() {
           </Button>
           <Button component={Link} href="/services" variant="outlined" startIcon={<Icons.Hub />}>
             View Services
+          </Button>
+          <Button component={Link} href="/exchange/subgraphs" variant="outlined" startIcon={<Icons.SwapHoriz />}>
+            Manage Subgraphs
           </Button>
         </Box>
       </Box>

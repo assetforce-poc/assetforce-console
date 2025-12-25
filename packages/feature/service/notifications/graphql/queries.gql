@@ -1,0 +1,43 @@
+#import "@assetforce/graphql"
+
+fragment SchemaChangeFields on SchemaChange {
+  id
+  subgraphName
+  hash {
+    old
+    new
+  }
+  severity
+  diffSummary
+  detectedAt
+}
+
+fragment NotificationFields on SchemaChangeNotification {
+  id
+  source
+  target
+  contract
+  summary
+  schemaChange {
+    ...SchemaChangeFields
+  }
+  detectedAt
+  acknowledged
+  acknowledgedAt
+  acknowledgedBy
+}
+
+query ListNotifications($input: NotificationListInput!) {
+  exchange {
+    notification {
+      list(input: $input) {
+        items {
+          ...NotificationFields
+        }
+        total
+        limit
+        offset
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+#import "@assetforce/graphql"
+
+fragment SubgraphFields on Subgraph {
+  id
+  name
+  displayName
+  graphqlUrl
+  status
+  schemaHash
+  lastHealthyAt
+  failureCount
+  priority
+  createdAt
+  updatedAt
+}
+
+fragment SubgraphSchemaFields on SubgraphSchema {
+  name
+  hash
+  sdl
+  refreshedAt
+  changed
+}
+
+query ListSubgraphs($status: SubgraphStatus) {
+  exchange {
+    subgraph {
+      list(status: $status) {
+        items {
+          ...SubgraphFields
+        }
+        total
+      }
+    }
+  }
+}
+
+query GetSubgraph($name: String!) {
+  exchange {
+    subgraph {
+      one(name: $name) {
+        ...SubgraphFields
+      }
+    }
+  }
+}
+
+query GetExchangeHealth {
+  exchange {
+    health {
+      status
+      activeSubgraphs
+      totalSubgraphs
+      unhealthySubgraphs
+    }
+  }
+}
