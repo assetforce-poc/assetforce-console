@@ -50,9 +50,8 @@ export const SubgraphsPage: FC = () => {
 
   const { subgraphs, total, loading, error, refetch } = useSubgraphList();
   const { health, loading: healthLoading } = useExchangeHealth();
-  const { register, activate, deactivate, remove, refreshSchema, registering, mutating } = useSubgraphMutations(
-    refetch
-  );
+  const { register, activate, deactivate, remove, refreshSchema, registering, mutating } =
+    useSubgraphMutations(refetch);
 
   const handleViewDetail = useCallback(
     (name: string) => {
@@ -61,10 +60,13 @@ export const SubgraphsPage: FC = () => {
     [router]
   );
 
-  const handleRegister = useCallback(async (input: Parameters<typeof register>[0]) => {
-    await register(input);
-    setRegisterOpen(false);
-  }, [register]);
+  const handleRegister = useCallback(
+    async (input: Parameters<typeof register>[0]) => {
+      await register(input);
+      setRegisterOpen(false);
+    },
+    [register]
+  );
 
   const handleRemove = useCallback(
     async (name: string) => {

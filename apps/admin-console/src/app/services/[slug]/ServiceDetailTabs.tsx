@@ -5,14 +5,14 @@ import { usePathname, useRouter } from 'next/navigation';
 import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
 
-interface ServiceDetailTabsProps {
+type ServiceDetailTabsProps = {
   slug: string;
-}
+};
 
-interface TabConfig {
+type TabConfig = {
   label: string;
   path: string;
-}
+};
 
 /**
  * Tabs navigation for service detail pages

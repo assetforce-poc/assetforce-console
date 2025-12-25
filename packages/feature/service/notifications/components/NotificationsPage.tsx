@@ -106,12 +106,7 @@ export const NotificationsPage: FC<NotificationsPageProps> = ({ serviceId, servi
             </IconButton>
           </Tooltip>
           {unacknowledgedCount > 0 && (
-            <Button
-              variant="contained"
-              onClick={acknowledgeAll}
-              disabled={acknowledging}
-              startIcon={<Icons.DoneAll />}
-            >
+            <Button variant="contained" onClick={acknowledgeAll} disabled={acknowledging} startIcon={<Icons.DoneAll />}>
               Acknowledge All
             </Button>
           )}

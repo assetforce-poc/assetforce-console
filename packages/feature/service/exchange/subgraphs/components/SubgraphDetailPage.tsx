@@ -68,9 +68,8 @@ function formatDate(date: string | null | undefined): string {
 export const SubgraphDetailPage: FC<SubgraphDetailPageProps> = ({ name }) => {
   const [tabValue, setTabValue] = useState(0);
   const { subgraph, loading, error, refetch } = useSubgraph(name);
-  const { activate, deactivate, refreshSchema, activating, deactivating, refreshing, mutating } = useSubgraphMutations(
-    refetch
-  );
+  const { activate, deactivate, refreshSchema, activating, deactivating, refreshing, mutating } =
+    useSubgraphMutations(refetch);
 
   const handleTabChange = useCallback((_event: SyntheticEvent, newValue: number) => {
     setTabValue(newValue);

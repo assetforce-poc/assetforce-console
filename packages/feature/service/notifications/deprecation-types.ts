@@ -17,8 +17,8 @@ export type DeprecationNotificationListInput = DeprecationNotificationListInputG
 /**
  * Filter option for deprecation notifications
  */
-export type DeprecationFilter = {
+export interface DeprecationFilter {
   acknowledged?: boolean;
   limit?: number;
   offset?: number;
-};
+}

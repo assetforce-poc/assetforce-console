@@ -37,12 +37,9 @@ export function useDeprecationNotifications(options: UseDeprecationNotifications
   });
 
   // Acknowledge mutation
-  const [acknowledgeMutation, { loading: acknowledging }] = useMutation(
-    AcknowledgeDeprecationNotificationsDocument,
-    {
-      onCompleted: () => refetch(),
-    }
-  );
+  const [acknowledgeMutation, { loading: acknowledging }] = useMutation(AcknowledgeDeprecationNotificationsDocument, {
+    onCompleted: () => refetch(),
+  });
 
   const notifications = (data?.exchange?.notification?.deprecation?.list?.items ?? []).filter(
     (item): item is ContractDeprecationNotification => Boolean(item)

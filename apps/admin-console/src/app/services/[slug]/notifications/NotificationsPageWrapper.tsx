@@ -1,8 +1,8 @@
 'use client';
 
 import { Alert, Box, CircularProgress } from '@assetforce/material';
-import { NotificationsPage } from '@assetforce/service/notifications';
 import { useServiceDetail } from '@assetforce/service/detail';
+import { NotificationsPage } from '@assetforce/service/notifications';
 
 export type NotificationsPageWrapperProps = {
   slug: string;

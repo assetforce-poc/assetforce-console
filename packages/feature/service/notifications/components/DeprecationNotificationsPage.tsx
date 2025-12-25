@@ -108,12 +108,7 @@ export const DeprecationNotificationsPage: FC<DeprecationNotificationsPageProps>
             </IconButton>
           </Tooltip>
           {unacknowledgedCount > 0 && (
-            <Button
-              variant="contained"
-              onClick={acknowledgeAll}
-              disabled={acknowledging}
-              startIcon={<Icons.DoneAll />}
-            >
+            <Button variant="contained" onClick={acknowledgeAll} disabled={acknowledging} startIcon={<Icons.DoneAll />}>
               Acknowledge All
             </Button>
           )}

@@ -1,8 +1,8 @@
 'use client';
 
 import { Alert, Box, CircularProgress } from '@assetforce/material';
-import { DeprecationNotificationsPage } from '@assetforce/service/notifications';
 import { useServiceDetail } from '@assetforce/service/detail';
+import { DeprecationNotificationsPage } from '@assetforce/service/notifications';
 
 export type DeprecationNotificationsPageWrapperProps = {
   slug: string;

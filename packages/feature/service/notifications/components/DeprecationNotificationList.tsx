@@ -114,9 +114,7 @@ export const DeprecationNotificationList: FC<DeprecationNotificationListProps> =
       {unacknowledged.length > 0 && (
         <Box sx={{ mb: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
           <Typography variant="body2" color="text.secondary">
-            {selectedIds.size > 0
-              ? `${selectedIds.size} selected`
-              : `${unacknowledged.length} unacknowledged`}
+            {selectedIds.size > 0 ? `${selectedIds.size} selected` : `${unacknowledged.length} unacknowledged`}
           </Typography>
 
           <Button
@@ -162,38 +160,22 @@ export const DeprecationNotificationList: FC<DeprecationNotificationListProps> =
                 }}
               >
                 <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedIds.has(notification.id)}
-                    onChange={() => handleSelect(notification.id)}
-                  />
+                  <Checkbox checked={selectedIds.has(notification.id)} onChange={() => handleSelect(notification.id)} />
                 </TableCell>
                 <TableCell>
                   <Box sx={{ display: 'flex', gap: 1 }}>
                     {notification.acknowledged ? (
-                      <Tooltip title={`Acknowledged by ${notification.acknowledgedBy || 'Unknown'} at ${formatDate(notification.acknowledgedAt)}`}>
-                        <Chip
-                          label="ACKNOWLEDGED"
-                          size="small"
-                          color="success"
-                          icon={<Icons.CheckCircle />}
-                        />
+                      <Tooltip
+                        title={`Acknowledged by ${notification.acknowledgedBy || 'Unknown'} at ${formatDate(notification.acknowledgedAt)}`}
+                      >
+                        <Chip label="ACKNOWLEDGED" size="small" color="success" icon={<Icons.CheckCircle />} />
                       </Tooltip>
                     ) : (
-                      <Chip
-                        label="NEW"
-                        size="small"
-                        color="warning"
-                        icon={<Icons.Notifications />}
-                      />
+                      <Chip label="NEW" size="small" color="warning" icon={<Icons.Notifications />} />
                     )}
                     {notification.removalVersion && (
                       <Tooltip title={`Will be removed in ${notification.removalVersion}`}>
-                        <Chip
-                          label="URGENT"
-                          size="small"
-                          color="error"
-                          icon={<Icons.Warning />}
-                        />
+                        <Chip label="URGENT" size="small" color="error" icon={<Icons.Warning />} />
                       </Tooltip>
                     )}
                   </Box>

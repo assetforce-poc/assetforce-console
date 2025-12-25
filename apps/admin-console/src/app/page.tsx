@@ -94,6 +94,15 @@ export default function Home() {
           <Button component={Link} href="/exchange/subgraphs" variant="outlined" startIcon={<Icons.SwapHoriz />}>
             Manage Subgraphs
           </Button>
+          <Button
+            component={Link}
+            href="/playground"
+            variant="outlined"
+            color="secondary"
+            startIcon={<Icons.Science />}
+          >
+            GraphQL Playground
+          </Button>
         </Box>
       </Box>
     </Container>

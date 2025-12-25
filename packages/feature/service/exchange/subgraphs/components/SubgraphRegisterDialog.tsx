@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Stack,
-  TextField,
-} from '@assetforce/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from '@assetforce/material';
 import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 
