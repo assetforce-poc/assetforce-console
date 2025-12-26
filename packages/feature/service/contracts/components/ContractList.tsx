@@ -149,7 +149,30 @@ export function ContractList({
                       </TableCell>
                       <TableCell>
                         {contract.deprecated ? (
-                          <Tooltip title={contract.deprecation?.reason || 'Deprecated'}>
+                          <Tooltip
+                            title={
+                              <Box sx={{ p: 0.5 }}>
+                                <Typography variant="caption" component="div" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                                  Deprecated
+                                </Typography>
+                                {contract.deprecation?.reason && (
+                                  <Typography variant="caption" component="div" sx={{ mb: 0.5 }}>
+                                    Reason: {contract.deprecation.reason}
+                                  </Typography>
+                                )}
+                                {contract.deprecation?.alternative && (
+                                  <Typography variant="caption" component="div" sx={{ mb: 0.5 }}>
+                                    Alternative: {contract.deprecation.alternative}
+                                  </Typography>
+                                )}
+                                {contract.deprecation?.removal && (
+                                  <Typography variant="caption" component="div" sx={{ color: 'error.light' }}>
+                                    Removal: {new Date(contract.deprecation.removal).toLocaleDateString()}
+                                  </Typography>
+                                )}
+                              </Box>
+                            }
+                          >
                             <Chip label="DEPRECATED" size="small" color="error" icon={<Icons.Warning />} />
                           </Tooltip>
                         ) : (
