@@ -5,6 +5,7 @@ import {
   CardContent,
   Chip,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -23,15 +24,31 @@ const ENV_COLORS: Record<string, 'success' | 'warning' | 'info' | 'default'> = {
   DEVELOPMENT: 'info',
 };
 
+const ZONE_COLORS: Record<string, 'primary' | 'secondary' | 'default'> = {
+  cosmos: 'primary',
+  galaxy: 'secondary',
+  stellar: 'default',
+};
+
 /** Instance summary for display (subset of ServiceInstance fields) */
 interface InstanceSummary {
   id: string;
   key: string;
+  zone: string;
   environment: Environment;
   baseUrl: string;
-  enabled: boolean;
+  endpoint: {
+    graphql?: { endpoint?: string | null; priority: number } | null;
+    rest?: { basePath?: string | null; priority: number } | null;
+    grpc?: { address?: string | null; priority: number } | null;
+  };
+  health: {
+    enabled: boolean;
+    lastStatus: HealthStatus;
+    lastCheckedAt?: string | null;
+    lastFailureReason?: string | null;
+  };
   probeApprovalStatus: ProbeApprovalStatus;
-  lastStatus: HealthStatus;
 }
 
 export interface ServiceInstancesTableProps {
@@ -58,9 +75,11 @@ export function ServiceInstancesTable({ instances }: ServiceInstancesTableProps)
             <Table size="small">
               <TableHead>
                 <TableRow>
+                  <TableCell>Zone</TableCell>
                   <TableCell>Environment</TableCell>
                   <TableCell>Key</TableCell>
                   <TableCell>Base URL</TableCell>
+                  <TableCell>Endpoints</TableCell>
                   <TableCell>Health</TableCell>
                   <TableCell>Status</TableCell>
                 </TableRow>
@@ -68,6 +87,13 @@ export function ServiceInstancesTable({ instances }: ServiceInstancesTableProps)
               <TableBody>
                 {instances.map((instance) => (
                   <TableRow key={instance.id}>
+                    <TableCell>
+                      <Chip
+                        label={instance.zone.toUpperCase()}
+                        size="small"
+                        color={ZONE_COLORS[instance.zone] ?? 'default'}
+                      />
+                    </TableCell>
                     <TableCell>
                       <Chip
                         label={instance.environment}
@@ -86,10 +112,35 @@ export function ServiceInstancesTable({ instances }: ServiceInstancesTableProps)
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <ServiceStatusBadge status={instance.lastStatus} />
+                      <Stack spacing={0.5}>
+                        {instance.endpoint.graphql?.endpoint && (
+                          <Chip
+                            label={`GraphQL (P${instance.endpoint.graphql.priority})`}
+                            size="small"
+                            variant="outlined"
+                          />
+                        )}
+                        {instance.endpoint.rest?.basePath && (
+                          <Chip
+                            label={`REST (P${instance.endpoint.rest.priority})`}
+                            size="small"
+                            variant="outlined"
+                          />
+                        )}
+                        {instance.endpoint.grpc?.address && (
+                          <Chip
+                            label={`gRPC (P${instance.endpoint.grpc.priority})`}
+                            size="small"
+                            variant="outlined"
+                          />
+                        )}
+                      </Stack>
                     </TableCell>
                     <TableCell>
-                      {!instance.enabled ? (
+                      <ServiceStatusBadge status={instance.health.lastStatus} />
+                    </TableCell>
+                    <TableCell>
+                      {!instance.health.enabled ? (
                         <Chip label="DISABLED" size="small" color="default" />
                       ) : instance.probeApprovalStatus === 'PENDING' ? (
                         <Chip label="PENDING" size="small" color="warning" />

@@ -670,6 +670,15 @@ export type GraphQlContractUpsertInput = {
   version?: InputMaybe<Scalars['String']['input']>;
 };
 
+/** GraphQL endpoint configuration */
+export type GraphQlEndpointConfig = {
+  __typename?: 'GraphQLEndpointConfig';
+  /** GraphQL endpoint URL (null = baseUrl + /graphql) */
+  endpoint?: Maybe<Scalars['String']['output']>;
+  /** Routing priority (higher = preferred, 1-999, default: 100) */
+  priority: Scalars['Int']['output'];
+};
+
 /** gRPC-specific contract configuration (future) */
 export type GrpcContractType = {
   __typename?: 'GrpcContractType';
@@ -681,6 +690,15 @@ export type GrpcContractType = {
   service: Scalars['String']['output'];
 };
 
+/** gRPC endpoint configuration */
+export type GrpcEndpointConfig = {
+  __typename?: 'GrpcEndpointConfig';
+  /** gRPC address (host:port) */
+  address?: Maybe<Scalars['String']['output']>;
+  /** Routing priority (higher = preferred, 1-999, default: 100) */
+  priority: Scalars['Int']['output'];
+};
+
 export enum HealthStatus {
   Down = 'DOWN',
   Unknown = 'UNKNOWN',
@@ -688,24 +706,60 @@ export enum HealthStatus {
 }
 
 export type InstanceDiscoverInput = {
-  /** Include all tenants. Platform-admin only. */
+  /** @deprecated Will be removed. Include all tenants. Platform-admin only. */
   allTenants?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Only return enabled instances (default: true) */
-  enabledOnly?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Filter by enabled status */
+  enabled?: InputMaybe<Scalars['Boolean']['input']>;
   /** Environment to discover in */
-  environment: Environment;
+  environment?: InputMaybe<Environment>;
   /** Filter by health status */
   health?: InputMaybe<HealthStatus>;
   /** Pagination parameters */
   page?: InputMaybe<PageInput>;
+  /** Filter by probe approval status */
+  probeApprovalStatus?: InputMaybe<ProbeApprovalStatus>;
   /** Service to discover instances for */
   serviceId: Scalars['ID']['input'];
-  /** Target specific tenant. Platform-admin only. */
+  /** @deprecated Use 'zone' instead. Target specific tenant. Platform-admin only. */
   tenant?: InputMaybe<Scalars['String']['input']>;
+  /** Filter by zone (cosmos/galaxy/stellar) */
+  zone?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Endpoint configuration container for multiple protocols */
+export type InstanceEndpointConfig = {
+  __typename?: 'InstanceEndpointConfig';
+  /** GraphQL endpoint configuration */
+  graphql?: Maybe<GraphQlEndpointConfig>;
+  /** gRPC endpoint configuration */
+  grpc?: Maybe<GrpcEndpointConfig>;
+  /** REST endpoint configuration */
+  rest?: Maybe<RestEndpointConfig>;
+};
+
+/** Health monitoring configuration and status */
+export type InstanceHealthConfig = {
+  __typename?: 'InstanceHealthConfig';
+  /** Check interval in seconds */
+  checkIntervalSeconds: Scalars['Int']['output'];
+  /** Whether health monitoring is enabled */
+  enabled: Scalars['Boolean']['output'];
+  /** Last health check timestamp */
+  lastCheckedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Last failure timestamp */
+  lastFailureAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Failure reason if last check failed */
+  lastFailureReason?: Maybe<Scalars['String']['output']>;
+  /** Most recent health check result */
+  lastStatus: HealthStatus;
+  /** Last successful check timestamp */
+  lastSuccessAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Health check endpoint path */
+  path: Scalars['String']['output'];
 };
 
 export type InstanceListInput = {
-  /** Include all tenants. Platform-admin only. */
+  /** @deprecated Will be removed. Include all tenants. Platform-admin only. */
   allTenants?: InputMaybe<Scalars['Boolean']['input']>;
   /** Filter by enabled status */
   enabled?: InputMaybe<Scalars['Boolean']['input']>;
@@ -713,10 +767,14 @@ export type InstanceListInput = {
   environment?: InputMaybe<Environment>;
   /** Pagination parameters */
   page?: InputMaybe<PageInput>;
+  /** Filter by probe approval status */
+  probeApprovalStatus?: InputMaybe<ProbeApprovalStatus>;
   /** Service to list instances for */
   serviceId: Scalars['ID']['input'];
-  /** Target specific tenant. Platform-admin only. */
+  /** @deprecated Use 'zone' instead. Target specific tenant. Platform-admin only. */
   tenant?: InputMaybe<Scalars['String']['input']>;
+  /** Filter by zone (cosmos/galaxy/stellar) */
+  zone?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InstanceUpsertInput = {
@@ -830,6 +888,15 @@ export type RestContractType = {
   path: Scalars['String']['output'];
   /** Schema reference (OpenAPI) */
   schema?: Maybe<SchemaReferenceType>;
+};
+
+/** REST endpoint configuration */
+export type RestEndpointConfig = {
+  __typename?: 'RestEndpointConfig';
+  /** REST base path (null = baseUrl) */
+  basePath?: Maybe<Scalars['String']['output']>;
+  /** Routing priority (higher = preferred, 1-999, default: 100) */
+  priority: Scalars['Int']['output'];
 };
 
 /** Schema change detection record */
@@ -1173,22 +1240,68 @@ export type ServiceIdentity = {
 export type ServiceInstance = {
   __typename?: 'ServiceInstance';
   baseUrl: Scalars['String']['output'];
+  /**
+   * @deprecated Use 'health.checkIntervalSeconds' instead
+   * @deprecated Use 'health.checkIntervalSeconds' instead. Will be removed in v2.0.0
+   */
   checkIntervalSeconds: Scalars['Int']['output'];
+  /**  ========== Audit ========== */
   createdAt?: Maybe<Scalars['DateTime']['output']>;
+  /**
+   * @deprecated Use 'health.enabled' instead
+   * @deprecated Use 'health.enabled' instead. Will be removed in v2.0.0
+   */
   enabled: Scalars['Boolean']['output'];
+  /** Protocol-specific endpoint configurations */
+  endpoint: InstanceEndpointConfig;
+  /**  ========== Deployment Configuration ========== */
   environment: Environment;
+  /** Health monitoring configuration and status */
+  health: InstanceHealthConfig;
+  /**
+   * @deprecated Use 'health.path' instead
+   * @deprecated Use 'health.path' instead. Will be removed in v2.0.0
+   */
   healthPath: Scalars['String']['output'];
+  /**  ========== Identity ========== */
   id: Scalars['ID']['output'];
   key: Scalars['String']['output'];
+  /**
+   * @deprecated Use 'health.lastCheckedAt' instead
+   * @deprecated Use 'health.lastCheckedAt' instead. Will be removed in v2.0.0
+   */
   lastCheckedAt?: Maybe<Scalars['DateTime']['output']>;
+  /**
+   * @deprecated Use 'health.lastFailureAt' instead
+   * @deprecated Use 'health.lastFailureAt' instead. Will be removed in v2.0.0
+   */
   lastFailureAt?: Maybe<Scalars['DateTime']['output']>;
+  /**
+   * @deprecated Use 'health.lastFailureReason' instead
+   * @deprecated Use 'health.lastFailureReason' instead. Will be removed in v2.0.0
+   */
   lastFailureReason?: Maybe<Scalars['String']['output']>;
+  /**
+   * @deprecated Use 'health.lastStatus' instead
+   * @deprecated Use 'health.lastStatus' instead. Will be removed in v2.0.0
+   */
   lastStatus: HealthStatus;
+  /**
+   * @deprecated Use 'health.lastSuccessAt' instead
+   * @deprecated Use 'health.lastSuccessAt' instead. Will be removed in v2.0.0
+   */
   lastSuccessAt?: Maybe<Scalars['DateTime']['output']>;
+  /**  ========== Probe Approval ========== */
   probeApprovalStatus: ProbeApprovalStatus;
   serviceId: Scalars['ID']['output'];
+  /**
+   * @deprecated Use 'zone' instead. Maps to zone for backward compatibility.
+   * @deprecated Use 'zone' instead. Will be removed in v2.0.0
+   */
   tenant: Scalars['String']['output'];
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Infrastructure zone (cosmos/galaxy/stellar), NOT business tenant */
+  zone: Scalars['String']['output'];
 };
 
 export type ServiceInstanceConnection = {
@@ -1550,7 +1663,7 @@ export type GetServiceDetailQueryVariables = Exact<{
 }>;
 
 
-export type GetServiceDetailQuery = { __typename?: 'Query', service: { __typename?: 'ServiceQueries', one: { __typename?: 'Service', id: string, slug: string, displayName: string, type: ServiceType, lifecycle?: ServiceLifecycle | null, repoUrl?: string | null, docsUrl?: string | null, tags?: Array<string> | null, createdAt?: any | null, updatedAt?: any | null, health?: { __typename?: 'ServiceHealthSummary', status: HealthStatus, lastCheckedAt?: any | null, lastSuccessAt?: any | null, lastFailureAt?: any | null } | null, dependencies: Array<{ __typename?: 'ServiceDependency', critical: boolean, target: { __typename?: 'ServiceIdentity', id: string, slug: string, displayName: string } }>, instances: Array<{ __typename?: 'ServiceInstance', id: string, key: string, environment: Environment, baseUrl: string, healthPath: string, enabled: boolean, probeApprovalStatus: ProbeApprovalStatus, lastStatus: HealthStatus, lastCheckedAt?: any | null, lastFailureReason?: string | null }> } } };
+export type GetServiceDetailQuery = { __typename?: 'Query', service: { __typename?: 'ServiceQueries', one: { __typename?: 'Service', id: string, slug: string, displayName: string, type: ServiceType, lifecycle?: ServiceLifecycle | null, repoUrl?: string | null, docsUrl?: string | null, tags?: Array<string> | null, createdAt?: any | null, updatedAt?: any | null, health?: { __typename?: 'ServiceHealthSummary', status: HealthStatus, lastCheckedAt?: any | null, lastSuccessAt?: any | null, lastFailureAt?: any | null } | null, dependencies: Array<{ __typename?: 'ServiceDependency', critical: boolean, target: { __typename?: 'ServiceIdentity', id: string, slug: string, displayName: string } }>, instances: Array<{ __typename?: 'ServiceInstance', id: string, key: string, zone: string, environment: Environment, baseUrl: string, probeApprovalStatus: ProbeApprovalStatus, endpoint: { __typename?: 'InstanceEndpointConfig', graphql?: { __typename?: 'GraphQLEndpointConfig', endpoint?: string | null, priority: number } | null, rest?: { __typename?: 'RestEndpointConfig', basePath?: string | null, priority: number } | null, grpc?: { __typename?: 'GrpcEndpointConfig', address?: string | null, priority: number } | null }, health: { __typename?: 'InstanceHealthConfig', path: string, enabled: boolean, lastStatus: HealthStatus, lastCheckedAt?: any | null, lastFailureReason?: string | null } }> } } };
 
 export type RegisterSubgraphMutationVariables = Exact<{
   input: SubgraphRegisterInput;
@@ -1674,7 +1787,7 @@ export const DeleteContractDocument = {"kind":"Document","definitions":[{"kind":
 export const ListContractsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListContracts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ContractListInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"list"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceContractFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"offset"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"serviceId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ListContractsQuery, ListContractsQueryVariables>;
 export const GetContractDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetContract"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceContractFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"}},{"kind":"Field","name":{"kind":"Name","value":"serviceId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hash"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deprecation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"alternative"}},{"kind":"Field","name":{"kind":"Name","value":"removal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<GetContractQuery, GetContractQueryVariables>;
 export const GetDependencyGraphDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetDependencyGraph"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DependencyGraphInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dependencies"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceIdentityFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"provides"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProvidesNodeFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"consumes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ConsumesNodeFields"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceIdentityFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Service"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServiceContractSummary"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceContract"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}},{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operation"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProvidesNodeFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProvidesNode"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceContractSummary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"consumers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceIdentityFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ConsumesNodeFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ConsumesNode"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contract"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceContractSummary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"providers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServiceIdentityFields"}}]}}]}}]} as unknown as DocumentNode<GetDependencyGraphQuery, GetDependencyGraphQueryVariables>;
-export const GetServiceDetailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetServiceDetail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceOneInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"lifecycle"}},{"kind":"Field","name":{"kind":"Name","value":"repoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"docsUrl"}},{"kind":"Field","name":{"kind":"Name","value":"tags"}},{"kind":"Field","name":{"kind":"Name","value":"health"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"lastCheckedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastSuccessAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastFailureAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"dependencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"target"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"critical"}}]}},{"kind":"Field","name":{"kind":"Name","value":"instances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"environment"}},{"kind":"Field","name":{"kind":"Name","value":"baseUrl"}},{"kind":"Field","name":{"kind":"Name","value":"healthPath"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"probeApprovalStatus"}},{"kind":"Field","name":{"kind":"Name","value":"lastStatus"}},{"kind":"Field","name":{"kind":"Name","value":"lastCheckedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastFailureReason"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetServiceDetailQuery, GetServiceDetailQueryVariables>;
+export const GetServiceDetailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetServiceDetail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceOneInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"service"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"one"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"lifecycle"}},{"kind":"Field","name":{"kind":"Name","value":"repoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"docsUrl"}},{"kind":"Field","name":{"kind":"Name","value":"tags"}},{"kind":"Field","name":{"kind":"Name","value":"health"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"lastCheckedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastSuccessAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastFailureAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"dependencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"target"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"critical"}}]}},{"kind":"Field","name":{"kind":"Name","value":"instances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"zone"}},{"kind":"Field","name":{"kind":"Name","value":"environment"}},{"kind":"Field","name":{"kind":"Name","value":"baseUrl"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"graphql"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endpoint"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rest"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"basePath"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}}]}},{"kind":"Field","name":{"kind":"Name","value":"grpc"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"health"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"path"}},{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"lastStatus"}},{"kind":"Field","name":{"kind":"Name","value":"lastCheckedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastFailureReason"}}]}},{"kind":"Field","name":{"kind":"Name","value":"probeApprovalStatus"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetServiceDetailQuery, GetServiceDetailQueryVariables>;
 export const RegisterSubgraphDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterSubgraph"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SubgraphRegisterInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exchange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subgraph"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SubgraphFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SubgraphFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Subgraph"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"graphqlUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"schemaHash"}},{"kind":"Field","name":{"kind":"Name","value":"lastHealthyAt"}},{"kind":"Field","name":{"kind":"Name","value":"failureCount"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<RegisterSubgraphMutation, RegisterSubgraphMutationVariables>;
 export const UpdateSubgraphDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateSubgraph"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SubgraphUpdateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exchange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subgraph"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"update"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SubgraphFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SubgraphFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Subgraph"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"graphqlUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"schemaHash"}},{"kind":"Field","name":{"kind":"Name","value":"lastHealthyAt"}},{"kind":"Field","name":{"kind":"Name","value":"failureCount"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpdateSubgraphMutation, UpdateSubgraphMutationVariables>;
 export const ActivateSubgraphDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivateSubgraph"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exchange"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subgraph"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SubgraphFields"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SubgraphFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Subgraph"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"graphqlUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"schemaHash"}},{"kind":"Field","name":{"kind":"Name","value":"lastHealthyAt"}},{"kind":"Field","name":{"kind":"Name","value":"failureCount"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ActivateSubgraphMutation, ActivateSubgraphMutationVariables>;

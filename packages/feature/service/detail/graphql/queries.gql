@@ -32,14 +32,34 @@ query GetServiceDetail($input: ServiceOneInput!) {
       instances {
         id
         key
+        zone
         environment
         baseUrl
-        healthPath
-        enabled
+
+        endpoint {
+          graphql {
+            endpoint
+            priority
+          }
+          rest {
+            basePath
+            priority
+          }
+          grpc {
+            address
+            priority
+          }
+        }
+
+        health {
+          path
+          enabled
+          lastStatus
+          lastCheckedAt
+          lastFailureReason
+        }
+
         probeApprovalStatus
-        lastStatus
-        lastCheckedAt
-        lastFailureReason
       }
     }
   }
