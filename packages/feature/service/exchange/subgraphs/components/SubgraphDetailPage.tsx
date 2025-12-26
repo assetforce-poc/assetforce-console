@@ -50,7 +50,9 @@ const InfoRow: FC<{ label: string; value: React.ReactNode }> = ({ label, value }
     <Typography variant="body2" color="text.secondary" sx={{ width: 160, flexShrink: 0 }}>
       {label}
     </Typography>
-    <Typography variant="body2">{value}</Typography>
+    <Typography variant="body2" component="div">
+      {value}
+    </Typography>
   </Box>
 );
 

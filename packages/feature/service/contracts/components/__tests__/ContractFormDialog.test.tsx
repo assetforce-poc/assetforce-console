@@ -32,27 +32,27 @@ describe('ContractFormDialog', () => {
       expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
     });
 
-//     it('should allow changing contract type', async () => {
-//       const user = userEvent.setup();
-// 
-//       render(<ContractFormDialog open={true} onClose={mockOnClose} serviceId="svc-test" onSubmit={mockOnSubmit} />);
-// 
-//       // Find the Select trigger button (MUI Select renders the trigger as a div with role="button")
-//       const typeSelectButton = screen.getByRole('button', { name: /Contract Type/i });
-//       expect(typeSelectButton).toHaveTextContent('PROVIDES');
-// 
-//       // Click to open dropdown
-//       await user.click(typeSelectButton);
-// 
-//       // Select CONSUMES
-//       const consumesOption = await screen.findByRole('option', { name: 'CONSUMES' });
-//       await user.click(consumesOption);
-// 
-//       // Should update to CONSUMES
-//       await waitFor(() => {
-//         expect(typeSelectButton).toHaveTextContent('CONSUMES');
-//       });
-//     });
+    //     it('should allow changing contract type', async () => {
+    //       const user = userEvent.setup();
+    //
+    //       render(<ContractFormDialog open={true} onClose={mockOnClose} serviceId="svc-test" onSubmit={mockOnSubmit} />);
+    //
+    //       // Find the Select trigger button (MUI Select renders the trigger as a div with role="button")
+    //       const typeSelectButton = screen.getByRole('button', { name: /Contract Type/i });
+    //       expect(typeSelectButton).toHaveTextContent('PROVIDES');
+    //
+    //       // Click to open dropdown
+    //       await user.click(typeSelectButton);
+    //
+    //       // Select CONSUMES
+    //       const consumesOption = await screen.findByRole('option', { name: 'CONSUMES' });
+    //       await user.click(consumesOption);
+    //
+    //       // Should update to CONSUMES
+    //       await waitFor(() => {
+    //         expect(typeSelectButton).toHaveTextContent('CONSUMES');
+    //       });
+    //     });
   });
 
   describe('form submission', () => {
@@ -98,10 +98,10 @@ describe('ContractFormDialog', () => {
       render(<ContractFormDialog open={true} onClose={mockOnClose} serviceId="svc-imc" onSubmit={mockOnSubmit} />);
 
       // Change type to CONSUMES
-// //       const typeSelectButton = screen.getByRole('button', { name: /Contract Type/i });
-// //       await user.click(typeSelectButton);
-// //       const consumesOption = await screen.findByRole('option', { name: 'CONSUMES' });
-// //       await user.click(consumesOption);
+      // //       const typeSelectButton = screen.getByRole('button', { name: /Contract Type/i });
+      // //       await user.click(typeSelectButton);
+      // //       const consumesOption = await screen.findByRole('option', { name: 'CONSUMES' });
+      // //       await user.click(consumesOption);
 
       // Fill only operation
       const operationInput = screen.getByRole('textbox', { name: /GraphQL Operation/i });
