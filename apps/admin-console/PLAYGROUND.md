@@ -42,14 +42,14 @@ The Playground connects to the Federation Gateway via proxy:
 
 ```bash
 # apps/admin-console/.env.local
-SXP_GRAPHQL_URL=http://localhost:8083/exchange/graphql
+SXP_GRAPHQL_URL=http://localhost:8084/graphql
 ```
 
 **Flow**:
 
 ```
 Browser → /api/graphql/sxp (Next.js proxy)
-         → http://localhost:8083/exchange/graphql (SGC Gateway)
+         → http://localhost:8084/graphql (SXP Federation Gateway)
          → Subgraphs (AAC, IMC, SGC)
 ```
 
@@ -182,10 +182,10 @@ Playground automatically saves your query history in browser localStorage.
                    │ HTTP POST ${SXP_GRAPHQL_URL}
                    ▼
 ┌─────────────────────────────────────────────────────┐
-│  SGC - SXP Gateway (localhost:8083)                 │
-│  /exchange/graphql                                  │
-│  - FederationRouter                                 │
-│  - SubgraphClient                                   │
+│  SXP - Federation Gateway (localhost:8084)          │
+│  /graphql                                           │
+│  - GraphQL Federation (Netflix DGS)                 │
+│  - Zone-aware Routing                              │
 │  - Schema Composition                               │
 └──────────────────┬──────────────────────────────────┘
                    │
